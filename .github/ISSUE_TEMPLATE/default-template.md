@@ -1,7 +1,7 @@
 ---
 name: default template
 about: deefault
-title: "[Feat]"
+title: "[iOS / BE]"
 labels: ''
 assignees: ''
 
