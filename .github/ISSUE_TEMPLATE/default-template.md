@@ -1,16 +1,16 @@
 ---
-name: default template
-about: deefault
-title: "[iOS / BE]"
+name: Custom Issue Template
+about: 기본 이슈 템플릿
+title: 이슈 제목
 labels: ''
 assignees: ''
 
 ---
 
-## Description
-설명을 작성하세요
+## 🚀 목표
+- 목표내용
 
-## To-do
-- [ ] undo
-- [ ] undo
-- [ ] undo
+## ⏱️ 할일
+- [] 해야할 일
+
+## 💬 참고사항
