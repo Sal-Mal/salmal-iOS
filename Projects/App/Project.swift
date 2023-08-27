@@ -20,9 +20,11 @@ let project = Project(
       sources: ["Sources/**"],
       resources: ["Resources/**"],
       dependencies: [
+        .project(target: "UI", path: "../UI"),
+        
         .external(name: "Alamofire"),
         .external(name: "Kingfisher"),
-        .external(name: "ComposableArchitecture")
+        .external(name: "ComposableArchitecture"),
       ]
     )
   ]

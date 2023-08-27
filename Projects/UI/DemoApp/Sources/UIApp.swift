@@ -1,11 +1,10 @@
 import SwiftUI
 
 @main
-struct SalmalApp: App {
+struct UIApp: App {
   var body: some Scene {
     WindowGroup {
       ContentView()
     }
   }
 }
-

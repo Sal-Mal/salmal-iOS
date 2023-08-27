@@ -1,0 +1,48 @@
+// Project.stencil
+
+import ProjectDescription
+
+let project = Project(
+  name: "{{ name }}",
+  targets: [
+    Target(
+      name: "{{ name }}",
+      platform: .iOS,
+      product: .framework,
+      bundleId: "com.framework.salmal.{{ name }}",
+      infoPlist: .default,
+      sources: ["Sources/**"],
+      dependencies: [
+        
+      ]
+    ),
+    
+    Target(
+      name: "{{ name }}Tests",
+      platform: .iOS,
+      product: .unitTests,
+      bundleId: "com.framework.salmal.{{ name }}Tests",
+      sources: ["Tests/**"],
+      dependencies: [
+        .target(name: "{{ name }}")
+      ]
+    ),
+    
+    Target(
+      name: "{{ name }}Demo",
+      platform: .iOS,
+      product: .app,
+      bundleId: "com.framework.salmal.{{ name }}Demo",
+      infoPlist: .extendingDefault(with: [
+        "CFBundleShortVersionString": "1.0",
+        "CFBundleVersion": "1",
+        "UILaunchStoryboardName": "LaunchScreen"
+      ]),
+      sources: ["DemoApp/Sources/**"],
+      resources: ["DemoApp/Resources/**"],
+      dependencies: [
+        .target(name: "{{ name }}")
+      ]
+    ),
+  ]
+)
