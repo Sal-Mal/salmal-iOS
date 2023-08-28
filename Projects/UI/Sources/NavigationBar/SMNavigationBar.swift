@@ -40,12 +40,12 @@ public extension View {
     title: String,
     @ViewBuilder leftItems: @escaping () -> some View,
     @ViewBuilder rightItems: @escaping () -> some View,
-    color: Color = .black
+    color: Color = UIAsset.black.swiftUIColor
   ) -> some View {
     modifier(SMNavigationBar(
       leftItems: leftItems,
       rightItems: rightItems,
-      title: { Text(title).foregroundColor(.white) },
+      title: { Text(title).foregroundColor(UIAsset.white.swiftUIColor) },
       color: color
     ))
   }
