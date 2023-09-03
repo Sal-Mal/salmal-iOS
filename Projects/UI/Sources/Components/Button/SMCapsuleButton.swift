@@ -77,7 +77,7 @@ struct SMCapsuleButton: View {
       .frame(height: 44)
       .padding(.horizontal, 10)
       .background(buttonMode.backgroundColor)
-      .cornerRadius(28)
+      .clipShape(Capsule())
     }
   }
 }
