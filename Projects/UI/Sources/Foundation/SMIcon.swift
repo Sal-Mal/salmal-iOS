@@ -1,107 +1,31 @@
-//
-//  SMIcon.swift
-//  UI
-//
-//  Created by 청새우 on 2023/09/03.
-//
-
 import SwiftUI
 
 extension SM {
 
-  public enum Icon {
-
-    public static var home: Image {
-      return .init("home", bundle: SM.bundle)
-    }
-
-    public static var arrowLeft: Image {
-      return .init("arrow.left", bundle: SM.bundle)
-    }
-
-    public static var bookmarkFill: Image {
-      return .init("bookmark.fill", bundle: SM.bundle)
-    }
-
-    public static var bookmark: Image {
-      return .init("bookmark", bundle: SM.bundle)
-    }
-
-    public static var camera: Image {
-      return .init("camera", bundle: SM.bundle)
-    }
-
-    public static var cancel: Image {
-      return .init("cancel", bundle: SM.bundle)
-    }
-
-    public static var check: Image {
-      return .init("check", bundle: SM.bundle)
-    }
-
-    public static var delete: Image {
-      return .init("delete", bundle: SM.bundle)
-    }
-
-    public static var edit: Image {
-      return .init("edit", bundle: SM.bundle)
-    }
-
-    public static var heartFill: Image {
-      return .init("heart.fill", bundle: SM.bundle)
-    }
-
-    public static var heart: Image {
-      return .init("heart", bundle: SM.bundle)
-    }
-
-    public static var homeFill: Image {
-      return .init("home.fill", bundle: SM.bundle)
-    }
-
-    public static var list: Image {
-      return .init("list", bundle: SM.bundle)
-    }
-
-    public static var message: Image {
-      return .init("message", bundle: SM.bundle)
-    }
-
-    public static var personFill: Image {
-      return .init("person.fill", bundle: SM.bundle)
-    }
-
-    public static var person: Image {
-      return .init("person", bundle: SM.bundle)
-    }
-
-    public static var plusCircle: Image {
-      return .init("plus.circle", bundle: SM.bundle)
-    }
-
-    public static var plus: Image {
-      return .init("plus", bundle: SM.bundle)
-    }
-
-    public static var send: Image {
-      return .init("send", bundle: SM.bundle)
-    }
-
-    public static var setting: Image {
-      return .init("setting", bundle: SM.bundle)
-    }
-
-    public static var warning: Image {
-      return .init("warning", bundle: SM.bundle)
-    }
-
-    public static var xmarkCircle: Image {
-      return .init("xmark.circle", bundle: SM.bundle)
-    }
-
-    public static var xmark: Image {
-      return .init("xmark", bundle: SM.bundle)
-    }
+  public enum Icon: String {
+    case arrow_left = "arrow.left"
+    case home_fill = "home.fill"
+    case home = "home"
+    case bookmark_fill = "bookmark.fill"
+    case bookmark = "bookmark"
+    case camera = "camera"
+    case cancel = "cancel"
+    case check = "check"
+    case delete = "delete"
+    case edit = "edit"
+    case heart_fill = "heart.fill"
+    case heart = "heart"
+    case list = "list"
+    case messsage = "message"
+    case person_fill = "person.fill"
+    case person = "person"
+    case plus_circle = "plus.circle"
+    case plus = "plus"
+    case send = "send"
+    case setting = "setting"
+    case warning = "warning"
+    case xmark_circle = "xmark.circle"
+    case xmark = "xmark"
   }
 }
 
