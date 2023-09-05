@@ -4,7 +4,10 @@ import ProjectDescription
 
 let project = Project(
   name: "SalmalApp",
-  options: .options(disableBundleAccessors: true, disableSynthesizedResourceAccessors: false),
+  options: .options(
+    disableBundleAccessors: true,
+    disableSynthesizedResourceAccessors: true
+  ),
   targets: [
     Target(
       name: "SalmalApp",

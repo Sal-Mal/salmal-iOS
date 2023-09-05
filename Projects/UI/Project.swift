@@ -4,6 +4,10 @@ import ProjectDescription
 
 let project = Project(
   name: "UI",
+  options: .options(
+    disableBundleAccessors: true,
+    disableSynthesizedResourceAccessors: true
+  ),
   targets: [
     Target(
       name: "UI",
