@@ -99,7 +99,7 @@ struct SMFloatingActionButton_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       SMFloatingActionButton(
-        iconImage: UIAsset.bookmark.swiftUIImage,
+        iconImage: .init(icon: .bookmark),
         buttonSize: .large,
         backgroundColor: .gray
       ) {
@@ -107,7 +107,7 @@ struct SMFloatingActionButton_Previews: PreviewProvider {
       }
 
       SMFloatingActionButton(
-        iconImage: UIAsset.bookmark.swiftUIImage,
+        iconImage: .init(icon: .bookmark),
         buttonSize: .large,
         badgeCount: 15,
         backgroundColor: .black

@@ -27,38 +27,38 @@ public struct SMMainNavigationBar: ViewModifier {
         ToolbarItem(placement: .navigationBarLeading) {
           Text("Home")
             .font(.title2).bold()
-            .foregroundColor(selection == 0 ? UIAsset.green1.swiftUIColor : UIAsset.white36.swiftUIColor)
+            .foregroundColor(selection == 0 ? .ds(.green1) : .ds(.white36))
             .onTapGesture {
               withAnimation {
                 selection = 0
               }
             }
         }
-        
+
         ToolbarItem(placement: .navigationBarLeading) {
           Text("Best")
             .font(.title2).bold()
-            .foregroundColor(selection == 1 ? UIAsset.green1.swiftUIColor : UIAsset.white36.swiftUIColor)
+            .foregroundColor(selection == 1 ? .ds(.green1) : .ds(.white36))
             .onTapGesture {
               withAnimation {
                 selection = 1
               }
             }
         }
-        
+
         ToolbarItem(placement: .navigationBarTrailing) {
-          Circle().fill(UIAsset.green1.swiftUIColor)
+          Circle().fill(Color.ds(.green1))
             .frame(width: 32)
             .overlay(
-              UIAsset.plus.swiftUIImage
+              Image(icon: .plus)
                 .renderingMode(.template)
                 .scaledToFit()
-                .foregroundColor(UIAsset.black.swiftUIColor)
+                .foregroundColor(.ds(.black))
                 .frame(width: 10)
             )
             .onTapGesture(perform: addAction)
         }
-        
+
         ToolbarItem(placement: .navigationBarTrailing) {
           profileImage
             .resizable()
@@ -78,7 +78,7 @@ public struct SMMainNavigationBar: ViewModifier {
 public extension View {
   func smMainNavigationBar(
     selection: Binding<Int>,
-    color: Color = UIAsset.black.swiftUIColor,
+    color: Color = .ds(.black),
     profile: Image,
     addAction: @escaping () -> Void,
     profileAction: @escaping () -> Void

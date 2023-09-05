@@ -29,7 +29,7 @@ public extension SMCapsuleTextField {
    */
   func title(
     _ text: String,
-    color: Color =  UIAsset.gray2.swiftUIColor,
+    color: Color = .ds(.gray2),
     font: Font = .callout
   ) -> Self {
     var new = self
@@ -42,9 +42,9 @@ public extension SMCapsuleTextField {
   /**
     왼쪽에 image 삽입
    */
-  func leftImage(_ name: String) -> Self {
+  func leftImage(_ image: Image) -> Self {
     var new = self
-    new.imageName = name
+    new.image = image
     return new
   }
   
@@ -96,20 +96,20 @@ public struct SMCapsuleTextField: View {
   @Binding var text: String
   
   var title: String?
-  var titleColor: Color = UIAsset.gray2.swiftUIColor
+  var titleColor: Color = .ds(.gray2)
   var titleFont: Font = .callout
   
-  var imageName: String?
+  var image: Image?
   var buttonTitle: String?
   var buttonAction: () -> Void = {}
   var lineLimit: Int = 1
   
-  var textColor: Color = UIAsset.white.swiftUIColor
-  var tintColor: Color = UIAsset.green1.swiftUIColor
+  var textColor: Color = .ds(.white)
+  var tintColor: Color = .ds(.green1)
   var font: Font = .body
-  var bgColor: Color = UIAsset.gray4.swiftUIColor
+  var bgColor: Color = .ds(.gray4)
   
-  var placeholderColor: Color = UIAsset.gray2.swiftUIColor
+  var placeholderColor: Color = .ds(.gray2)
   let placeholder: String
   
   @FocusState var focus: Bool
@@ -163,8 +163,8 @@ public struct SMCapsuleTextField: View {
   
   @ViewBuilder
   var imageView: some View {
-    if let imageName {
-      Image(imageName, bundle: .module)
+    if let image {
+      image
         .resizable()
         .scaledToFill()
         .frame(width: 48, height: 48)
@@ -195,9 +195,9 @@ public struct SMCapsuleTextField: View {
 struct SMCapsuleTextField_Previews: PreviewProvider {
   static var previews: some View {
     SMCapsuleTextField(text: .constant("ddsas"), placeholder: "눌러서 댓글입력")
-      .color(.foreground(UIAsset.white.swiftUIColor))
-      .color(.tint(UIAsset.green1.swiftUIColor))
-      .leftImage(UIAsset.cancel.name)
+      .color(.foreground(.ds(.white)))
+      .color(.tint(.ds(.green1)))
+      .leftImage(Image(icon: .cancel))
       .padding()
       .previewLayout(.sizeThatFits)
   }

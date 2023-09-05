@@ -16,20 +16,20 @@ public struct SMCapsuleButton: View {
     var forgroundColor: Color {
       switch self {
       case .white:
-        return UIAsset.black.swiftUIColor
+        return .ds(.black)
 
       case .black:
-        return UIAsset.white.swiftUIColor
+        return .ds(.white)
       }
     }
 
     var backgroundColor: Color {
       switch self {
       case .white:
-        return UIAsset.white.swiftUIColor
+        return .ds(.white)
 
       case .black:
-        return UIAsset.black.swiftUIColor
+        return .ds(.black)
       }
     }
   }
@@ -94,7 +94,7 @@ struct SMCapsuleButton_Previews: PreviewProvider {
 
       SMCapsuleButton(
         title: "feroldis",
-        iconImage: UIAsset.heartFill.swiftUIImage
+        iconImage: .init(icon: .heart_fill)
       ) {
         print("SMCapsuleButton 클릭")
       }
@@ -104,7 +104,7 @@ struct SMCapsuleButton_Previews: PreviewProvider {
 
       SMCapsuleButton(
         title: "feroldis",
-        iconImage: UIAsset.camera.swiftUIImage,
+        iconImage: .init(icon: .camera),
         buttonMode: .black
       ) {
         print("SMCapsuleButton 클릭")

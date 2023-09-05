@@ -1,23 +1,25 @@
 import SwiftUI
 
-enum DemoMenu: String {
+enum Demo: String, CaseIterable {
   case fonts = "Fonts"
   case colors = "Colors"
+
+  @ViewBuilder var content: some View {
+    switch self {
+    case .fonts:
+      FontView()
+    case .colors:
+      ColorView()
+    }
+  }
 }
 
 struct ContentView: View {
 
-  var menus: [DemoMenu] = [.fonts, .colors]
-
   var body: some View {
     NavigationView {
-      List(menus, id: \.rawValue) { menu in
-        switch menu {
-        case .fonts:
-          NavigationLink(menu.rawValue, destination: FontView())
-        case .colors:
-          NavigationLink(menu.rawValue, destination: ColorView())
-        }
+      List(Demo.allCases, id: \.rawValue) { demo in
+        NavigationLink(demo.rawValue, destination: demo.content)
       }
     }
   }

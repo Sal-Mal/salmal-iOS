@@ -51,13 +51,13 @@ public struct SMVoteButton: View {
           ZStack(alignment: .leading) {
             HStack {
               Text(title)
-                .foregroundColor(UIAsset.green1.swiftUIColor)
+                .foregroundColor(.ds(.green1))
                 .font(.system(size: 20, weight: .semibold))
 
               Spacer()
 
               Text("\(Int(round(progress * 100)))%")
-                .foregroundColor(UIAsset.green1.swiftUIColor)
+                .foregroundColor(.ds(.green1))
                 .font(.system(size: 20, weight: .semibold))
             }
             .padding(.horizontal)
@@ -65,11 +65,11 @@ public struct SMVoteButton: View {
 
             HStack {
               Text(title)
-                .foregroundColor(UIAsset.black.swiftUIColor)
+                .foregroundColor(.ds(.black))
                 .font(.system(size: 20, weight: .semibold))
               Spacer()
               Text("\(Int(round(progress * 100)))%")
-                .foregroundColor(UIAsset.black.swiftUIColor)
+                .foregroundColor(.ds(.black))
                 .font(.system(size: 20, weight: .semibold))
             }
             .padding(.horizontal)
@@ -88,15 +88,15 @@ public struct SMVoteButton: View {
 
             ZStack(alignment: .leading) {
               RoundedRectangle(cornerRadius: 30)
-                .fill(UIAsset.gray4.swiftUIColor)
+                .fill(Color.ds(.gray4))
                 .overlay {
                   RoundedRectangle(cornerRadius: 30)
                     .stroke(lineWidth: 2)
-                    .foregroundColor(UIAsset.green1.swiftUIColor)
+                    .foregroundColor(.ds(.green1))
                 }
 
               RoundedRectangle(cornerRadius: 30)
-                .fill(UIAsset.green1.swiftUIColor)
+                .fill(Color.ds(.green1))
                 .frame(width: size.width * animationProgress, height: size.height)
                 .clipped()
             }
@@ -105,13 +105,13 @@ public struct SMVoteButton: View {
 
       } else {
         Text(title)
-          .foregroundColor(UIAsset.white.swiftUIColor)
+          .foregroundColor(.ds(.white))
           .font(.system(size: 20, weight: .semibold))
           .frame(maxWidth: .infinity)
           .frame(height: 60)
           .background {
             RoundedRectangle(cornerRadius: 30)
-              .fill(UIAsset.gray3.swiftUIColor)
+              .fill(Color.ds(.gray3))
           }
       }
     }

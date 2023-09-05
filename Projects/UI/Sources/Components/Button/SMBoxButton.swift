@@ -70,15 +70,15 @@ public struct SMBoxButton: View {
   private var foregroundColor: Color {
     if isEnabled {
       if buttonType == .filled {
-        return UIAsset.black.swiftUIColor
+        return .ds(.black)
       } else {
-        return UIAsset.green1.swiftUIColor
+        return .ds(.green1)
       }
     } else {
       if buttonType == .filled {
-        return UIAsset.gray3.swiftUIColor
+        return .ds(.gray3)
       } else {
-        return UIAsset.gray2.swiftUIColor
+        return .ds(.gray2)
       }
     }
   }
@@ -86,9 +86,9 @@ public struct SMBoxButton: View {
   /// 버튼 배경색 색상
   private var backgroundColor: Color {
     if isEnabled {
-      return UIAsset.green1.swiftUIColor
+      return .ds(.green1)
     } else {
-      return UIAsset.gray1.swiftUIColor
+      return .ds(.gray1)
     }
   }
 

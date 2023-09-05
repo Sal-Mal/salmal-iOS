@@ -16,20 +16,20 @@ public struct SMIconButton: View {
     var forgroundColor: Color {
       switch self {
       case .white:
-        return UIAsset.black.swiftUIColor
+        return .ds(.black)
 
       case .black:
-        return UIAsset.white.swiftUIColor
+        return .ds(.white)
       }
     }
 
     var backgroundColor: Color {
       switch self {
       case .white:
-        return UIAsset.white.swiftUIColor
+        return .ds(.white)
 
       case .black:
-        return UIAsset.black.swiftUIColor
+        return .ds(.black)
       }
     }
   }
@@ -73,19 +73,19 @@ public struct SMIconButton: View {
 struct SMIconButton_Previews: PreviewProvider {
   static var previews: some View {
     Group {
-      SMIconButton(iconImage: UIAsset.heartFill.swiftUIImage) {
+      SMIconButton(iconImage: .init(icon: .heart_fill)) {
         print("클릭")
       }
 
       SMIconButton(
-        iconImage: UIAsset.heartFill.swiftUIImage,
+        iconImage: .init(icon: .heart_fill),
         caption: "좋아요"
       ) {
         print("클릭")
       }
 
       SMIconButton(
-        iconImage: UIAsset.camera.swiftUIImage,
+        iconImage: .init(icon: .camera),
         buttonStyle: .black
       ) {
         print("클릭")
@@ -93,7 +93,7 @@ struct SMIconButton_Previews: PreviewProvider {
       .preferredColorScheme(.dark)
 
       SMIconButton(
-        iconImage: UIAsset.camera.swiftUIImage,
+        iconImage: .init(icon: .camera),
         buttonStyle: .black,
         caption: "촬영"
       ) {
