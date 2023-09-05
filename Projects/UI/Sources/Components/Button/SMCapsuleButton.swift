@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct SMCapsuleButton: View {
+public struct SMCapsuleButton: View {
 
-  enum ButtonStyle {
+  public enum ButtonStyle {
     case white
     case black
 
@@ -38,15 +38,15 @@ struct SMCapsuleButton: View {
   private let title: String
 
   /// 버튼 좌측 아이콘 이미지 (Optional)
-  private var iconImage: Image?
+  private let iconImage: Image?
 
   /// 버튼 스타일 (white, black)
-  private var buttonMode: ButtonStyle
+  private let buttonMode: ButtonStyle
 
   /// 버튼 액션
-  private var action: () -> Void
+  private let action: () -> Void
 
-  init(
+  public init(
     title: String,
     iconImage: Image? = nil,
     buttonMode: ButtonStyle = .white,
@@ -58,7 +58,7 @@ struct SMCapsuleButton: View {
     self.action = action
   }
   
-  var body: some View {
+  public var body: some View {
     Button {
       self.action()
     } label: {

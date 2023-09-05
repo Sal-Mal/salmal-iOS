@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct SMFloatingActionButton: View {
+public struct SMFloatingActionButton: View {
 
-  enum ButtonSize {
+  public enum ButtonSize {
     case small
     case medium
     case large
@@ -42,13 +42,27 @@ struct SMFloatingActionButton: View {
     }
   }
 
-  let iconImage: Image
-  var buttonSize: ButtonSize = .large
-  var badgeCount: Int? = nil
-  var backgroundColor: Color
-  var action: () -> Void
+  private let iconImage: Image
+  private let buttonSize: ButtonSize
+  private let badgeCount: Int?
+  private let backgroundColor: Color
+  private let action: () -> Void
 
-  var body: some View {
+  public init(
+    iconImage: Image,
+    buttonSize: ButtonSize = .large ,
+    badgeCount: Int? = nil,
+    backgroundColor: Color,
+    action: @escaping () -> Void
+  ) {
+    self.iconImage = iconImage
+    self.buttonSize = buttonSize
+    self.badgeCount = badgeCount
+    self.backgroundColor = backgroundColor
+    self.action = action
+  }
+
+  public var body: some View {
     Button {
       self.action()
     } label: {

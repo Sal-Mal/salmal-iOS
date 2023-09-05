@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct SMIconButton: View {
+public struct SMIconButton: View {
 
-  enum ButtonStyle {
+  public enum ButtonStyle {
     case white
     case black
 
@@ -34,23 +34,24 @@ struct SMIconButton: View {
     }
   }
 
-  private var iconImage: Image
-  private var buttonStyle: ButtonStyle
-  private var caption: String?
-  private var action: () -> Void
+  private let iconImage: Image
+  private let buttonStyle: ButtonStyle
+  private let caption: String?
+  private let action: () -> Void
 
-  init(
+  public init(
     iconImage: Image,
     buttonStyle: ButtonStyle = .white,
     caption: String? = nil,
-    action: @escaping () -> Void) {
+    action: @escaping () -> Void
+  ) {
     self.iconImage = iconImage
     self.buttonStyle = buttonStyle
     self.caption = caption
     self.action = action
   }
 
-  var body: some View {
+  public var body: some View {
     Button {
       self.action()
     } label: {

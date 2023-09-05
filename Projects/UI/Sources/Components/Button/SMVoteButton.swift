@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct SMVoteButton: View {
+public struct SMVoteButton: View {
 
-  enum ButtonState {
+  public enum ButtonState {
     case none
     case first
     case second
@@ -18,12 +18,24 @@ struct SMVoteButton: View {
   @State private var animationProgress: Double = 0
   @State private var isPressed: Bool = false
 
-  let title: String
-  var buttonState: ButtonState = .none
-  var progress: Double
-  var action: () -> Void
+  private let title: String
+  private let buttonState: ButtonState
+  private let progress: Double
+  private let action: () -> Void
 
-  var body: some View {
+  public init(
+    title: String,
+    buttonState: ButtonState = .none,
+    progress: Double,
+    action: @escaping () -> Void
+  ) {
+    self.title = title
+    self.buttonState = buttonState
+    self.progress = progress
+    self.action = action
+  }
+
+  public var body: some View {
     Button {
       isPressed = true
 
@@ -108,7 +120,7 @@ struct SMVoteButton: View {
 
 struct SMVoteButton_Previews: PreviewProvider {
   static var previews: some View {
-    SMVoteButton(title: "👍🏻 살", progress: 0.1) {
+    SMVoteButton(title: "👍🏻 살", progress: 0.6) {
       print("클릭")
     }
     .padding()

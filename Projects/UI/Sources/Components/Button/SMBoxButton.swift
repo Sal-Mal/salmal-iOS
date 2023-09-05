@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SMBoxButton: View {
+public struct SMBoxButton: View {
 
   // 상태
   // - Disabled
@@ -21,12 +21,12 @@ struct SMBoxButton: View {
   // - 기본 Box (r6)
   // - Round Box (높이 50%)
 
-  enum ButtonType {
+  public enum ButtonType {
     case filled
     case outlined
   }
 
-  enum ButtonSize {
+  public enum ButtonSize {
     case small
     case medium
     case large
@@ -59,7 +59,7 @@ struct SMBoxButton: View {
     }
   }
 
-  enum ButtonRadius {
+  public enum ButtonRadius {
     case r6
     case half
   }
@@ -96,18 +96,18 @@ struct SMBoxButton: View {
   private let title: String
 
   /// 버튼 타입 (filled[default], outlined)
-  private var buttonType: ButtonType
+  private let buttonType: ButtonType
 
   /// 버튼 텍스트 (small, medium, large[default], xLarge)
-  private var buttonSize: ButtonSize
+  private let buttonSize: ButtonSize
 
   /// 버튼 CornerRadius (r6, half(높이의 절반))
-  private var buttonRadius: ButtonRadius
+  private let buttonRadius: ButtonRadius
 
   /// 버튼 액션
-  private var action: () -> Void
+  private let action: () -> Void
 
-  init(
+  public init(
     title: String,
     buttonType: ButtonType = .filled,
     buttonSize: ButtonSize = .xLarge,
@@ -121,7 +121,7 @@ struct SMBoxButton: View {
     self.action = action
   }
 
-  var body: some View {
+  public var body: some View {
     Button {
       self.action()
     } label: {
@@ -141,7 +141,6 @@ struct SMBoxButton: View {
           }
         }
     }
-    .disabled(!isEnabled)
   }
 
   private func setRadius() -> CGFloat {
@@ -161,7 +160,7 @@ struct SMBoxButton_Previews: PreviewProvider {
       SMBoxButton(title: "확인") {
         print("확인 클릭")
       }
-      .environment(\.isEnabled, true)
+      .disabled(false)
       .padding()
       .preferredColorScheme(.dark)
       .previewDisplayName("Filled Button")
@@ -170,7 +169,7 @@ struct SMBoxButton_Previews: PreviewProvider {
       SMBoxButton(title: "확인", buttonRadius: .r6) {
         print("확인 클릭")
       }
-      .environment(\.isEnabled, true)
+      .disabled(false)
       .padding()
       .preferredColorScheme(.dark)
       .previewDisplayName("Filled Button Radius 6")
@@ -179,7 +178,7 @@ struct SMBoxButton_Previews: PreviewProvider {
       SMBoxButton(title: "확인") {
         print("확인 클릭")
       }
-      .environment(\.isEnabled, false)
+      .disabled(true)
       .padding()
       .preferredColorScheme(.dark)
       .previewDisplayName("Filled Button: Disabled")
