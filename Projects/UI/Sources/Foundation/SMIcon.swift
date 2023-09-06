@@ -26,6 +26,8 @@ extension SM {
     case warning = "warning"
     case xmark_circle = "xmark.circle"
     case xmark = "xmark"
+    case trash = "trash"
+    case gallery = "gallery"
   }
 }
 

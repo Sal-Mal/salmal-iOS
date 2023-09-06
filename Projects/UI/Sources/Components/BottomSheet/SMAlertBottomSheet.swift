@@ -82,7 +82,7 @@ public struct SMAlertBottomSheetModifier: ViewModifier {
         .frame(maxHeight: .infinity, alignment: .bottom)
         .background(Color.ds(.gray4))
         .presentationDetents([.height(212)])
-        .presentationDragIndicator(.visible)
+        .presentationDragIndicator(.hidden)
       }
   }
 }
@@ -95,11 +95,10 @@ public struct SMAlertBottomSheet: View {
   
   public var body: some View {
     VStack(spacing: 32) {
-      Rectangle().fill(Color.ds(.gray3))
-        .clipShape(Capsule())
-        .frame(width: 39, height: 4)
-        .padding(.top, 16)
+      SheetDragIndicator()
+      
       Spacer()
+      
       VStack(spacing: 8) {
         Text(alert.title)
           .foregroundColor(.ds(.white))
