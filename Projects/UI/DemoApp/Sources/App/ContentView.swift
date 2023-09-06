@@ -1,8 +1,9 @@
 import SwiftUI
 
 enum Demo: String, CaseIterable {
-  case fonts = "Fonts"
-  case colors = "Colors"
+  case fonts = "폰트"
+  case colors = "컬러"
+  case toasts = "토스트"
 
   @ViewBuilder var content: some View {
     switch self {
@@ -10,6 +11,8 @@ enum Demo: String, CaseIterable {
       FontView()
     case .colors:
       ColorView()
+    case .toasts:
+      ToastView()
     }
   }
 }

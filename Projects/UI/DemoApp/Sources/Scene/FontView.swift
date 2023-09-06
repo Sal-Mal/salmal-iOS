@@ -51,7 +51,7 @@ struct FontView: View {
             .font(.twaySky(size: 20))
         }
       }
-      .navigationTitle("Fonts")
+      .navigationTitle("폰트")
     }
 }
 
