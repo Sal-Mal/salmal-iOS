@@ -9,6 +9,14 @@ extension SM {
       SM.Font.Family.registerAllCustomFonts()
     }
 
+    public enum PretendardStyle {
+      case title1
+      case title2
+      case title3
+      case title4
+      case title5
+    }
+
     public enum PretendardWeight {
       case black
       case bold

@@ -25,6 +25,19 @@ struct FontView: View {
             .font(.pretendard(.black, size: 20))
         }
 
+        Section("Pretendard Style") {
+          Text("Pretendard Bold 24: Title1")
+            .font(.ds(.title1))
+          Text("Pretendard SemiBold 20: Title2")
+            .font(.ds(.title2))
+          Text("Pretendard Medium 16: Title3")
+            .font(.ds(.title3))
+          Text("Pretendard Medium 13: Title4")
+            .font(.ds(.title4))
+          Text("Pretendard Medium 11: Title5")
+            .font(.ds(.title5))
+        }
+
         Section("Custom") {
           Text("Binggrae 20")
             .font(.binggrae(size: 20))
