@@ -15,5 +15,12 @@ extension SM {
     case white20 = "White20"
     case white36 = "White36"
     case white80 = "White80"
+    case red = "Red"
+    case orange = "Orange"
+    case yellow = "Yellow"
+    case green = "Green"
+    case blue = "Blue"
+    case purple = "Purple"
+    case apricot = "Apricot"
   }
 }
