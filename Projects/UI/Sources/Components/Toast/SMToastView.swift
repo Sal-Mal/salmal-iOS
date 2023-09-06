@@ -99,7 +99,7 @@ public struct SMToastView: View {
     .padding()
     .frame(height: 48)
     .background(Color.ds(.gray4))
-    .cornerRadius(24)
+    .clipShape(Capsule())
     .shadow(radius: 4)
   }
 }
