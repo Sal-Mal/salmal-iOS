@@ -45,7 +45,7 @@ public struct SMToastView: View {
       case .warning:
         return .ds(.orange)
       case .success:
-        return .ds(.green)
+        return .ds(.green1)
       }
     }
 
