@@ -3,6 +3,8 @@ import SwiftUI
 enum Demo: String, CaseIterable {
   case fonts = "Fonts"
   case colors = "Colors"
+  case bottomSheet = "BottomSheet"
+  case textField = "TextField"
 
   @ViewBuilder var content: some View {
     switch self {
@@ -10,6 +12,10 @@ enum Demo: String, CaseIterable {
       FontView()
     case .colors:
       ColorView()
+    case .bottomSheet:
+      BottomSheetView()
+    case .textField:
+      TextFieldView()
     }
   }
 }

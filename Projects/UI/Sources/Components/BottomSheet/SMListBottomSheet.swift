@@ -1,6 +1,6 @@
 import SwiftUI
 
-public enum Menu: String, Identifiable {
+public enum SMMenu: String, Identifiable {
   case 해당_게시물_신고하기 = "해당 게시물 신고하기"
   case 이_사용자_차단하기 = "이 사용자 차단하기"
   case 사진첩에서_선택하기 = "사진첩에서 선택하기"
@@ -28,7 +28,7 @@ public enum Menu: String, Identifiable {
 extension View {
   public func smListSheet(
     isPresented: Binding<Bool>,
-    items: [Menu],
+    items: [SMMenu],
     actions: [() -> Void]
   ) -> some View {
     modifier(SMListBottomSheetModifier(
@@ -42,7 +42,7 @@ extension View {
 public struct SMListBottomSheetModifier: ViewModifier {
   
   @Binding var isPresented: Bool
-  let items: [Menu]
+  let items: [SMMenu]
   let actions: [() -> Void]
 
   public func body(content: Content) -> some View {
@@ -59,7 +59,7 @@ public struct SMListBottomSheetModifier: ViewModifier {
 
 public struct SMListBottomSheet: View {
   
-  let items: [Menu]
+  let items: [SMMenu]
   let actions: [() -> Void]
   
   public var body: some View {

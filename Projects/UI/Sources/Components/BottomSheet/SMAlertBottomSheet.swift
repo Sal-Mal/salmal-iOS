@@ -1,6 +1,6 @@
 import SwiftUI
 
-public enum Alert {
+public enum SMAlert {
   case blocking
   case delete
   case logout
@@ -56,7 +56,7 @@ public enum Alert {
 public extension View {
   func smAlertSheet(
     isPresented: Binding<Bool>,
-    alert: Alert,
+    alert: SMAlert,
     confirmAction: @escaping () -> Void
   ) -> some View {
     modifier(SMAlertBottomSheetModifier(
@@ -69,7 +69,7 @@ public extension View {
 
 public struct SMAlertBottomSheetModifier: ViewModifier {
   @Binding var isPresented: Bool
-  let alert: Alert
+  let alert: SMAlert
   let confirmAction: () -> Void
   
   public func body(content: Content) -> some View {
@@ -88,7 +88,7 @@ public struct SMAlertBottomSheetModifier: ViewModifier {
 }
 
 public struct SMAlertBottomSheet: View {
-  let alert: Alert
+  let alert: SMAlert
   let confirmAction: () -> Void
   
   @Environment(\.dismiss) var dismiss
