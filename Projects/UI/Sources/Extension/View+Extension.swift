@@ -1,7 +1,6 @@
 import SwiftUI
 
-extension View {
-
+public extension View {
   func debug(_ color: Color = .red) -> some View {
     modifier(FrameDebugModifier(color: color))
   }

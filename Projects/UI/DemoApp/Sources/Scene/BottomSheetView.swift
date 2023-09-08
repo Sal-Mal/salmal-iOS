@@ -3,32 +3,31 @@ import UI
 
 struct BottomSheetView: View {
   @State var showAlert: Bool = false
-  @State var showList: Bool = false
+  @State var showCustom: Bool = false
   
   var body: some View {
     VStack {
-      Button {
-        showAlert.toggle()
-      } label: {
-        Text("얼럿").frame(width: 100)
+      Button("Show Alert") {
+        showAlert = true
       }
-
-      Button {
-        showList.toggle()
-      } label: {
-        Text("리스트").frame(width: 100)
+      
+      Button("Show Custon") {
+        showCustom = true
       }
     }
-    .buttonStyle(.borderedProminent)
-    
-    .smAlertSheet(isPresented: $showAlert, alert: .blocking) {
-      print("!!")
-    }
-    .smListSheet(
-      isPresented: $showList,
-      items: [.사진첩에서_선택하기, .이_사용자_차단하기],
-      actions: [{ print("선택하기") }, { print("차단하기") }]
+    .smAlertSheet(isPresented: $showAlert, alert: .blocking) { /*cofirm Action*/ }
+    .smBottomSheet(
+      isPresented: $showCustom,
+      content: { Views }
     )
+  }
+  
+  var Views: some View {
+    VStack(spacing: 0) {
+      ForEach(0..<3, id: \.self) { _ in
+        MenuRow(item: .init(icon: Image(icon: .warning), title: "해당 게시물 신고하기"))
+      }
+    }.padding(.top, 43)
   }
 }
 

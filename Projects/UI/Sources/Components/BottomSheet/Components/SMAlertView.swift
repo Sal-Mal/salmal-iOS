@@ -53,41 +53,7 @@ public enum SMAlert {
   }
 }
 
-public extension View {
-  func smAlertSheet(
-    isPresented: Binding<Bool>,
-    alert: SMAlert,
-    confirmAction: @escaping () -> Void
-  ) -> some View {
-    modifier(SMAlertBottomSheetModifier(
-      isPresented: isPresented,
-      alert: alert,
-      confirmAction: confirmAction
-    ))
-  }
-}
-
-public struct SMAlertBottomSheetModifier: ViewModifier {
-  @Binding var isPresented: Bool
-  let alert: SMAlert
-  let confirmAction: () -> Void
-  
-  public func body(content: Content) -> some View {
-    content
-      .sheet(isPresented: $isPresented) {
-        SMAlertBottomSheet(
-          alert: alert,
-          confirmAction: confirmAction
-        )
-        .frame(maxHeight: .infinity, alignment: .bottom)
-        .background(Color.ds(.gray4))
-        .presentationDetents([.height(212)])
-        .presentationDragIndicator(.hidden)
-      }
-  }
-}
-
-public struct SMAlertBottomSheet: View {
+public struct SMAlertView: View {
   let alert: SMAlert
   let confirmAction: () -> Void
   
@@ -95,8 +61,6 @@ public struct SMAlertBottomSheet: View {
   
   public var body: some View {
     VStack(spacing: 32) {
-      SheetDragIndicator()
-      
       Spacer()
       
       VStack(spacing: 8) {
@@ -121,19 +85,14 @@ public struct SMAlertBottomSheet: View {
         }
       }
     }
+    .frame(height: 212)
     .padding(.horizontal, 18)
   }
 }
 
-struct SMAlertBottomSheet_Previews: PreviewProvider {
+struct SMAlertView_Previews: PreviewProvider {
   static var previews: some View {
-    @State var dissmiss = false
-    RoundedRectangle(cornerRadius: 20).fill(.green)
-      .smAlertSheet(
-        isPresented: .constant(true),
-        alert: .blocking,
-        confirmAction: {}
-      )
-      .previewLayout(.sizeThatFits)
+    SMAlertView(alert: .blocking) { }
+    .previewLayout(.sizeThatFits)
   }
 }
