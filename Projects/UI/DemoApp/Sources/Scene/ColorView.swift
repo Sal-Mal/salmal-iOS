@@ -23,8 +23,18 @@ struct ColorView: View {
         ColorExample(title: "White36", color: .ds(.white36))
         ColorExample(title: "White80", color: .ds(.white80))
       }
+
+      Section("Rainbows") {
+        ColorExample(title: "Red", color: .ds(.red))
+        ColorExample(title: "Orange", color: .ds(.orange))
+        ColorExample(title: "Yellow", color: .ds(.yellow))
+        ColorExample(title: "Green", color: .ds(.green))
+        ColorExample(title: "Blue", color: .ds(.blue))
+        ColorExample(title: "Purple", color: .ds(.purple))
+        ColorExample(title: "Apricot", color: .ds(.apricot))
+      }
     }
-    .navigationTitle("Colors")
+    .navigationTitle("컬러")
   }
 }
 
