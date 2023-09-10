@@ -3,6 +3,10 @@ import SwiftUI
 extension SM {
 
   public enum Icon: String {
+    case chevron_left = "chevron.left"
+    case trash = "trash"
+    case bell_fill = "bell.fill"
+    case bell_dot_fill = "bell.dot.fill"
     case arrow_left = "arrow.left"
     case home_fill = "home.fill"
     case home = "home"

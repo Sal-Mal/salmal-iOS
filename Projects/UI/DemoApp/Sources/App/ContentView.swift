@@ -6,6 +6,7 @@ enum Demo: String, CaseIterable {
   case toasts = "토스트"
   case bottomSheet = "바텀시트"
   case textField = "텍스트필드"
+  case navigation = "네비게이션"
 
   @ViewBuilder var content: some View {
     switch self {
@@ -19,14 +20,16 @@ enum Demo: String, CaseIterable {
       BottomSheetView()
     case .textField:
       TextFieldView()
+    case .navigation:
+      NavigationView()
     }
   }
 }
 
 struct ContentView: View {
-
+  
   var body: some View {
-    NavigationView {
+    NavigationStack {
       List(Demo.allCases, id: \.rawValue) { demo in
         NavigationLink(demo.rawValue, destination: demo.content)
       }

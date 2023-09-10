@@ -5,6 +5,10 @@ extension Font {
   public static func pretendard(_ weight: SM.Font.PretendardWeight, size: CGFloat) -> Font {
     return SM.Font.pretendard(weight, size: size)
   }
+  
+  public static func blackHanSans(size: CGFloat) -> Font {
+    return SM.Font.blackHanSans(size: size)
+  }
 
   public static func binggrae(size: CGFloat) -> Font {
     return SM.Font.binggrae(size: size)

@@ -1,71 +1,45 @@
 import SwiftUI
 
 public struct SMMainNavigationBar: ViewModifier {
-  @Binding var selection: Int
-  let color: Color
-  let profileImage: Image
-  let addAction: () -> Void
-  let profileAction: () -> Void
-  
-  public init(
-    selection: Binding<Int>,
-    color: Color,
-    profileImage: Image,
-    addAction: @escaping () -> Void,
-    profileAction: @escaping () -> Void
-  ) {
-    self._selection = selection
-    self.color = color
-    self.profileImage = profileImage
-    self.addAction = addAction
-    self.profileAction = profileAction
+  public enum Tab {
+    case home
+    case best
   }
+  
+  @Binding var selection: Tab
+  let color: Color
+  let isAlarmExist: Bool
+  let alarmTapAction: () -> Void
   
   public func body(content: Content) -> some View {
     content
       .toolbar {
         ToolbarItem(placement: .navigationBarLeading) {
           Text("Home")
-            .font(.title2).bold()
-            .foregroundColor(selection == 0 ? .ds(.green1) : .ds(.white36))
+            .font(.blackHanSans(size: 24))
+            .foregroundColor(selection == .home ? .ds(.green1) : .ds(.white36))
             .onTapGesture {
               withAnimation {
-                selection = 0
+                selection = .home
               }
             }
         }
 
         ToolbarItem(placement: .navigationBarLeading) {
           Text("Best")
-            .font(.title2).bold()
-            .foregroundColor(selection == 1 ? .ds(.green1) : .ds(.white36))
+            .font(.blackHanSans(size: 24))
+            .foregroundColor(selection == .best ? .ds(.green1) : .ds(.white36))
             .onTapGesture {
               withAnimation {
-                selection = 1
+                selection = .best
               }
             }
         }
 
         ToolbarItem(placement: .navigationBarTrailing) {
-          Circle().fill(Color.ds(.green1))
-            .frame(width: 32)
-            .overlay(
-              Image(icon: .plus)
-                .renderingMode(.template)
-                .scaledToFit()
-                .foregroundColor(.ds(.black))
-                .frame(width: 10)
-            )
-            .onTapGesture(perform: addAction)
-        }
-
-        ToolbarItem(placement: .navigationBarTrailing) {
-          profileImage
-            .resizable()
-            .scaledToFit()
-            .frame(width: 32, height: 32)
-            .clipShape(Circle())
-            .onTapGesture(perform: profileAction)
+          Image(icon: isAlarmExist ? .bell_dot_fill : .bell_fill)
+            .fit(size: 28)
+            .onTapGesture(perform: alarmTapAction)
         }
       }
       .toolbarBackground(color, for: .navigationBar)
@@ -77,18 +51,28 @@ public struct SMMainNavigationBar: ViewModifier {
 
 public extension View {
   func smMainNavigationBar(
-    selection: Binding<Int>,
+    selection: Binding<SMMainNavigationBar.Tab>,
     color: Color = .ds(.black),
-    profile: Image,
-    addAction: @escaping () -> Void,
-    profileAction: @escaping () -> Void
+    isAlarmExist: Bool,
+    alarmTapAction: @escaping () -> Void
   ) -> some View{
     modifier(SMMainNavigationBar(
       selection: selection,
       color: color,
-      profileImage: profile,
-      addAction: addAction,
-      profileAction: profileAction
+      isAlarmExist: isAlarmExist,
+      alarmTapAction: alarmTapAction
     ))
+  }
+}
+
+struct SMMainNavigationView_Previews: PreviewProvider {
+  static var previews: some View {
+    NavigationStack {
+      Text("Hello, world!")
+        .smMainNavigationBar(selection: .constant(.home), isAlarmExist: true) {
+          
+          
+        }
+    }
   }
 }
