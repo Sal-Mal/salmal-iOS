@@ -66,10 +66,10 @@ public struct SMAlertView: View {
       VStack(spacing: 8) {
         Text(alert.title)
           .foregroundColor(.ds(.white))
-          .font(.ds(.title3))
+          .font(.ds(.title3(.medium)))
         Text(alert.content)
           .foregroundColor(.ds(.white36))
-          .font(.ds(.title4))
+          .font(.ds(.title4(.medium)))
       }
       
       HStack(spacing: 13) {

@@ -9,11 +9,27 @@ extension SM {
       SM.Font.Family.registerAllCustomFonts()
     }
 
-    public enum PretendardStyle {
+    public enum Style {
+      public enum Weight {
+        case medium
+        case semibold
+
+        var pretendardWeght: PretendardWeight {
+          switch self {
+          case .medium:
+            return .medium
+
+          case .semibold:
+            return .semiBold
+          }
+        }
+      }
+
+      case title
       case title1
       case title2
-      case title3
-      case title4
+      case title3(Weight)
+      case title4(Weight)
       case title5
     }
 

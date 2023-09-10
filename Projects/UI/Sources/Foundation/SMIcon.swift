@@ -3,6 +3,11 @@ import SwiftUI
 extension SM {
 
   public enum Icon: String {
+    case ic_check
+    case ic_xmark
+    case ic_exclamation
+
+    /// 레거시
     case chevron_left = "chevron.left"
     case bell_fill = "bell.fill"
     case bell_dot_fill = "bell.dot.fill"

@@ -28,7 +28,7 @@ public struct MenuRow: View {
         .padding(.leading, 18)
       
       Text(item.title)
-        .font(.ds(.title3))
+        .font(.ds(.title3(.medium)))
     }
     .foregroundColor(.ds(.white))
     .frame(height: 60)

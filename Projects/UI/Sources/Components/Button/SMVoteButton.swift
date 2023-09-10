@@ -120,7 +120,7 @@ public struct SMVoteButton: View {
 
 struct SMVoteButton_Previews: PreviewProvider {
   static var previews: some View {
-    SMVoteButton(title: "👍🏻 살", progress: 0.6) {
+    SMVoteButton(title: "👍🏻 살", progress: 0.1) {
       print("클릭")
     }
     .padding()

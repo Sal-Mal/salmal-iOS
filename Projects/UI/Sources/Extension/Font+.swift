@@ -30,16 +30,18 @@ extension Font {
     return SM.Font.twaySky(size: size)
   }
 
-  public static func ds(_ style: SM.Font.PretendardStyle) -> Font {
+  public static func ds(_ style: SM.Font.Style) -> Font {
     switch style {
+    case .title:
+      return .blackHanSans(size: 24)
     case .title1:
-      return .pretendard(.bold, size: 24)
+      return .pretendard(.semiBold, size: 24)
     case .title2:
       return .pretendard(.semiBold, size: 20)
-    case .title3:
-      return .pretendard(.medium, size: 16)
-    case .title4:
-      return .pretendard(.medium, size: 13)
+    case .title3(let weight):
+      return .pretendard(weight.pretendardWeght, size: 16)
+    case .title4(let weight):
+      return .pretendard(weight.pretendardWeght, size: 13)
     case .title5:
       return .pretendard(.medium, size: 11)
     }
