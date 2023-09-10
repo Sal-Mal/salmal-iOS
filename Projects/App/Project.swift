@@ -24,8 +24,7 @@ let project = Project(
       resources: ["Resources/**"],
       dependencies: [
         .project(target: "UI", path: "../UI"),
-        
-        .external(name: "Alamofire"),
+        .project(target: "Core", path: "../Core"),
         .external(name: "Kingfisher"),
         .external(name: "ComposableArchitecture"),
       ]

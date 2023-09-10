@@ -14,6 +14,7 @@ let project = Project(
       platform: .iOS,
       product: .framework,
       bundleId: "com.framework.salmal.UI",
+      deploymentTarget: .iOS(targetVersion: "16.0", devices: .iphone),
       infoPlist: .default,
       sources: ["Sources/**"],
       resources: ["Resources/**"],
@@ -27,6 +28,7 @@ let project = Project(
       platform: .iOS,
       product: .unitTests,
       bundleId: "com.framework.salmal.UITests",
+      deploymentTarget: .iOS(targetVersion: "16.0", devices: .iphone),
       sources: ["Tests/**"],
       dependencies: [
         .target(name: "UI")
@@ -38,6 +40,7 @@ let project = Project(
       platform: .iOS,
       product: .app,
       bundleId: "com.framework.salmal.UIDemo",
+      deploymentTarget: .iOS(targetVersion: "16.0", devices: .iphone),
       infoPlist: .extendingDefault(with: [
         "CFBundleShortVersionString": "1.0",
         "CFBundleVersion": "1",
