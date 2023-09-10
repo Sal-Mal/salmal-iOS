@@ -13,18 +13,9 @@ public struct SMBoxButton: View {
   // - Disabled
   // - Loading -> 보류!
 
-  // 버튼 타입
-  // - filled(default)
-  // - outlined
-
   // Corner Radius
-  // - 기본 Box (r6)
+  // - 기본 Box (커스텀 Radius)
   // - Round Box (높이 50%)
-
-  public enum ButtonType {
-    case filled
-    case outlined
-  }
 
   public enum ButtonSize {
     case small
@@ -48,76 +39,62 @@ public struct SMBoxButton: View {
     var font: Font {
       switch self {
       case .small:
-        return .system(size: 11, weight: .medium)
+        return .pretendard(.medium, size: 11)
       case .medium:
-        return .system(size: 13, weight: .semibold)
+        return .pretendard(.semiBold, size: 13)
       case .large:
-        return .system(size: 16, weight: .semibold)
+        return .pretendard(.semiBold, size: 16)
       case .xLarge:
-        return .system(size: 20, weight: .bold)
+        return .pretendard(.semiBold, size: 20)
       }
     }
   }
 
   public enum ButtonRadius {
-    case r6
     case half
+    case custom(CGFloat)
   }
 
   @Environment(\.isEnabled) private var isEnabled: Bool
 
-  /// 버튼 텍스트 색상
-  private var foregroundColor: Color {
-    if isEnabled {
-      if buttonType == .filled {
-        return .ds(.black)
-      } else {
-        return .ds(.green1)
-      }
-    } else {
-      if buttonType == .filled {
-        return .ds(.gray3)
-      } else {
-        return .ds(.gray2)
-      }
-    }
-  }
-
-  /// 버튼 배경색 색상
-  private var backgroundColor: Color {
-    if isEnabled {
-      return .ds(.green1)
-    } else {
-      return .ds(.gray1)
-    }
-  }
-
   /// 버튼 텍스트
   private let title: String
-
-  /// 버튼 타입 (filled[default], outlined)
-  private let buttonType: ButtonType
 
   /// 버튼 텍스트 (small, medium, large[default], xLarge)
   private let buttonSize: ButtonSize
 
-  /// 버튼 CornerRadius (r6, half(높이의 절반))
+  /// 버튼 CornerRadius (커스텀, half(높이의 절반))
   private let buttonRadius: ButtonRadius
+
+  private let foregroundColor: Color
+  private let backgroundColor: Color
+
+  /// 버튼 텍스트 색상
+  private var _foregroundColor: Color {
+    return isEnabled ? foregroundColor : .ds(.gray3)
+  }
+
+  /// 버튼 배경색 색상
+  private var _backgroundColor: Color {
+    return isEnabled ? backgroundColor : .ds(.gray2)
+  }
 
   /// 버튼 액션
   private let action: () -> Void
 
   public init(
     title: String,
-    buttonType: ButtonType = .filled,
-    buttonSize: ButtonSize = .xLarge,
+    buttonSize: ButtonSize = .large,
     buttonRadius: ButtonRadius = .half,
+    foregroundColor: Color = .ds(.black),
+    backgroundColor: Color = .ds(.green1),
     action: @escaping () -> Void
   ) {
     self.title = title
-    self.buttonType = buttonType
     self.buttonSize = buttonSize
     self.buttonRadius = buttonRadius
+    self.foregroundColor = foregroundColor
+    self.backgroundColor = backgroundColor
     self.action = action
   }
 
@@ -126,30 +103,24 @@ public struct SMBoxButton: View {
       self.action()
     } label: {
       Text(title)
-        .foregroundColor(foregroundColor)
+        .foregroundColor(_foregroundColor)
         .font(buttonSize.font)
         .frame(maxWidth: .infinity)
         .frame(height: buttonSize.height)
         .background {
-          if buttonType == .filled {
-            RoundedRectangle(cornerRadius: setRadius())
-              .fill(backgroundColor)
-          } else {
-            RoundedRectangle(cornerRadius: setRadius())
-              .stroke(lineWidth: 2)
-              .fill(backgroundColor)
-          }
+          RoundedRectangle(cornerRadius: setRadius())
+            .fill(_backgroundColor)
         }
     }
   }
 
   private func setRadius() -> CGFloat {
     switch buttonRadius {
-    case .r6:
-      return 6
-
     case .half:
       return buttonSize.height / 2
+
+    case .custom(let radius):
+      return radius
     }
   }
 }
@@ -163,16 +134,7 @@ struct SMBoxButton_Previews: PreviewProvider {
       .disabled(false)
       .padding()
       .preferredColorScheme(.dark)
-      .previewDisplayName("Filled Button")
-      .previewLayout(.sizeThatFits)
-
-      SMBoxButton(title: "확인", buttonRadius: .r6) {
-        print("확인 클릭")
-      }
-      .disabled(false)
-      .padding()
-      .preferredColorScheme(.dark)
-      .previewDisplayName("Filled Button Radius 6")
+      .previewDisplayName("기본 Button")
       .previewLayout(.sizeThatFits)
 
       SMBoxButton(title: "확인") {
@@ -181,25 +143,16 @@ struct SMBoxButton_Previews: PreviewProvider {
       .disabled(true)
       .padding()
       .preferredColorScheme(.dark)
-      .previewDisplayName("Filled Button: Disabled")
+      .previewDisplayName("기본 Button: Disabled")
       .previewLayout(.sizeThatFits)
 
-      SMBoxButton(title: "확인", buttonType: .outlined) {
+      SMBoxButton(title: "확인", buttonRadius: .custom(6)) {
         print("확인 클릭")
       }
-      .environment(\.isEnabled, true)
+      .disabled(false)
       .padding()
       .preferredColorScheme(.dark)
-      .previewDisplayName("Outlined Button")
-      .previewLayout(.sizeThatFits)
-
-      SMBoxButton(title: "확인", buttonType: .outlined) {
-        print("확인 클릭")
-      }
-      .environment(\.isEnabled, false)
-      .padding()
-      .preferredColorScheme(.dark)
-      .previewDisplayName("Outlined Button: Disabled")
+      .previewDisplayName("Button 커스텀 Radius 6")
       .previewLayout(.sizeThatFits)
     }
   }

@@ -73,7 +73,12 @@ public struct SMAlertView: View {
       }
       
       HStack(spacing: 13) {
-        SMBoxButton(title: "취소", buttonSize: .large) {
+        SMBoxButton(
+          title: "취소",
+          buttonSize: .large,
+          foregroundColor: .ds(.white),
+          backgroundColor: .ds(.white20)
+        ) {
           dismiss()
         }
         
