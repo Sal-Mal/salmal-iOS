@@ -123,11 +123,13 @@ public struct SMCapsuleTextField: View {
     VStack(alignment: .leading, spacing: 12) {
       titleView
       
-      HStack(spacing: 8) {
+      HStack(alignment: .bottom, spacing: 8) {
         imageView
+          .debug()
         
         HStack(alignment: .bottom) {
           textField
+            .debug()
           
           if let buttonTitle {
             Spacer()
@@ -166,8 +168,8 @@ public struct SMCapsuleTextField: View {
     if let image {
       image
         .resizable()
-        .scaledToFill()
-        .frame(width: 48, height: 48)
+        .aspectRatio(1, contentMode: .fit)
+        .frame(width: 54)
         .clipShape(Circle())
     }
   }

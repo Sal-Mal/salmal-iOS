@@ -1,10 +1,10 @@
 import SwiftUI
 
-struct FrameDebugModifier: ViewModifier {
+public struct FrameDebugModifier: ViewModifier {
 
   let color: Color
 
-  func body(content: Content) -> some View {
+  public func body(content: Content) -> some View {
     content
     #if DEBUG
       .overlay(GeometryReader(content: overlay(for:)))
