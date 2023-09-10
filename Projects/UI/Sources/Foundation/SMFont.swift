@@ -55,25 +55,29 @@ extension SM {
     public static func pretendard(_ weight: SM.Font.PretendardWeight, size: CGFloat) -> SwiftUI.Font {
       return SwiftUI.Font.custom(weight.name, size: size)
     }
+    
+    public static func blackHanSans(size: CGFloat) -> SwiftUI.Font {
+      return .custom(SM.Font.Family.BlackHanSans.regular.name, size: size)
+    }
 
     public static func binggrae(size: CGFloat) -> SwiftUI.Font {
-      return SwiftUI.Font.custom(SM.Font.Family.Binggrae.regular.name, size: size)
+      return .custom(SM.Font.Family.Binggrae.regular.name, size: size)
     }
 
     public static func gabiaSolmee(size: CGFloat) -> SwiftUI.Font {
-      return SwiftUI.Font.custom(SM.Font.Family.GabiaSolmee.regular.name, size: size)
+      return .custom(SM.Font.Family.GabiaSolmee.regular.name, size: size)
     }
 
     public static func maruBuri(size: CGFloat) -> SwiftUI.Font {
-      return SwiftUI.Font.custom(SM.Font.Family.MaruBuriOTF.light.name, size: size)
+      return .custom(SM.Font.Family.MaruBuriOTF.light.name, size: size)
     }
 
     public static func ttTogether(size: CGFloat) -> SwiftUI.Font {
-      return SwiftUI.Font.custom(SM.Font.Family.TTTogether.regular.name, size: size)
+      return .custom(SM.Font.Family.TTTogether.regular.name, size: size)
     }
 
     public static func twaySky(size: CGFloat) -> SwiftUI.Font {
-      return SwiftUI.Font.custom(SM.Font.Family.TwaySky.regular.name, size: size)
+      return .custom(SM.Font.Family.TwaySky.regular.name, size: size)
     }
   }
 }
@@ -84,6 +88,11 @@ extension SM {
 extension SM.Font {
 
   enum Family {
+    
+    enum BlackHanSans {
+      static let regular = FontConvertible(name: "BlackHanSans-Regular", family: "BlackHanSans", path: "BlackHanSans-Regular.ttf")
+      static let all: [FontConvertible] = [regular]
+    }
 
     enum Binggrae {
       static let regular = FontConvertible(name: "Binggrae", family: "Binggrae", path: "Binggrae.otf")
@@ -123,7 +132,9 @@ extension SM.Font {
       static let all: [FontConvertible] = [regular]
     }
 
-    static let allCustomFonts: [FontConvertible] = [Binggrae.all, GabiaSolmee.all, MaruBuriOTF.all, Pretendard.all, TTTogether.all, TwaySky.all].flatMap { $0 }
+    static let allCustomFonts: [FontConvertible] = [
+      BlackHanSans.all, Binggrae.all, GabiaSolmee.all, MaruBuriOTF.all, Pretendard.all, TTTogether.all, TwaySky.all
+    ].flatMap { $0 }
 
     static func registerAllCustomFonts() {
       allCustomFonts.forEach { $0.register() }
