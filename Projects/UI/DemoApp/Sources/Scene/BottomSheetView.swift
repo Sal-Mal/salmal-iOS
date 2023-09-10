@@ -15,11 +15,8 @@ struct BottomSheetView: View {
         showCustom = true
       }
     }
-    .smAlertSheet(isPresented: $showAlert, alert: .blocking) { /*cofirm Action*/ }
-    .smBottomSheet(
-      isPresented: $showCustom,
-      content: { Views }
-    )
+    .alert(isPresented: $showAlert, alert: .blocking) { /*cofirm Action*/ }
+    .bottomSheet(isPresented: $showCustom, content: { Views })
   }
   
   var Views: some View {

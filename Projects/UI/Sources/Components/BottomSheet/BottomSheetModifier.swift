@@ -2,7 +2,7 @@ import SwiftUI
 
 public extension View {
   /// Alert 전용 Bottom Sheet
-  func smAlertSheet(
+  func alert(
     isPresented: Binding<Bool>,
     alert: SMAlert,
     confirmAction: @escaping () -> Void
@@ -17,7 +17,7 @@ public extension View {
   }
   
   /// 모든 View를 받을 수 있는 Bottom Sheet
-  func smBottomSheet<Content: View>(
+  func bottomSheet<Content: View>(
     isPresented: Binding<Bool>,
     @ViewBuilder content: @escaping () -> Content
   ) -> some View {
@@ -57,6 +57,6 @@ public struct SMBottomSheetModifier<Inner: View>: ViewModifier {
 struct BottomSheet_Previews: PreviewProvider {
   static var previews: some View {
     Text("Hello, world!")
-      .smAlertSheet(isPresented: .constant(true), alert: .blocking) { }
+      .alert(isPresented: .constant(true), alert: .blocking) { }
   }
 }
