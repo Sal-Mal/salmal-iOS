@@ -49,8 +49,7 @@ let project = Project(
       sources: ["DemoApp/Sources/**"],
       resources: ["DemoApp/Resources/**"],
       dependencies: [
-        .target(name: "UI"),
-        .external(name: "ComposableArchitecture")
+        .target(name: "UI")
       ]
     ),
   ]

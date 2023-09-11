@@ -14,7 +14,7 @@ let project = Project(
       infoPlist: .default,
       sources: ["Sources/**"],
       dependencies: [
-        .external(name: "Alamofire")
+        .project(target: "ThirdPartyLibs", path: "../ThirdPartyLibs")
       ]
     ),
     

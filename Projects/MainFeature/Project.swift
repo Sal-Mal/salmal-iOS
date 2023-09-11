@@ -3,39 +3,40 @@
 import ProjectDescription
 
 let project = Project(
-  name: "{{ name }}",
+  name: "MainFeature",
   targets: [
     Target(
-      name: "{{ name }}",
+      name: "MainFeature",
       platform: .iOS,
       product: .framework,
-      bundleId: "com.framework.salmal.{{ name }}",
-      deploymentTarget: .iOS(targetVersion: "16.0", devices: .iphone),
+      bundleId: "com.framework.salmal.MainFeature",
+      deploymentTarget: .iOS(targetVersion: "16.0", devices: [.iphone]),
       infoPlist: .default,
       sources: ["Sources/**"],
       dependencies: [
-        
+        .project(target: "UI", path: "../UI"),
+        .project(target: "Core", path: "../Core")
       ]
     ),
     
     Target(
-      name: "{{ name }}Tests",
+      name: "MainFeatureTests",
       platform: .iOS,
       product: .unitTests,
-      bundleId: "com.framework.salmal.{{ name }}Tests",
-      deploymentTarget: .iOS(targetVersion: "16.0", devices: .iphone),
+      bundleId: "com.framework.salmal.MainFeatureTests",
+      deploymentTarget: .iOS(targetVersion: "16.0", devices: [.iphone]),
       sources: ["Tests/**"],
       dependencies: [
-        .target(name: "{{ name }}")
+        .target(name: "MainFeature")
       ]
     ),
     
     Target(
-      name: "{{ name }}Demo",
+      name: "MainFeatureDemo",
       platform: .iOS,
       product: .app,
-      bundleId: "com.framework.salmal.{{ name }}Demo",
-      deploymentTarget: .iOS(targetVersion: "16.0", devices: .iphone),
+      bundleId: "com.framework.salmal.MainFeatureDemo",
+      deploymentTarget: .iOS(targetVersion: "16.0", devices: [.iphone]),
       infoPlist: .extendingDefault(with: [
         "CFBundleShortVersionString": "1.0",
         "CFBundleVersion": "1",
@@ -44,7 +45,7 @@ let project = Project(
       sources: ["DemoApp/Sources/**"],
       resources: ["DemoApp/Resources/**"],
       dependencies: [
-        .target(name: "{{ name }}")
+        .target(name: "MainFeature")
       ]
     ),
   ]
