@@ -79,12 +79,17 @@ public struct SalMalView: View {
   
   public var body: some View {
     VStack(spacing: 13) {
-      if viewStore.tab == .home {
-        CarouselView(store: store.scope(state: \.homeState, action: { .homeAction($0) }))
-      }
-      
-      if viewStore.tab == .best {
-        CarouselView(store: store.scope(state: \.bestState, action: { .bestAction($0) }))
+      ZStack(alignment: .bottom) {
+        if viewStore.tab == .home {
+          CarouselView(store: store.scope(state: \.homeState, action: { .homeAction($0) }))
+        }
+        
+        if viewStore.tab == .best {
+          CarouselView(store: store.scope(state: \.bestState, action: { .bestAction($0) }))
+        }
+        
+        NumberOfVotesView(number: viewStore.totalCount)
+          .offset(y: 7)
       }
 
       VStack(spacing: 9) {
