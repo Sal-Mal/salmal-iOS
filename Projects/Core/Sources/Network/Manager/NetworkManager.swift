@@ -20,7 +20,7 @@ public enum NetworkManagerKey: DependencyKey {
 }
 
 /// TCA Dependency에 등록
-extension DependencyValues {
+public extension DependencyValues {
   var network: NetworkManager {
     get { self[NetworkManagerKey.self] }
     set { self[NetworkManagerKey.self] = newValue }

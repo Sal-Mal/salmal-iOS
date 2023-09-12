@@ -10,12 +10,14 @@ public struct SalMalCore: Reducer {
     var notBuyPercentage: Double = 0
     var totalCount = 0
     
-    var carouselState = CarouselCore.State()
+    var homeState = CarouselCore.State()
+    var bestState = CarouselCore.State()
   }
   
   public enum Action: Equatable, BindableAction {
     case binding(BindingAction<State>)
-    case subAction(CarouselCore.Action)
+    case homeAction(CarouselCore.Action)
+    case bestAction(CarouselCore.Action)
     case moveToAlarm
     case buyTapped
     case notBuyTapped
@@ -26,6 +28,18 @@ public struct SalMalCore: Reducer {
     
     Reduce { state, action in
       switch action {
+      case let .homeAction(.delegate(.updateVote(total, buy, notBuy))):
+        state.totalCount = total
+        state.buyPercentage = Double(buy) / Double(total)
+        state.notBuyPercentage = Double(notBuy) / Double(total)
+        return .none
+        
+      case let .bestAction(.delegate(.updateVote(total, buy, notBuy))):
+        state.totalCount = total
+        state.buyPercentage = Double(buy) / Double(total)
+        state.notBuyPercentage = Double(notBuy) / Double(total)
+        return .none
+        
       case .moveToAlarm:
         return .none
         
@@ -40,7 +54,11 @@ public struct SalMalCore: Reducer {
       }
     }
     
-    Scope(state: \.carouselState, action: /Action.subAction) {
+    Scope(state: \.homeState, action: /Action.homeAction) {
+      CarouselCore()
+    }
+    
+    Scope(state: \.bestState, action: /Action.bestAction) {
       CarouselCore()
     }
   }
@@ -56,15 +74,26 @@ public struct SalMalView: View {
   }
   
   public var body: some View {
-    VStack {
-      CarouselView(store: store.scope(state: \.carouselState, action: { .subAction($0) }))
-      SMVoteButton(title: "살", progress: viewStore.buyPercentage) {
-        store.send(.buyTapped)
+    VStack(spacing: 13) {
+      if viewStore.tab == .home {
+        CarouselView(store: store.scope(state: \.homeState, action: { .homeAction($0) }))
       }
-      SMVoteButton(title: "말", progress: viewStore.notBuyPercentage) {
-        store.send(.notBuyTapped)
+      
+      if viewStore.tab == .best {
+        CarouselView(store: store.scope(state: \.bestState, action: { .bestAction($0) }))
       }
+
+      VStack(spacing: 9) {
+        SMVoteButton(title: "살", progress: viewStore.buyPercentage) {
+          store.send(.buyTapped)
+        }
+        SMVoteButton(title: "말", progress: viewStore.notBuyPercentage) {
+          store.send(.notBuyTapped)
+        }
+      }
+      .padding(2)
     }
+    .padding(16)
       .smMainNavigationBar(
         selection: viewStore.$tab,
         isAlarmExist: true
@@ -76,8 +105,11 @@ public struct SalMalView: View {
 
 struct SalMalView_Previews: PreviewProvider {
   static var previews: some View {
-    SalMalView(store: .init(initialState: SalMalCore.State()) {
-      SalMalCore()
-    })
+    NavigationStack {
+      SalMalView(store: .init(initialState: SalMalCore.State()) {
+        SalMalCore()
+      })
+    }
+    .preferredColorScheme(.dark)
   }
 }

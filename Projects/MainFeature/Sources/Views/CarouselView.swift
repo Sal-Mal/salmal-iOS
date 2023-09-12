@@ -1,27 +1,59 @@
 import SwiftUI
+import Core
 import ComposableArchitecture
+
+fileprivate enum Const {
+  static let size = 5
+}
 
 public struct CarouselCore: Reducer {
   public struct State: Equatable {
     let spacing: CGFloat = 20
     var index = 0
     var votes: [Vote] = []
+    var hasNext = false
   }
   
   public enum Action: Equatable {
     case requestVoteList
     case updateIndex(y: CGFloat)
+    case voteResponse(hasNext: Bool, votes: [Vote])
+    case delegate(Delegate)
+    
+    public enum Delegate: Equatable {
+      case updateVote(total: Int, buy: Int, notBuy: Int)
+    }
   }
+  
+  @Dependency(\.network) var networkManager
   
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
-      case .requestVoteList:
-        // TODO: - 5개 아이템 가져오기
-        state.votes.append(contentsOf: [
-          .dummy, .dummy, .dummy
-        ])
+      case .delegate:
         return .none
+      
+      case .requestVoteList:
+        return .run { send in
+          let result = try await networkManager.request(VoteAPI.getList(size: Const.size), type: VoteListDTO.self)
+          await send(.voteResponse(hasNext: result.hasNext, votes: result.votes.map { $0.toDomian }))
+        } catch: { error, send in
+          // TODO: Erorr 처리
+        }
+        
+      case let .voteResponse(hasNext, votes):
+        state.hasNext = hasNext
+        state.votes.append(contentsOf: votes)
+        
+        /// 최초 로딩시 업데이트 시켜주기
+        if state.index == 0 {
+          let item = state.votes[state.index]
+          return .send(.delegate(.updateVote(
+            total: item.totalVoteCount,
+            buy: item.likeCount,
+            notBuy: item.disLikeCount
+          )))
+        }
         
       case let .updateIndex(y):
         if y > 0 {
@@ -32,7 +64,12 @@ public struct CarouselCore: Reducer {
           state.index = min(state.votes.count - 1, state.index + 1)
         }
         
-        return .none
+        let item = state.votes[state.index]
+        return .send(.delegate(.updateVote(
+          total: item.totalVoteCount,
+          buy: item.likeCount,
+          notBuy: item.disLikeCount
+        )))
         
       default:
         return .none
@@ -69,10 +106,7 @@ public struct CarouselView: View {
             .frame(width: width, height: height)
             .cornerRadius(24)
             .onAppear {
-              
-              // TODO: - Prefetching
               if index == viewStore.votes.count - 2 {
-                print("\(index)")
                 store.send(.requestVoteList)
               }
             }

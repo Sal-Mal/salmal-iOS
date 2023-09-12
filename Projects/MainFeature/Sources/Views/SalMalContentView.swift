@@ -1,6 +1,6 @@
 import SwiftUI
 import UI
-
+import Core
 import ComposableArchitecture
 
 public struct SalMalContentCore: Reducer {
@@ -99,7 +99,7 @@ extension SalMalContentView {
       SMFloatingActionButton(
         iconImage: .init(icon: .bookmark),
         buttonSize: .medium,
-        badgeCount: viewStore.reviewCount,
+        badgeCount: viewStore.commentCnt,
         backgroundColor: .ds(.white36)) {
           store.send(.bookmarkTapped)
         }
@@ -107,7 +107,7 @@ extension SalMalContentView {
       SMFloatingActionButton(
         iconImage: .init(icon: .messsage),
         buttonSize: .medium,
-        badgeCount: viewStore.reviewCount,
+        badgeCount: viewStore.commentCnt,
         backgroundColor: .ds(.white36)) {
           store.send(.commentTapped)
         }
@@ -118,7 +118,7 @@ extension SalMalContentView {
 struct SalMalContentView_Previews: PreviewProvider {
   
   static var previews: some View {
-    SalMalContentView(store: .init(initialState: .init(vote: Vote.dummy)) {
+    SalMalContentView(store: .init(initialState: .init(vote: VoteDTO.mock.toDomian)) {
       SalMalContentCore()
     })
     .padding(20)
