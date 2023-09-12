@@ -12,6 +12,7 @@ public struct SalMalContentCore: Reducer {
     case profileTapped
     case bookmarkTapped
     case commentTapped
+    case moreTapped
   }
 
   public var body: some ReducerOf<Self> {
@@ -22,6 +23,8 @@ public struct SalMalContentCore: Reducer {
       case .bookmarkTapped:
         return .none
       case .commentTapped:
+        return .none
+      case .moreTapped:
         return .none
       }
     }
@@ -43,11 +46,12 @@ public struct SalMalContentView: View {
       let height = proxy.size.height
       
       ZStack(alignment: .bottomTrailing) {
-        ZStack(alignment: .topLeading) {
+        ZStack(alignment: .top) {
           targetItem
             .frame(width: width, height: height)
           
-          profile
+          TopBottons
+            .padding([.horizontal, .top], 18)
         }
         
         bottomButtons
@@ -83,15 +87,25 @@ extension SalMalContentView {
     }
   }
   
-  private var profile: some View {
-    SMCapsuleButton(
-      title: viewStore.nickName,
-      iconImage: .init(icon: .camera),
-      buttonMode: .black
-    ) {
-      store.send(.profileTapped)
+  var TopBottons: some View {
+    HStack(alignment: .top) {
+      SMCapsuleButton(
+        title: viewStore.nickName,
+        iconImage: .init(icon: .camera),
+        buttonMode: .black
+      ) {
+        store.send(.profileTapped)
+      }
+      
+      Spacer()
+      
+      Button {
+        store.send(.moreTapped)
+      } label: {
+        Image(icon: .ic_more)
+          .fit(size: 24)
+      }
     }
-    .padding([.top, .leading], 18)
   }
   
   private var bottomButtons: some View {

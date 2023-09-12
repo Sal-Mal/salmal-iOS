@@ -12,6 +12,8 @@ public struct SalMalCore: Reducer {
     
     var homeState = CarouselCore.State()
     var bestState = CarouselCore.State()
+    
+    public init() {}
   }
   
   public enum Action: Equatable, BindableAction {
@@ -22,6 +24,8 @@ public struct SalMalCore: Reducer {
     case buyTapped
     case notBuyTapped
   }
+  
+  public init() { }
   
   public var body: some ReducerOf<Self> {
     BindingReducer()

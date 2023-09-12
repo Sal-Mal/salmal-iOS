@@ -55,6 +55,8 @@ public struct CarouselCore: Reducer {
           )))
         }
         
+        return .none
+        
       case let .updateIndex(y):
         if y > 0 {
           state.index = max(0, state.index - 1)
