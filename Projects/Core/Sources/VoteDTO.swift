@@ -1,11 +1,17 @@
 import Foundation
 
-struct VoteListDTO: Decodable {
+struct VoteListDTO: Responsable {
   let hasNext: Bool
   let votes: [VoteDTO]
 }
 
-struct VoteDTO: Decodable {
+extension VoteListDTO {
+  static var mock: VoteListDTO {
+    VoteListDTO(hasNext: true, votes: [.mock, .mock, .mock, .mock, .mock])
+  }
+}
+
+struct VoteDTO: Responsable {
   let imageUrl: String
   let nickName: String
   let memberImageUrl: String
@@ -16,7 +22,7 @@ struct VoteDTO: Decodable {
 }
 
 extension VoteDTO {
-  static var dummy: VoteDTO {
+  static var mock: VoteDTO {
     VoteDTO(
       imageUrl: "https://picsum.photos/300/600",
       nickName: "dudu",
