@@ -27,7 +27,7 @@ extension SM {
 
       case title
       case title1
-      case title2
+      case title2(Weight)
       case title3(Weight)
       case title4(Weight)
       case title5

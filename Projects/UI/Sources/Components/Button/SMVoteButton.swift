@@ -10,100 +10,43 @@ import SwiftUI
 public struct SMVoteButton: View {
 
   public enum ButtonState {
-    case none
-    case first
-    case second
+    case idle
+    case selected
+    case unSelected
   }
 
   @State private var animationProgress: Double = 0
-  @State private var isPressed: Bool = false
+  @Binding private var buttonState: ButtonState
 
   private let title: String
-  private let buttonState: ButtonState
   private let progress: Double
   private let action: () -> Void
 
   public init(
     title: String,
-    buttonState: ButtonState = .none,
     progress: Double,
+    buttonState: Binding<ButtonState>,
     action: @escaping () -> Void
   ) {
     self.title = title
-    self.buttonState = buttonState
-    self.progress = progress
+
+    if progress < 0 {
+      self.progress = 0
+    } else if progress > 1 {
+      self.progress = 1
+    } else {
+      self.progress = progress
+    }
+
+    self._buttonState = buttonState
     self.action = action
   }
 
   public var body: some View {
     Button {
-      isPressed = true
-
-      withAnimation(.easeOut) {
-        animationProgress = progress
-        self.action()
-      }
+      self.action()
     } label: {
-      if isPressed {
-        GeometryReader { proxy in
-          let size = proxy.size
-
-          ZStack(alignment: .leading) {
-            HStack {
-              Text(title)
-                .foregroundColor(.ds(.green1))
-                .font(.system(size: 20, weight: .semibold))
-
-              Spacer()
-
-              Text("\(Int(round(progress * 100)))%")
-                .foregroundColor(.ds(.green1))
-                .font(.system(size: 20, weight: .semibold))
-            }
-            .padding(.horizontal)
-            .frame(width: size.width, height: size.height)
-
-            HStack {
-              Text(title)
-                .foregroundColor(.ds(.black))
-                .font(.system(size: 20, weight: .semibold))
-              Spacer()
-              Text("\(Int(round(progress * 100)))%")
-                .foregroundColor(.ds(.black))
-                .font(.system(size: 20, weight: .semibold))
-            }
-            .padding(.horizontal)
-            .frame(width: size.width, height: size.height)
-            .mask(alignment: .leading) {
-              Rectangle()
-                .frame(width: size.width * animationProgress, height: size.height)
-            }
-          }
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 60)
-        .background {
-          GeometryReader { proxy in
-            let size = proxy.size
-
-            ZStack(alignment: .leading) {
-              RoundedRectangle(cornerRadius: 30)
-                .fill(Color.ds(.gray4))
-                .overlay {
-                  RoundedRectangle(cornerRadius: 30)
-                    .stroke(lineWidth: 2)
-                    .foregroundColor(.ds(.green1))
-                }
-
-              RoundedRectangle(cornerRadius: 30)
-                .fill(Color.ds(.green1))
-                .frame(width: size.width * animationProgress, height: size.height)
-                .clipped()
-            }
-          }
-        }
-
-      } else {
+      if buttonState == .idle {
         Text(title)
           .foregroundColor(.ds(.white))
           .font(.system(size: 20, weight: .semibold))
@@ -111,8 +54,80 @@ public struct SMVoteButton: View {
           .frame(height: 60)
           .background {
             RoundedRectangle(cornerRadius: 30)
-              .fill(Color.ds(.gray3))
+              .fill(Color.ds(.white20))
           }
+
+      } else {
+        GeometryReader { proxy in
+          let size = proxy.size
+
+          Rectangle()
+            .fill(.clear)
+            .frame(width: size.width, height: size.height)
+            .background {
+              ZStack(alignment: .leading) {
+                // 배경
+                Rectangle()
+                  .fill(Color.ds(.white20))
+                  .clipShape(Capsule())
+
+                // 퍼센트 배경
+                Rectangle()
+                  .fill(Color.ds(buttonState == .selected ? .green1 : .gray3))
+                  .frame(width: size.width * animationProgress)
+                  .animation(.default, value: animationProgress)
+                  .clipShape(Capsule())
+
+                // 배경 아웃 라인
+                if buttonState == .selected {
+                  RoundedRectangle(cornerRadius: size.height / 2)
+                    .stroke(lineWidth: 2)
+                    .foregroundColor(.ds(.green1))
+                }
+              }
+            }
+            .overlay(alignment: .leading) {
+              // 살/말 및 퍼센트 문자 부분
+              ZStack {
+                HStack {
+                  Text(title)
+                    .font(.ds(.title2(.semibold)))
+                    .foregroundColor(.ds(buttonState == .selected ? .green1 : .white))
+                  Spacer()
+                  Text("\(Int(round(progress * 100)))%")
+                    .foregroundColor(.ds(buttonState == .selected ? .green1 : .white))
+                    .font(.ds(.title2(.semibold)))
+                }
+                .padding()
+
+                HStack {
+                  Text(title)
+                    .font(.ds(.title2(.semibold)))
+                    .foregroundColor(.ds(buttonState == .selected ? .black : .white))
+                  Spacer()
+                  Text("\(Int(round(progress * 100)))%")
+                    .foregroundColor(.ds(buttonState == .selected ? .black : .white))
+                    .font(.ds(.title2(.semibold)))
+                }
+                .padding()
+                .mask(alignment: .leading) {
+                  Rectangle()
+                    .frame(width: size.width * animationProgress, height: size.height)
+                    .animation(.default, value: animationProgress)
+                }
+              }
+            }
+            .clipShape(Capsule())
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 60)
+      }
+    }
+    .onChange(of: buttonState) { state in
+      if state != .idle {
+        animationProgress = progress
+      } else {
+        animationProgress = 0
       }
     }
   }
@@ -120,10 +135,10 @@ public struct SMVoteButton: View {
 
 struct SMVoteButton_Previews: PreviewProvider {
   static var previews: some View {
-    SMVoteButton(title: "👍🏻 살", progress: 0.1) {
+    SMVoteButton(title: "👍🏻 살", progress: 0.5, buttonState: .constant(.selected)) {
       print("클릭")
     }
     .padding()
-    .preferredColorScheme(.dark)
+    .preferredColorScheme(.light)
   }
 }

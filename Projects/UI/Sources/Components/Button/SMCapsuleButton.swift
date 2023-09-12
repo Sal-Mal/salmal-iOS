@@ -9,39 +9,20 @@ import SwiftUI
 
 public struct SMCapsuleButton: View {
 
-  public enum ButtonStyle {
-    case white
-    case black
-
-    var forgroundColor: Color {
-      switch self {
-      case .white:
-        return .ds(.black)
-
-      case .black:
-        return .ds(.white)
-      }
-    }
-
-    var backgroundColor: Color {
-      switch self {
-      case .white:
-        return .ds(.white)
-
-      case .black:
-        return .ds(.black)
-      }
-    }
-  }
-
   /// 버튼 텍스트
   private let title: String
 
   /// 버튼 좌측 아이콘 이미지 (Optional)
   private let iconImage: Image?
 
-  /// 버튼 스타일 (white, black)
-  private let buttonMode: ButtonStyle
+  /// 버튼 비동기 이미지
+  private let iconURL: URL?
+
+  /// 버튼 ForegroundColor
+  private let foregroundColor: Color
+
+  /// 버튼 BackgroundColor
+  private let backgroundColor: Color
 
   /// 버튼 액션
   private let action: () -> Void
@@ -49,12 +30,30 @@ public struct SMCapsuleButton: View {
   public init(
     title: String,
     iconImage: Image? = nil,
-    buttonMode: ButtonStyle = .white,
+    foregroundColor: Color = .ds(.black),
+    backgroundColor: Color = .ds(.white),
     action: @escaping () -> Void
   ) {
     self.title = title
     self.iconImage = iconImage
-    self.buttonMode = buttonMode
+    self.iconURL = nil
+    self.foregroundColor = foregroundColor
+    self.backgroundColor = backgroundColor
+    self.action = action
+  }
+
+  public init(
+    title: String,
+    iconURL: URL,
+    foregroundColor: Color = .ds(.black),
+    backgroundColor: Color = .ds(.white),
+    action: @escaping () -> Void
+  ) {
+    self.title = title
+    self.iconImage = nil
+    self.iconURL = iconURL
+    self.foregroundColor = foregroundColor
+    self.backgroundColor = backgroundColor
     self.action = action
   }
   
@@ -62,21 +61,31 @@ public struct SMCapsuleButton: View {
     Button {
       self.action()
     } label: {
-      HStack(spacing: 2) {
+      HStack(spacing: 8) {
         if let image = iconImage {
           image
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(width: 32, height: 32)
             .clipShape(Circle())
+            .debug()
+
+        } else {
+          AsyncImage(url: iconURL)
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 32, height: 32)
+            .clipShape(Circle())
+            .debug()
         }
+
         Text(title)
-          .font(.system(size: 16, weight: .medium))
-          .foregroundColor(buttonMode.forgroundColor)
+          .font(.ds(.title3(.medium)))
+          .foregroundColor(foregroundColor)
+          .debug()
       }
+      .padding(.horizontal, 6)
       .frame(height: 44)
-      .padding(.horizontal, 10)
-      .background(buttonMode.backgroundColor)
+      .background(backgroundColor)
       .clipShape(Capsule())
     }
   }
@@ -94,7 +103,7 @@ struct SMCapsuleButton_Previews: PreviewProvider {
 
       SMCapsuleButton(
         title: "feroldis",
-        iconImage: .init(icon: .heart_fill)
+        iconImage: .init(icon: .ic_xmark)
       ) {
         print("SMCapsuleButton 클릭")
       }
@@ -102,10 +111,20 @@ struct SMCapsuleButton_Previews: PreviewProvider {
       .previewDisplayName("SMCapsuleButton: Icon")
       .previewLayout(.sizeThatFits)
 
+      /*
+      SMCapsuleButton(title: "Button", iconURL: URL(string: "https://...")!) {
+        print("SMCapsuleButton 클릭")
+      }
+      .preferredColorScheme(.dark)
+      .previewDisplayName("SMCapsuleButton: 비동기")
+      .previewLayout(.sizeThatFits)
+       */
+
       SMCapsuleButton(
         title: "feroldis",
-        iconImage: .init(icon: .camera),
-        buttonMode: .black
+        iconImage: .init(icon: .bookmark_fill),
+        foregroundColor: .white,
+        backgroundColor: .blue
       ) {
         print("SMCapsuleButton 클릭")
       }
