@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-public struct NotiManager {
+public enum NotiManager {
   public enum Noti: String {
     case reportVote
     case banUser

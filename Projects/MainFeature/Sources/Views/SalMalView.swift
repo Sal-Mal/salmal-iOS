@@ -92,7 +92,7 @@ public struct SalMalView: View {
         NumberOfVotesView(number: viewStore.totalCount)
           .offset(y: 7)
       }
-
+      
       VStack(spacing: 9) {
         SMVoteButton(title: "살", progress: viewStore.buyPercentage) {
           store.send(.buyTapped)
@@ -104,12 +104,12 @@ public struct SalMalView: View {
       .padding(2)
     }
     .padding(16)
-      .smMainNavigationBar(
-        selection: viewStore.$tab,
-        isAlarmExist: true
-      ) {
-        store.send(.moveToAlarm)
-      }
+    .smMainNavigationBar(
+      selection: viewStore.$tab,
+      isAlarmExist: true
+    ) {
+      store.send(.moveToAlarm)
+    }
   }
 }
 
