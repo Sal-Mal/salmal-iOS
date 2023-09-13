@@ -13,17 +13,14 @@ public struct SMFloatingActionButton: View {
     case small
     case medium
     case large
-    case xLarge
 
     var height: CGFloat {
       switch self {
       case .small:
         return 32
       case .medium:
-        return 48
+        return 42
       case .large:
-        return 55
-      case .xLarge:
         return 60
       }
     }
@@ -31,27 +28,29 @@ public struct SMFloatingActionButton: View {
     var font: Font {
       switch self {
       case .small:
-        return .system(size: 11, weight: .medium)
+        return .ds(.title5)
       case .medium:
-        return .system(size: 13, weight: .semibold)
+        return .ds(.title4(.semibold))
       case .large:
-        return .system(size: 16, weight: .semibold)
-      case .xLarge:
-        return .system(size: 20, weight: .bold)
+        return .ds(.title3(.semibold))
       }
     }
   }
 
   private let iconImage: Image
   private let buttonSize: ButtonSize
-  private let badgeCount: Int?
+  private let badgeCount: Int
   private let backgroundColor: Color
   private let action: () -> Void
 
+  private var badgeCountText: String {
+    return "\(badgeCount > 999 ? "999+" : "\(badgeCount)")"
+  }
+
   public init(
     iconImage: Image,
-    buttonSize: ButtonSize = .large ,
-    badgeCount: Int? = nil,
+    buttonSize: ButtonSize = .medium,
+    badgeCount: Int = 0,
     backgroundColor: Color,
     action: @escaping () -> Void
   ) {
@@ -77,19 +76,19 @@ public struct SMFloatingActionButton: View {
         height: buttonSize.height
       )
       .background(backgroundColor)
-      .cornerRadius(buttonSize.height / 2)
+      .clipShape(Capsule())
     }
     .overlay(alignment: .topTrailing) {
-      if let badgeCount, buttonSize != .small {
-        Text("\(badgeCount)")
-          .foregroundColor(.black)
-          .font(.system(size: 13, weight: .regular))
-          .padding(6)
-          .frame(height: 21)
-          .background(.white)
-          .cornerRadius(10.5)
-          .offset(x: 6)
-          .shadow(radius: 1)
+      if badgeCount > 0 {
+        Text(badgeCountText)
+          .foregroundColor(.ds(.gray3))
+          .font(.ds(.title5))
+          .padding(.horizontal, 6)
+          .frame(height: 14)
+          .background(Color.ds(.white))
+          .clipShape(Capsule())
+          .offset(x: 4 * CGFloat(badgeCountText.count), y: -3)
+          .shadow(radius: 2)
       }
     }
   }
@@ -99,17 +98,17 @@ struct SMFloatingActionButton_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       SMFloatingActionButton(
-        iconImage: .init(icon: .bookmark),
-        buttonSize: .large,
+        iconImage: .init(icon: .messsage),
+        buttonSize: .medium,
         backgroundColor: .gray
       ) {
         print("")
       }
 
       SMFloatingActionButton(
-        iconImage: .init(icon: .bookmark),
-        buttonSize: .large,
-        badgeCount: 15,
+        iconImage: .init(icon: .messsage),
+        buttonSize: .medium,
+        badgeCount: 9999,
         backgroundColor: .black
       ) {
         print("")

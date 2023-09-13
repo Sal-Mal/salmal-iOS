@@ -9,45 +9,23 @@ import SwiftUI
 
 public struct SMIconButton: View {
 
-  public enum ButtonStyle {
-    case white
-    case black
-
-    var forgroundColor: Color {
-      switch self {
-      case .white:
-        return .ds(.black)
-
-      case .black:
-        return .ds(.white)
-      }
-    }
-
-    var backgroundColor: Color {
-      switch self {
-      case .white:
-        return .ds(.white)
-
-      case .black:
-        return .ds(.black)
-      }
-    }
-  }
-
   private let iconImage: Image
-  private let buttonStyle: ButtonStyle
   private let caption: String?
+  private let foregroundColor: Color
+  private let backgroundColor: Color
   private let action: () -> Void
 
   public init(
     iconImage: Image,
-    buttonStyle: ButtonStyle = .white,
     caption: String? = nil,
+    foregroundColor: Color = .ds(.black),
+    backgroundColor: Color = .ds(.white),
     action: @escaping () -> Void
   ) {
     self.iconImage = iconImage
-    self.buttonStyle = buttonStyle
     self.caption = caption
+    self.foregroundColor = foregroundColor
+    self.backgroundColor = backgroundColor
     self.action = action
   }
 
@@ -62,8 +40,8 @@ public struct SMIconButton: View {
 
         if let caption {
           Text(caption)
-            .font(.system(size: 13, weight: .medium))
-            .foregroundColor(buttonStyle.forgroundColor)
+            .font(.ds(.title4(.medium)))
+            .foregroundColor(foregroundColor)
         }
       }
     }
@@ -85,8 +63,7 @@ struct SMIconButton_Previews: PreviewProvider {
       }
 
       SMIconButton(
-        iconImage: .init(icon: .camera),
-        buttonStyle: .black
+        iconImage: .init(icon: .camera)
       ) {
         print("클릭")
       }
@@ -94,8 +71,8 @@ struct SMIconButton_Previews: PreviewProvider {
 
       SMIconButton(
         iconImage: .init(icon: .camera),
-        buttonStyle: .black,
-        caption: "촬영"
+        caption: "촬영",
+        foregroundColor: .ds(.white)
       ) {
         print("클릭")
       }
