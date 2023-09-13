@@ -1,4 +1,5 @@
 import SwiftUI
+
 import UI
 
 struct NumberOfVotesView: View {
