@@ -76,6 +76,8 @@ extension SalMalContentView {
       case .failure:
         // TODO: Error 처리
         Text("Error")
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .contentShape(Rectangle())
         
       default:
         ZStack {

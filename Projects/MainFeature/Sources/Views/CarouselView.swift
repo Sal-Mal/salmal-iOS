@@ -78,11 +78,7 @@ public struct CarouselCore: Reducer {
         }
         
         let item = state.votes[state.index]
-        return .send(.delegate(.updateVote(
-          total: item.totalVoteCount,
-          buy: item.likeCount,
-          notBuy: item.disLikeCount
-        )))
+        return .send(.delegate(.updateVote(total: item.totalVoteCount, buy: item.likeCount, notBuy: item.disLikeCount)))
         
       default:
         return .none
@@ -112,17 +108,21 @@ public struct CarouselView: View {
       ScrollView(.vertical, showsIndicators: false) {
         LazyVStack(spacing: viewStore.spacing) {
           ForEach(viewStore.votes.indices, id: \.self) { index in
+            let visibleIndices = [viewStore.index, viewStore.index + 1]
+            
             SalMalContentView(store: Store(initialState: .init(vote: viewStore.votes[index])) {
               SalMalContentCore()
-            }
-            )
+            })
             .frame(width: width, height: height)
             .cornerRadius(24)
+            .opacity(visibleIndices.contains(index) ? 1 : 0)
             .onAppear {
-              if index == viewStore.votes.count - 2 {
-                store.send(.requestVoteList)
+              if viewStore.index == viewStore.votes.count - 3 {
+                  store.send(.requestVoteList)
               }
             }
+            
+            if true {}
           }
         }
         .padding(height)
