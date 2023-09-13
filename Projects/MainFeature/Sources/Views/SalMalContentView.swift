@@ -111,9 +111,9 @@ extension SalMalContentView {
   private var bottomButtons: some View {
     HStack(spacing: 12) {
       SMFloatingActionButton(
-        iconImage: .init(icon: .bookmark),
+        iconImage: viewStore.isBookmarked ? .init(icon: .bookmark_fill) : .init(icon: .bookmark),
         buttonSize: .medium,
-        badgeCount: viewStore.commentCnt,
+        badgeCount: viewStore.bookmarkCount,
         backgroundColor: .ds(.white36)) {
           store.send(.bookmarkTapped)
         }

@@ -1,5 +1,6 @@
 import Foundation
 
+/// 투표 목록 조회에서 쓰는 DTO
 public struct VoteListDTO: Responsable {
   public let hasNext: Bool
   public let votes: [VoteDTO]
@@ -11,6 +12,7 @@ extension VoteListDTO {
   }
 }
 
+/// 투표 조회에서 쓰는 DTO
 public struct VoteDTO: Responsable {
   public let imageUrl: String
   public let nickName: String
@@ -19,6 +21,9 @@ public struct VoteDTO: Responsable {
   public let likeCnt: Int
   public let disLikeCnt: Int
   public let totalEvaludationCnt: Int
+  public let bookMarkCnt: Int
+  public let createdDate: Date
+  public let isBookmarked: Bool
 }
 
 extension VoteDTO {
@@ -30,7 +35,10 @@ extension VoteDTO {
       commentCnt: (0...100).randomElement()!,
       likeCnt: (0...100).randomElement()!,
       disLikeCnt: (0...100).randomElement()!,
-      totalEvaludationCnt: (100...1000).randomElement()!
+      totalEvaludationCnt: (100...1000).randomElement()!,
+      bookMarkCnt: (100...1000).randomElement()!,
+      createdDate: Date.now,
+      isBookmarked: Bool.random()
     )
   }
   
@@ -42,7 +50,9 @@ extension VoteDTO {
       commentCnt: commentCnt,
       likeCount: likeCnt,
       disLikeCount: disLikeCnt,
-      totalVoteCount: totalEvaludationCnt
+      totalVoteCount: totalEvaludationCnt,
+      bookmarkCount: bookMarkCnt,
+      isBookmarked: isBookmarked
     )
   }
 }

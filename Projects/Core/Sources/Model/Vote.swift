@@ -8,4 +8,7 @@ public struct Vote: Equatable {
   public let likeCount: Int
   public let disLikeCount: Int
   public let totalVoteCount: Int
+  public let bookmarkCount: Int
+//  public let createdDate: Date 현재미사용
+  public let isBookmarked: Bool
 }
