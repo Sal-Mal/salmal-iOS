@@ -140,12 +140,14 @@ public struct CarouselView: View {
   }
   
   var dragGesture: some Gesture {
-    DragGesture()
+    DragGesture(minimumDistance: 10)
       .updating($dragOffset) { value, state, _ in
         state = value.translation.height
       }
       .onEnded { value in
         let y = value.translation.height
+        guard abs(y) >= 30 else { return }
+        
         store.send(.updateIndex(y: y))
       }
   }
