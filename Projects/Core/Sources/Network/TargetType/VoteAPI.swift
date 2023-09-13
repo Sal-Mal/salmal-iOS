@@ -10,7 +10,7 @@ public enum VoteAPI: TargetType {
   case bestList(size: Int, cursor: Int? = nil) // Best 목록 조회
   
   public var baseURL: String {
-    return "http://3.38.192.126"
+    return "http://3.38.192.126/api/votes/"
   }
   
   // TODO: - jwt payload에서 vote-id 추가하기
@@ -18,26 +18,26 @@ public enum VoteAPI: TargetType {
   public var path: String {
     switch self {
     case let .vote(id):
-      return "api/votes/\(id)/evaluations"
+      return "\(id)/evaluations"
     case let .bookmark(id):
-      return "api/votes/\(id)/bookmarks"
+      return "\(id)/bookmarks"
     case let .report(id):
-      return "api/votes/\(id)/reports"
+      return "\(id)/reports"
     case let .get(id):
-      return "api/votes/\(id)"
+      return "\(id)"
     case let .delete(id):
-      return "api/votes/\(id)"
+      return "\(id)"
     case let .homeList(size, cursor):
       if let cursor {
-        return "api/votes/home/?size=\(size)?cusor-id=\(cursor)"
+        return "home/?size=\(size)?cusor-id=\(cursor)"
       } else {
-        return "api/votes/home/?size=\(size)"
+        return "home/?size=\(size)"
       }
     case let .bestList(size, cursor):
       if let cursor {
-        return "api/votes/home/?size=\(size)?cusor-id=\(cursor)"
+        return "best/?size=\(size)?cusor-id=\(cursor)"
       } else {
-        return "api/votes/home/?size=\(size)"
+        return "best/?size=\(size)"
       }
     }
   }
