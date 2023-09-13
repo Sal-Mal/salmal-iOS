@@ -1,4 +1,5 @@
 import SwiftUI
+
 import UI
 import Core
 import ComposableArchitecture
@@ -30,7 +31,7 @@ public struct ReportCore: Reducer {
         case 0:
           return .run { [id = state.voteID] send in
             try await network.request(VoteAPI.report(id: id))
-            // Noti
+            NotiManager.post(.reportVote, userInfo: ["id": id])
             // TODO:  토스트 메시지 띄우기
           } catch: { error, send in
             // TODO: 에러처리 (토스트)
@@ -38,7 +39,7 @@ public struct ReportCore: Reducer {
         case 1:
           return .run { [id = state.memberID] send in
             try await network.request(MemberAPI.ban(id: id))
-            // NOti
+            NotiManager.post(.banUser, userInfo: ["id": id])
             // TODO:  토스트 메시지 띄우기
           } catch: { error, send in
             // TODO: 에러처리 (토스트)

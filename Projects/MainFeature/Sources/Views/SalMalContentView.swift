@@ -76,8 +76,18 @@ public struct SalMalContentView: View {
       
       ZStack(alignment: .bottomTrailing) {
         ZStack(alignment: .top) {
-          targetItem
-            .frame(width: width, height: height)
+          ZStack {
+            targetItem
+              .frame(width: width, height: height)
+              .onAppear {
+                print("\(viewStore.vote.id) \(viewStore.vote.imageURL)")
+              }
+            
+            Text("\(viewStore.vote.id)")
+              .foregroundColor(.black)
+              .bold()
+              .font(.largeTitle)
+          }
           
           TopBottons
             .padding([.horizontal, .top], 18)
@@ -111,7 +121,7 @@ public struct SalMalContentView: View {
 extension SalMalContentView {
   
   private var targetItem: some View {
-    AsyncImage(url: URL(string: viewStore.vote.imageURL)) { phase in
+    return AsyncImage(url: URL(string: viewStore.vote.imageURL)) { phase in
       switch phase {
       case let .success(image):
         image
@@ -129,6 +139,7 @@ extension SalMalContentView {
         ZStack {
           ProgressView()
             .progressViewStyle(.circular)
+            .tint(.ds(.green1))
             .scaleEffect(2)
         }
       }

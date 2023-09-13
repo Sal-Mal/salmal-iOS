@@ -1,10 +1,11 @@
 import SwiftUI
+
 import UI
 import Core
 import ComposableArchitecture
 
 fileprivate enum Const {
-  static let size = 5
+  static let size = 20
 }
 
 public struct CarouselCore: Reducer {
@@ -20,6 +21,10 @@ public struct CarouselCore: Reducer {
     case requestVoteList
     case updateIndex(y: CGFloat)
     case voteResponse(hasNext: Bool, votes: [Vote])
+    
+    case removeVote(id: Int)
+    case removeAllVote(userID: Int)
+    
     case delegate(Delegate)
     
     public enum Delegate: Equatable {
@@ -37,6 +42,7 @@ public struct CarouselCore: Reducer {
       
       case .requestVoteList:
         return .run { [state] send in
+          
           let api: VoteAPI
           let cursor = state.votes.last?.id
           
@@ -65,7 +71,6 @@ public struct CarouselCore: Reducer {
             notBuy: item.disLikeCount
           )))
         }
-        
         return .none
         
       case let .updateIndex(y):
@@ -80,7 +85,25 @@ public struct CarouselCore: Reducer {
         let item = state.votes[state.index]
         return .send(.delegate(.updateVote(total: item.totalVoteCount, buy: item.likeCount, notBuy: item.disLikeCount)))
         
-      default:
+      case let .removeVote(id):
+        // TODO: 삭제 처리
+//        print(state.votes.map { $0.id })
+//        print(state.index)
+//
+//        if let index = state.votes.firstIndex (where: { $0.id == id}) {
+//          state.votes.remove(at: index)
+//        }
+//
+//        print(state.votes.map { $0.id })
+//        print(state.index)
+        
+        return .none
+        
+      case let .removeAllVote(userID):
+        // TODO: 해당 유저 차단
+//        state.index = 0
+//        state.votes.removeAll()
+        
         return .none
       }
     }
@@ -121,8 +144,6 @@ public struct CarouselView: View {
                   store.send(.requestVoteList)
               }
             }
-            
-            if true {}
           }
         }
         .padding(height)
@@ -135,7 +156,16 @@ public struct CarouselView: View {
       .clipped()
     }
     .task {
+      // TODO: 무지성 로딩이아니라, 이전 커서를 유지해야함
       store.send(.requestVoteList)
+    }
+    .onReceive(NotiManager.publisher(.reportVote)) { userInfo in
+      guard let id = userInfo["id"] as? Int else { return }
+      store.send(.removeVote(id: id))
+    }
+    .onReceive(NotiManager.publisher(.banUser)) { userInfo in
+      guard let id = userInfo["id"] as? Int else { return }
+      store.send(.removeAllVote(userID: id))
     }
   }
   

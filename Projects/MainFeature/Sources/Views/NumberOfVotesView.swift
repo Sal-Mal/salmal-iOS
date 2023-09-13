@@ -18,9 +18,10 @@ struct NumberOfVotesView: View {
         Capsule().fill(Color.ds(.black))
       )
       .overlay(
-        Capsule().stroke(Color.ds(.green1), lineWidth: 2)
+        Capsule().stroke(Color.ds(.green1), lineWidth: 1)
           .shadow(color: .ds(.green1), radius: 1)
       )
+      .animation(.default, value: number)
   }
 }
 
