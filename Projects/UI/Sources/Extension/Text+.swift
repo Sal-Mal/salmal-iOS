@@ -5,6 +5,6 @@ public extension Text {
   func navigationItem(color: Color = .ds(.white)) -> some View {
     self
       .foregroundColor(color)
-      .font(.ds(.title2))
+      .font(.ds(.title2(.semibold)))
   }
 }

@@ -52,20 +52,11 @@ public struct SMToastView: View {
     var iconImage: Image {
       switch self {
       case .error:
-        return .init(icon: .delete)
+        return .init(icon: .ic_xmark)
       case .warning:
-        return .init(icon: .warning)
+        return .init(icon: .ic_exclamation)
       case .success:
-        return .init(icon: .check)
-      }
-    }
-
-    var iconSize: CGFloat {
-      switch self {
-      case .success:
-        return 12.0
-      default:
-        return 18.0
+        return .init(icon: .ic_check)
       }
     }
   }
@@ -89,11 +80,11 @@ public struct SMToastView: View {
           type.iconImage
             .resizable()
             .aspectRatio(1, contentMode: .fit)
-            .frame(width: type.iconSize, height: type.iconSize)
+            .frame(width: 18, height: 18)
         }
 
       Text(title)
-        .font(.ds(.title4))
+        .font(.ds(.title4(.medium)))
         .foregroundColor(.ds(.white))
     }
     .padding()
