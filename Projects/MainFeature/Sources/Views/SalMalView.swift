@@ -10,8 +10,8 @@ public struct SalMalCore: Reducer {
     var notBuyPercentage: Double = 0
     var totalCount = 0
     
-    var homeState = CarouselCore.State()
-    var bestState = CarouselCore.State()
+    var homeState = CarouselCore.State(tab: .home)
+    var bestState = CarouselCore.State(tab: .best)
     
     public init() {}
   }

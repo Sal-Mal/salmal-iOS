@@ -1,4 +1,5 @@
 import SwiftUI
+import UI
 import Core
 import ComposableArchitecture
 
@@ -8,6 +9,7 @@ fileprivate enum Const {
 
 public struct CarouselCore: Reducer {
   public struct State: Equatable {
+    let tab: SMMainNavigationBar.Tab
     let spacing: CGFloat = 20
     var index = 0
     var votes: [Vote] = []
@@ -34,8 +36,17 @@ public struct CarouselCore: Reducer {
         return .none
       
       case .requestVoteList:
-        return .run { send in
-          let result = try await networkManager.request(VoteAPI.getList(size: Const.size), type: VoteListDTO.self)
+        return .run { [state] send in
+          let api: VoteAPI
+          let cursor = state.votes.last?.id
+          
+          if state.tab == .home {
+            api = .homeList(size: Const.size, cursor: cursor)
+          } else {
+            api = .bestList(size: Const.size, cursor: cursor)
+          }
+          
+          let result = try await networkManager.request(api, type: VoteListDTO.self)
           await send(.voteResponse(hasNext: result.hasNext, votes: result.votes.map { $0.toDomian }))
         } catch: { error, send in
           // TODO: Erorr 처리
@@ -142,7 +153,7 @@ public struct CarouselView: View {
 
 struct CarouselView_Previews: PreviewProvider {
   static var previews: some View {
-    CarouselView(store: .init(initialState: .init()) {
+    CarouselView(store: .init(initialState: .init(tab: .home)) {
       CarouselCore()
         ._printChanges()
     })

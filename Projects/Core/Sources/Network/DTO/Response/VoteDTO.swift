@@ -14,6 +14,7 @@ extension VoteListDTO {
 
 /// 투표 조회에서 쓰는 DTO
 public struct VoteDTO: Responsable {
+  public let id: Int
   public let imageUrl: String
   public let nickName: String
   public let memberImageUrl: String
@@ -29,6 +30,7 @@ public struct VoteDTO: Responsable {
 extension VoteDTO {
   public static var mock: VoteDTO {
     VoteDTO(
+      id: (0...1000).randomElement()!,
       imageUrl: "https://picsum.photos/300/600",
       nickName: "dudu",
       memberImageUrl: "https://picsum.photos/100",
@@ -44,6 +46,7 @@ extension VoteDTO {
   
   public var toDomian: Vote {
     Vote(
+      id: id,
       imageURL: imageUrl,
       nickName: nickName,
       memberImageURL: memberImageUrl,

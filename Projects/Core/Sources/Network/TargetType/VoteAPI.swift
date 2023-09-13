@@ -1,12 +1,13 @@
 import Foundation
 
 public enum VoteAPI: TargetType {
-  case vote // 투표(살, 밀)
-  case bookmark // 북마크
-  case report // 신고
-  case get // 조회
-  case delete // 삭제
-  case getList(size: Int) // 목록조회
+  case vote(id: Int) // 투표(살, 밀)
+  case bookmark(id: Int) // 북마크
+  case report(id: Int) // 신고
+  case get(id: Int) // 조회
+  case delete(id: Int) // 삭제
+  case homeList(size: Int, cursor: Int? = nil) // Home 목록 조회
+  case bestList(size: Int, cursor: Int? = nil) // Best 목록 조회
   
   public var baseURL: String {
     return "http://3.38.192.126"
@@ -16,18 +17,28 @@ public enum VoteAPI: TargetType {
   
   public var path: String {
     switch self {
-    case .vote:
-      return "api/votes/{vote-id}/evaluations"
-    case .bookmark:
-      return "api/votes/{vote-id}/bookmarks"
-    case .report:
-      return "api/votes/{vote-id}/reports"
-    case .get:
-      return "api/votes/{vote-id}"
-    case .delete:
-      return "api/votes/{vote-id}"
-    case let .getList(size):
-      return "api/votes/?size=\(size)"
+    case let .vote(id):
+      return "api/votes/\(id)/evaluations"
+    case let .bookmark(id):
+      return "api/votes/\(id)/bookmarks"
+    case let .report(id):
+      return "api/votes/\(id)/reports"
+    case let .get(id):
+      return "api/votes/\(id)"
+    case let .delete(id):
+      return "api/votes/\(id)"
+    case let .homeList(size, cursor):
+      if let cursor {
+        return "api/votes/home/?size=\(size)?cusor-id=\(cursor)"
+      } else {
+        return "api/votes/home/?size=\(size)"
+      }
+    case let .bestList(size, cursor):
+      if let cursor {
+        return "api/votes/home/?size=\(size)?cusor-id=\(cursor)"
+      } else {
+        return "api/votes/home/?size=\(size)"
+      }
     }
   }
   
@@ -43,7 +54,9 @@ public enum VoteAPI: TargetType {
       return .get
     case .delete:
       return .delete
-    case .getList:
+    case .homeList:
+      return .get
+    case .bestList:
       return .get
     }
   }

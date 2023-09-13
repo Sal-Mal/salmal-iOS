@@ -40,7 +40,7 @@ public struct LiveNetworkManager: NetworkManager {
       url,
       method: target.method,
       parameters: target.parameters,
-      encoding: URLEncoding.default,
+      encoding: JSONEncoding.default,
       headers: target.headers,
       interceptor: RetryInterceptor(retryLimit: retryLimit)
     )
