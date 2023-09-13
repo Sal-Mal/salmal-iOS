@@ -1,10 +1,3 @@
-//
-//  CommentListView.swift
-//  MainFeature
-//
-//  Created by LS-MAC-00213 on 2023/09/13.
-//
-
 import SwiftUI
 import ComposableArchitecture
 

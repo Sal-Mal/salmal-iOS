@@ -3,6 +3,8 @@ import UI
 import Core
 import ComposableArchitecture
 
+// TODO: Toast Message
+
 public struct ReportCore: Reducer {
   public struct State: Equatable {
     let voteID: Int
@@ -22,31 +24,29 @@ public struct ReportCore: Reducer {
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
+        
       case let .tap(index):
         switch index {
         case 0:
           return .run { [id = state.voteID] send in
             try await network.request(VoteAPI.report(id: id))
-//            await send(.responseResult(.init(type: .success("더 이상 해당 게시글이 피드에서 보이지 않습니다"))))
+            // Noti
+            // TODO:  토스트 메시지 띄우기
           } catch: { error, send in
-            // TODO: 에러처리
+            // TODO: 에러처리 (토스트)
           }
         case 1:
           return .run { [id = state.memberID] send in
             try await network.request(MemberAPI.ban(id: id))
-//            await send(.responseResult(.init(type: .success("더 이상 해당 사용자가 피드에서 보이지 않습니다"))))
+            // NOti
+            // TODO:  토스트 메시지 띄우기
           } catch: { error, send in
-            // TODO: 에러처리
+            // TODO: 에러처리 (토스트)
           }
           
         default:
-          break
+          return .none
         }
-        
-        return .none
-        
-      default:
-        return .none
       }
     }
   }

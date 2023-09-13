@@ -5,6 +5,7 @@ public struct Vote: Equatable {
   public let imageURL: String
   public let nickName: String
   public let memberImageURL: String
+  public let memberID: Int
   public let commentCnt: Int
   public let likeCount: Int
   public let disLikeCount: Int

@@ -6,12 +6,13 @@ import ComposableArchitecture
 public struct SalMalContentCore: Reducer {
   public struct State: Equatable {
     var vote: Vote
-    @BindingState var isReportPresented = false
+    
+    @PresentationState var reportState: ReportCore.State?
     @PresentationState var commentListState: CommentListCore.State?
   }
   
-  public enum Action: Equatable, BindableAction {
-    case binding(BindingAction<State>)
+  public enum Action: Equatable {
+    case report(PresentationAction<ReportCore.Action>)
     case commentList(PresentationAction<CommentListCore.Action>)
     case profileTapped
     case bookmarkTapped
@@ -22,11 +23,13 @@ public struct SalMalContentCore: Reducer {
   @Dependency(\.network) var network
 
   public var body: some ReducerOf<Self> {
-    BindingReducer()
-    
     Reduce { state, action in
       switch action {
-//      case .commentList(.presented(<#T##Action#>))
+      case .report:
+        return .none
+        
+      case .commentList:
+        return .none
         
       case .profileTapped:
         // TODO: Move To Profile
@@ -34,6 +37,7 @@ public struct SalMalContentCore: Reducer {
         
       case .bookmarkTapped:
         // TODO: Book Mark
+        // request & updateUI
         return .none
         
       case .commentTapped:
@@ -41,15 +45,15 @@ public struct SalMalContentCore: Reducer {
         return .none
         
       case .moreTapped:
-        state.isReportPresented = true
-        return .none
-        
-      default:
+        state.reportState = .init(voteID: state.vote.id, memberID: state.vote.memberID)
         return .none
       }
     }
     .ifLet(\.$commentListState, action: /Action.commentList) {
       CommentListCore()
+    }
+    .ifLet(\.$reportState, action: /Action.report) {
+      ReportCore()
     }
   }
 }
@@ -57,6 +61,8 @@ public struct SalMalContentCore: Reducer {
 public struct SalMalContentView: View {
   let store: StoreOf<SalMalContentCore>
   @ObservedObject var viewStore: ViewStoreOf<SalMalContentCore>
+  
+  @State var modalHeight: CGFloat = .zero
   
   public init(store: StoreOf<SalMalContentCore>) {
     self.store = store
@@ -81,18 +87,23 @@ public struct SalMalContentView: View {
           .padding(.bottom, 22)
           .padding(.trailing, 16)
       }
-      .bottomSheet(isPresented: viewStore.$isReportPresented) {
-        let vote = viewStore.vote
-        // TODO: Member ID
-        ReportView(store: Store(initialState: .init(voteID: vote.id, memberID: vote.id)) {
-          ReportCore()
-        })
+      .sheet(store: store.scope(state: \.$reportState, action: SalMalContentCore.Action.report)) { subStore in
+        ReportView(store: subStore)
+          .readHeight()
+          .onPreferenceChange(HeightPreferenceKey.self) { height in
+            if let height {
+              self.modalHeight = height
+            }
+          }
+          .presentationDetents([.height(self.modalHeight)])
+          .presentationDragIndicator(.visible)
+          
       }
       .sheet(store: store.scope(state: \.$commentListState, action: SalMalContentCore.Action.commentList)) { subStore in
         CommentListView(store: subStore)
-          .presentationDetents([.medium, .large])
+          .presentationDetents([.fraction(0.7), .large])
+          .presentationDragIndicator(.visible)
       }
-      .debug()
     }
   }
 }

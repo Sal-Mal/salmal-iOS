@@ -4,6 +4,7 @@ extension SM {
 
   public enum Color: String {
     case black = "Black"
+    case black50 = "Black50"
     case gray1 = "Gray1"
     case gray2 = "Gray2"
     case gray3 = "Gray3"

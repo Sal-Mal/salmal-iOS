@@ -45,6 +45,7 @@ public struct SalMalCore: Reducer {
         return .none
         
       case .moveToAlarm:
+        // TODO: 알람화면으로 이동
         return .none
         
       case .buyTapped:

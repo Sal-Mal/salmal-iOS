@@ -18,6 +18,7 @@ public struct VoteDTO: Responsable {
   public let imageUrl: String
   public let nickName: String
   public let memberImageUrl: String
+  public let memberID: Int
   public let commentCnt: Int
   public let likeCnt: Int
   public let disLikeCnt: Int
@@ -34,6 +35,7 @@ extension VoteDTO {
       imageUrl: "https://picsum.photos/300/600",
       nickName: "dudu",
       memberImageUrl: "https://picsum.photos/100",
+      memberID: 0,
       commentCnt: (0...100).randomElement()!,
       likeCnt: (0...100).randomElement()!,
       disLikeCnt: (0...100).randomElement()!,
@@ -50,6 +52,7 @@ extension VoteDTO {
       imageURL: imageUrl,
       nickName: nickName,
       memberImageURL: memberImageUrl,
+      memberID: memberID,
       commentCnt: commentCnt,
       likeCount: likeCnt,
       disLikeCount: disLikeCnt,
