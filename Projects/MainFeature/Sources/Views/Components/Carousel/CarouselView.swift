@@ -22,30 +22,28 @@ public struct CarouselView: View {
       let yOffset = CGFloat(viewStore.index) * -height + dragOffset + CGFloat(viewStore.index) * -viewStore.spacing
       
       ScrollView(.vertical, showsIndicators: false) {
-        LazyVStack(spacing: viewStore.spacing) {
-          ForEach(viewStore.votes.indices, id: \.self) { index in
-            let visibleIndices = [viewStore.index, viewStore.index + 1]
+        LazyVStack(spacing: 0) {
+          ForEachStore(store.scope(state: \.votes, action: CarouselCore.Action.vote(id:action:))) { subStore in
             
-            SalMalContentView(store: Store(initialState: .init(vote: viewStore.votes[index])) {
-              SalMalContentCore()
-            })
-            .frame(width: width, height: height)
-            .cornerRadius(24)
-            .opacity(visibleIndices.contains(index) ? 1 : 0)
-            .onAppear {
-              if viewStore.index == viewStore.votes.count - 3 {
+            VoteItemView(store: subStore)
+              .frame(width: width, height: height)
+              .cornerRadius(24)
+              .padding(.bottom, 20)
+              .background(Color.ds(.black))
+              .onAppear {
+                if viewStore.index >= viewStore.votes.count - 3 {
                   store.send(.requestVoteList)
+                }
               }
-            }
           }
         }
-        .padding(height)
         .offset(y: yOffset)
+        .padding(.vertical, height)
         .animation(.spring(), value: yOffset)
         .gesture(dragGesture)
       }
       .scrollDisabled(true)
-      .padding(-height)
+      .padding(.vertical, -height)
       .clipped()
     }
     .task {

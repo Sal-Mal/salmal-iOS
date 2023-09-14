@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Vote: Equatable {
+public struct Vote: Equatable, Identifiable {
   public let id: Int
   public let imageURL: String
   public let nickName: String

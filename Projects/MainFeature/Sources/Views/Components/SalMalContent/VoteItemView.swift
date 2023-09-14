@@ -4,13 +4,13 @@ import Core
 import UI
 import ComposableArchitecture
 
-public struct SalMalContentView: View {
-  let store: StoreOf<SalMalContentCore>
-  @ObservedObject var viewStore: ViewStoreOf<SalMalContentCore>
+public struct VoteItemView: View {
+  let store: StoreOf<VoteItemCore>
+  @ObservedObject var viewStore: ViewStoreOf<VoteItemCore>
   
   @State var modalHeight: CGFloat = .zero
   
-  public init(store: StoreOf<SalMalContentCore>) {
+  public init(store: StoreOf<VoteItemCore>) {
     self.store = store
     self.viewStore = ViewStore(self.store, observe: { $0 })
   }
@@ -20,30 +20,20 @@ public struct SalMalContentView: View {
       let width = proxy.size.width
       let height = proxy.size.height
       
-      ZStack(alignment: .bottomTrailing) {
-        ZStack(alignment: .top) {
-          ZStack {
-            targetItem
-              .frame(width: width, height: height)
-              .onAppear {
-                print("\(viewStore.vote.id) \(viewStore.vote.imageURL)")
-              }
-            
-            Text("\(viewStore.vote.id)")
-              .foregroundColor(.black)
-              .bold()
-              .font(.largeTitle)
-          }
+      ZStack(alignment: .top) {
+        ZStack(alignment: .bottomTrailing) {
+          targetItem
+            .frame(width: width, height: height)
           
-          TopBottons
-            .padding([.horizontal, .top], 18)
+          bottomButtons
+            .padding(.bottom, 22)
+            .padding(.trailing, 16)
         }
         
-        bottomButtons
-          .padding(.bottom, 22)
-          .padding(.trailing, 16)
+        TopBottons
+          .padding([.horizontal, .top], 18)
       }
-      .sheet(store: store.scope(state: \.$reportState, action: SalMalContentCore.Action.report)) { subStore in
+      .sheet(store: store.scope(state: \.$reportState, action: VoteItemCore.Action.report)) { subStore in
         ReportView(store: subStore)
           .readHeight()
           .onPreferenceChange(HeightPreferenceKey.self) { height in
@@ -53,9 +43,9 @@ public struct SalMalContentView: View {
           }
           .presentationDetents([.height(self.modalHeight)])
           .presentationDragIndicator(.visible)
-          
+        
       }
-      .sheet(store: store.scope(state: \.$commentListState, action: SalMalContentCore.Action.commentList)) { subStore in
+      .sheet(store: store.scope(state: \.$commentListState, action: VoteItemCore.Action.commentList)) { subStore in
         CommentListView(store: subStore)
           .presentationDetents([.fraction(0.7), .large])
           .presentationDragIndicator(.visible)
@@ -64,7 +54,7 @@ public struct SalMalContentView: View {
   }
 }
 
-extension SalMalContentView {
+extension VoteItemView {
   
   private var targetItem: some View {
     return AsyncImage(url: URL(string: viewStore.vote.imageURL)) { phase in
@@ -96,9 +86,12 @@ extension SalMalContentView {
     HStack(alignment: .top) {
       SMCapsuleButton(
         title: viewStore.vote.nickName,
-        iconURL: URL(string: viewStore.vote.memberImageURL)!) {
-          store.send(.profileTapped)
-        }
+        iconURL: URL(string: viewStore.vote.memberImageURL)!,
+        foregroundColor: .ds(.white),
+        backgroundColor: .ds(.black)
+      ) {
+        store.send(.profileTapped)
+      }
       
       Spacer()
       
@@ -120,7 +113,7 @@ extension SalMalContentView {
         backgroundColor: .ds(.white36)) {
           store.send(.bookmarkTapped)
         }
-      
+
       SMFloatingActionButton(
         iconImage: .init(icon: .messsage),
         buttonSize: .medium,
@@ -132,11 +125,11 @@ extension SalMalContentView {
   }
 }
 
-struct SalMalContentView_Previews: PreviewProvider {
+struct VoteItemView_Previews: PreviewProvider {
   
   static var previews: some View {
-    SalMalContentView(store: .init(initialState: .init(vote: VoteDTO.mock.toDomian)) {
-      SalMalContentCore()
+    VoteItemView(store: .init(initialState: .init(vote: VoteDTO.mock.toDomian)) {
+      VoteItemCore()
         ._printChanges()
     })
     .padding(20)

@@ -13,8 +13,6 @@ public enum VoteAPI: TargetType {
     return "http://3.38.192.126/api/votes/"
   }
   
-  // TODO: - jwt payload에서 vote-id 추가하기
-  
   public var path: String {
     switch self {
     case let .vote(id):

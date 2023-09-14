@@ -20,10 +20,6 @@ public struct ReportView: View {
         MenuRow(item: viewStore.items[index])
           .onTapGesture {
             store.send(.tap(index: index))
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-              dismiss()
-            }
           }
       }
     }

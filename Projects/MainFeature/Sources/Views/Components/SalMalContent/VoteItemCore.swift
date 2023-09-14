@@ -1,9 +1,11 @@
 import ComposableArchitecture
 import Core
 
-public struct SalMalContentCore: Reducer {
-  public struct State: Equatable {
-    var vote: Vote
+public struct VoteItemCore: Reducer {
+  public struct State: Equatable, Identifiable {
+    let vote: Vote
+    
+    public var id: Int { return vote.id }
     
     @PresentationState var reportState: ReportCore.State?
     @PresentationState var commentListState: CommentListCore.State?
@@ -18,7 +20,7 @@ public struct SalMalContentCore: Reducer {
     case moreTapped
   }
   
-  @Dependency(\.network) var network
+  @Dependency(\.network) var networkManager
 
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
@@ -34,9 +36,13 @@ public struct SalMalContentCore: Reducer {
         return .none
         
       case .bookmarkTapped:
-        // TODO: Book Mark
-        // request & updateUI
-        return .none
+        return .run { send in
+          // TODO: Request BookMark API
+          // TODO: Success ToastMessage
+          // TODO: UpdateUI
+        } catch: { error, send in
+          // TODO: Error ToastMessage
+        }
         
       case .commentTapped:
         state.commentListState = .init(voteID: state.vote.id)
