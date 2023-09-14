@@ -96,11 +96,9 @@ extension SalMalContentView {
     HStack(alignment: .top) {
       SMCapsuleButton(
         title: viewStore.vote.nickName,
-        iconImage: .init(icon: .camera),
-        buttonMode: .black
-      ) {
-        store.send(.profileTapped)
-      }
+        iconURL: URL(string: viewStore.vote.memberImageURL)!) {
+          store.send(.profileTapped)
+        }
       
       Spacer()
       

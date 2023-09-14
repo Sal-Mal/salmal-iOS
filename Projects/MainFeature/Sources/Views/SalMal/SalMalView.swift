@@ -27,12 +27,19 @@ public struct SalMalView: View {
       }
       
       VStack(spacing: 9) {
-        SMVoteButton(title: "살", progress: viewStore.buyPercentage) {
-          store.send(.buyTapped)
-        }
-        SMVoteButton(title: "말", progress: viewStore.notBuyPercentage) {
-          store.send(.notBuyTapped)
-        }
+        SMVoteButton(
+          title: "👍🏻 살",
+          progress: viewStore.buyPercentage,
+          buttonState: viewStore.$salButtonState
+        ) {
+            store.send(.buyTapped)
+          }
+        SMVoteButton(
+          title: "👎🏻 말", progress:
+            viewStore.notBuyPercentage,
+          buttonState: viewStore.$malButtonState) {
+            store.send(.notBuyTapped)
+          }
       }
       .padding(2)
     }

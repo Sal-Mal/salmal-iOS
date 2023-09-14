@@ -30,16 +30,20 @@ public struct VoteDTO: Responsable {
 
 extension VoteDTO {
   public static var mock: VoteDTO {
-    VoteDTO(
+    let total = (100...1000).randomElement()!
+    let sal = (0...total).randomElement()!
+    let mal = total - sal
+    
+    return VoteDTO(
       id: (0...1000).randomElement()!,
       imageUrl: "https://picsum.photos/300/600",
       nickName: "dudu",
       memberImageUrl: "https://picsum.photos/100",
       memberID: 0,
       commentCnt: (0...100).randomElement()!,
-      likeCnt: (0...100).randomElement()!,
-      disLikeCnt: (0...100).randomElement()!,
-      totalEvaludationCnt: (100...1000).randomElement()!,
+      likeCnt: sal,
+      disLikeCnt: mal,
+      totalEvaludationCnt: total,
       bookMarkCnt: (100...1000).randomElement()!,
       createdDate: Date.now,
       isBookmarked: Bool.random()

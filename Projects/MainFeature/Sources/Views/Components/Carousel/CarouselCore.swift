@@ -28,7 +28,7 @@ public struct CarouselCore: Reducer {
     case delegate(Delegate)
     
     public enum Delegate: Equatable {
-      case updateVote(total: Int, buy: Int, notBuy: Int)
+      case updateVote(vote: Vote)
     }
   }
   
@@ -64,12 +64,7 @@ public struct CarouselCore: Reducer {
         
         /// 최초 로딩시 업데이트 시켜주기
         if state.index == 0 {
-          let item = state.votes[state.index]
-          return .send(.delegate(.updateVote(
-            total: item.totalVoteCount,
-            buy: item.likeCount,
-            notBuy: item.disLikeCount
-          )))
+          return .send(.delegate(.updateVote(vote: state.votes[state.index])))
         }
         return .none
         
@@ -82,8 +77,7 @@ public struct CarouselCore: Reducer {
           state.index = min(state.votes.count - 1, state.index + 1)
         }
         
-        let item = state.votes[state.index]
-        return .send(.delegate(.updateVote(total: item.totalVoteCount, buy: item.likeCount, notBuy: item.disLikeCount)))
+        return .send(.delegate(.updateVote(vote: state.votes[state.index])))
         
       case let .removeVote(id):
         // TODO: 삭제 처리

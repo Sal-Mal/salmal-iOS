@@ -68,20 +68,17 @@ public struct SMCapsuleButton: View {
             .aspectRatio(contentMode: .fit)
             .frame(width: 32, height: 32)
             .clipShape(Circle())
-            .debug()
 
         } else {
           AsyncImage(url: iconURL)
             .aspectRatio(contentMode: .fit)
             .frame(width: 32, height: 32)
             .clipShape(Circle())
-            .debug()
         }
 
         Text(title)
           .font(.ds(.title3(.medium)))
           .foregroundColor(foregroundColor)
-          .debug()
       }
       .padding(.horizontal, 6)
       .frame(height: 44)
