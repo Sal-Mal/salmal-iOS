@@ -3,6 +3,7 @@ import SwiftUI
 extension SM {
 
   public enum Icon: String {
+    case ic_more
     case ic_check
     case ic_xmark
     case ic_exclamation

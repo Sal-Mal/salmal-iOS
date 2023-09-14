@@ -1,10 +1,10 @@
 import SwiftUI
 
 /// View의 Size를 알아내기위한 PreferenceKey
-struct HeightPreferenceKey: PreferenceKey {
-  static var defaultValue: CGFloat?
+public struct HeightPreferenceKey: PreferenceKey {
+  public static var defaultValue: CGFloat?
   
-  static func reduce(value: inout CGFloat?, nextValue: () -> CGFloat?) {
+  public static func reduce(value: inout CGFloat?, nextValue: () -> CGFloat?) {
     guard let nextValue = nextValue() else { return }
     value = nextValue
   }

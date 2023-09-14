@@ -5,7 +5,8 @@ public typealias HTTPMethod = Alamofire.HTTPMethod
 public typealias Parameters = Alamofire.Parameters
 public typealias HTTPHeaders = Alamofire.HTTPHeaders
 
-public final class NetworkManager {
+/// 실제로 쓰는 NetworkManager
+public struct LiveNetworkManager: NetworkManager {
   
   private let session: Session
   private let retryLimit: Int
@@ -15,7 +16,7 @@ public final class NetworkManager {
     self.retryLimit = retryLimit
   }
   
-  public func request<T: Decodable>(_ target: TargetType, type: T.Type) async throws -> T {
+  public func request<T: Responsable>(_ target: TargetType, type: T.Type) async throws -> T {
     let data = try await request(target)
     let result = try JSONDecoder().decode(type, from: data)
     
@@ -39,7 +40,7 @@ public final class NetworkManager {
       url,
       method: target.method,
       parameters: target.parameters,
-      encoding: URLEncoding.default,
+      encoding: JSONEncoding.default,
       headers: target.headers,
       interceptor: RetryInterceptor(retryLimit: retryLimit)
     )

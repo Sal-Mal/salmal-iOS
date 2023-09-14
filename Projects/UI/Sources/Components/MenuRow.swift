@@ -1,6 +1,8 @@
 import SwiftUI
 
-public struct MenuItem {
+public struct MenuItem: Equatable, Identifiable {
+  public let id = UUID()
+  
   let icon: Image
   let title: String
   
