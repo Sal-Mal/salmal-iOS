@@ -57,7 +57,7 @@ public struct VoteItemView: View {
 extension VoteItemView {
   
   private var targetItem: some View {
-    return AsyncImage(url: URL(string: viewStore.vote.imageURL)) { phase in
+    AsyncImage(url: URL(string: viewStore.vote.imageURL)) { phase in
       switch phase {
       case let .success(image):
         image
@@ -109,7 +109,6 @@ extension VoteItemView {
       SMFloatingActionButton(
         iconImage: viewStore.vote.isBookmarked ? .init(icon: .bookmark_fill) : .init(icon: .bookmark),
         buttonSize: .medium,
-        badgeCount: viewStore.vote.bookmarkCount,
         backgroundColor: .ds(.white36)) {
           store.send(.bookmarkTapped)
         }

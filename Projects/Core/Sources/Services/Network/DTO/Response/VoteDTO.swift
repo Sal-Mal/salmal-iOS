@@ -61,7 +61,7 @@ extension VoteDTO {
       likeCount: likeCnt,
       disLikeCount: disLikeCnt,
       totalVoteCount: totalEvaludationCnt,
-      bookmarkCount: bookMarkCnt,
+//      bookmarkCount: bookMarkCnt,
       isBookmarked: isBookmarked
     )
   }
