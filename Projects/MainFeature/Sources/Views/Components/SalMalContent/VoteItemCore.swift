@@ -3,7 +3,7 @@ import Core
 
 public struct VoteItemCore: Reducer {
   public struct State: Equatable, Identifiable {
-    let vote: Vote
+    var vote: Vote
     
     public var id: Int { return vote.id }
     
@@ -36,6 +36,7 @@ public struct VoteItemCore: Reducer {
         return .none
         
       case .bookmarkTapped:
+        state.vote.isBookmarked.toggle()
         return .run { send in
           // TODO: Request BookMark API
           // TODO: Success ToastMessage

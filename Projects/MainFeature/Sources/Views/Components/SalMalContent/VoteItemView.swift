@@ -57,12 +57,11 @@ public struct VoteItemView: View {
 extension VoteItemView {
   
   private var targetItem: some View {
-    AsyncImage(url: URL(string: viewStore.vote.imageURL)) { phase in
+    CacheAsyncImage(url: URL(string: viewStore.vote.imageURL)!) { phase in
       switch phase {
       case let .success(image):
         image
-          .resizable()
-          .aspectRatio(contentMode: .fill)
+          .fill()
           .clipShape(Rectangle())
         
       case .failure:

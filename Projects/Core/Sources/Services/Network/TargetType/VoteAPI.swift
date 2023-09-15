@@ -2,7 +2,7 @@ import Foundation
 
 public enum VoteAPI: TargetType {
   case vote(id: Int) // 투표(살, 밀)
-  case bookmark(id: Int) // 북마크
+  case bookmark(id: Int, check: Bool) // 북마크
   case report(id: Int) // 신고
   case get(id: Int) // 조회
   case delete(id: Int) // 삭제
@@ -17,8 +17,9 @@ public enum VoteAPI: TargetType {
     switch self {
     case let .vote(id):
       return "\(id)/evaluations"
-    case let .bookmark(id):
-      return "\(id)/bookmarks"
+    case let .bookmark(id, check):
+      // TODO: check uncheck 처리
+      return "\(id)/bookmarks\(check)"
     case let .report(id):
       return "\(id)/reports"
     case let .get(id):
@@ -27,13 +28,13 @@ public enum VoteAPI: TargetType {
       return "\(id)"
     case let .homeList(size, cursor):
       if let cursor {
-        return "home/?size=\(size)?cusor-id=\(cursor)"
+        return "home/?size=\(size)?cursor-id=\(cursor)"
       } else {
         return "home/?size=\(size)"
       }
     case let .bestList(size, cursor):
       if let cursor {
-        return "best/?size=\(size)?cusor-id=\(cursor)"
+        return "best/?size=\(size)?cursor-id=\(cursor)"
       } else {
         return "best/?size=\(size)"
       }

@@ -7,10 +7,17 @@ public struct Vote: Equatable, Identifiable {
   public let memberImageURL: String
   public let memberID: Int
   public let commentCnt: Int
-  public let likeCount: Int
-  public let disLikeCount: Int
-  public let totalVoteCount: Int
+  public var likeCount: Int
+  public var disLikeCount: Int
+  public var totalVoteCount: Int
 //  public let bookmarkCount: Int
 //  public let createdDate: Date
-  public let isBookmarked: Bool
+  public var isBookmarked: Bool
+  public var voteStatus: VoteStatus
+  
+  public enum VoteStatus: String {
+    case like
+    case disLike
+    case none
+  }
 }
