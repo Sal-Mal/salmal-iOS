@@ -23,7 +23,7 @@ public struct VoteDTO: Responsable {
   public let likeCnt: Int
   public let disLikeCnt: Int
   public let totalEvaludationCnt: Int
-  public let bookMarkCnt: Int
+//  public let bookMarkCnt: Int
   public let createdDate: Date
   public let isBookmarked: Bool
   public let status: VoteStatus
@@ -51,7 +51,7 @@ extension VoteDTO {
       likeCnt: sal,
       disLikeCnt: mal,
       totalEvaludationCnt: total,
-      bookMarkCnt: (100...1000).randomElement()!,
+//      bookMarkCnt: (100...1000).randomElement()!,
       createdDate: Date.now,
       isBookmarked: Bool.random(),
       status: [VoteStatus.like, .disLike, .none].randomElement()!

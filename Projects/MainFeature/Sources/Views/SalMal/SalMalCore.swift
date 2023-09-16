@@ -47,6 +47,18 @@ public struct SalMalCore: Reducer {
         state.salButtonState = .idle
         state.malButtonState = .idle
         
+        switch vote.voteStatus {
+        case .like:
+          state.salButtonState = .selected
+          state.malButtonState = .unSelected
+        case .disLike:
+          state.salButtonState = .unSelected
+          state.malButtonState = .selected
+        case .none:
+          state.salButtonState = .idle
+          state.malButtonState = .idle
+        }
+
         return .none
         
       case let .bestAction(.delegate(.updateVote(vote))):
@@ -56,6 +68,18 @@ public struct SalMalCore: Reducer {
         
         state.salButtonState = .idle
         state.malButtonState = .idle
+        
+        switch vote.voteStatus {
+        case .like:
+          state.salButtonState = .selected
+          state.malButtonState = .unSelected
+        case .disLike:
+          state.salButtonState = .unSelected
+          state.malButtonState = .selected
+        case .none:
+          state.salButtonState = .idle
+          state.malButtonState = .idle
+        }
         
         return .none
         
@@ -76,6 +100,7 @@ public struct SalMalCore: Reducer {
           state.salButtonState = .selected
           state.malButtonState = .unSelected
         }
+        
         return .none
         
       case .notBuyTapped:
