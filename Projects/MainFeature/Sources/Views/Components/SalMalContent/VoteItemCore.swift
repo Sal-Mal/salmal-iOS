@@ -4,8 +4,14 @@ import Core
 public struct VoteItemCore: Reducer {
   public struct State: Equatable, Identifiable {
     var vote: Vote
+    let originalVote: Vote
     
     public var id: Int { return vote.id }
+    
+    init(vote: Vote) {
+      self.vote = vote
+      self.originalVote = vote
+    }
     
     @PresentationState var reportState: ReportCore.State?
     @PresentationState var commentListState: CommentListCore.State?
@@ -18,6 +24,8 @@ public struct VoteItemCore: Reducer {
     case bookmarkTapped
     case commentTapped
     case moreTapped
+    case onAppear
+    case onDisappear
   }
   
   @Dependency(\.network) var networkManager
@@ -25,6 +33,16 @@ public struct VoteItemCore: Reducer {
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
+      case .onAppear:
+        if state.vote != state.originalVote {
+          // TODO: 유저가 조작해서 뭔가 다르다면, 투표 api 재요청
+        }
+
+        return .none
+      case .onDisappear:
+
+        return .none
+        
       case .report:
         return .none
         

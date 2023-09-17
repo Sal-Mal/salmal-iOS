@@ -40,7 +40,6 @@ public struct CarouselCore: Reducer {
       switch action {
         
       case let .vote(id, action):
-        print(state.votes[id: id]?.vote)
         return .none
         
       case .delegate:

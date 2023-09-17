@@ -31,19 +31,18 @@ public struct CarouselView: View {
               .padding(.bottom, 20)
               .background(Color.ds(.black))
               .onAppear {
-                if viewStore.index >= viewStore.votes.count - 3 {
-                  store.send(.requestVoteList)
-                }
+                subStore.send(.onAppear)
+              }
+              .onDisappear {
+                subStore.send(.onDisappear)
               }
           }
         }
         .offset(y: yOffset)
-        .padding(.vertical, height)
         .animation(.spring(), value: yOffset)
         .gesture(dragGesture)
       }
       .scrollDisabled(true)
-      .padding(.vertical, -height)
       .clipped()
     }
     .task {
