@@ -7,6 +7,7 @@ extension SM {
     case ic_check
     case ic_xmark
     case ic_exclamation
+    case ic_salmal
 
     /// 레거시
     case chevron_left = "chevron.left"
