@@ -14,22 +14,40 @@ public struct LoginView: View {
   }
   
   public var body: some View {
-    VStack {
-      Spacer()
-      
-      VStack(spacing: 12) {
-        KakaoButton
-        AppleButton
+    NavigationStackStore(store.scope(state: \.path, action: LoginCore.Action.path)) {
+      VStack {
+        Spacer()
+        
+        VStack(spacing: 12) {
+          KakaoButton
+          AppleButton
+        }
+      }
+      .padding(.horizontal, 20)
+    } destination: { state in
+      switch state {
+      case .termsScreen:
+        CaseLet(
+          /LoginCore.Path.State.termsScreen,
+           action: LoginCore.Path.Action.termsScreen,
+           then: TermsView.init(store:)
+        )
+      case .signUpScreen:
+        CaseLet(
+          /LoginCore.Path.State.signUpScreen,
+           action: LoginCore.Path.Action.signUpScreen,
+           then: SignUpView.init(store:)
+        )
       }
     }
-    .padding(.horizontal, 20)
   }
 }
 
 private extension LoginView {
   var KakaoButton: some View {
     Button {
-      
+      // TODO: kakao login
+      store.send(.moveToTerms(id: "sample-id", provider: "kakao"))
     } label: {
       Text("카카오톡 으로 시작하기")
         .foregroundColor(.ds(.black))
@@ -60,6 +78,9 @@ private extension LoginView {
         case let .failure(error):
           print(error.localizedDescription)
         }
+        
+        // TODO: apple login
+        store.send(.moveToTerms(id: "sample-id", provider: "apple"))
       }
     )
     .signInWithAppleButtonStyle(.white)

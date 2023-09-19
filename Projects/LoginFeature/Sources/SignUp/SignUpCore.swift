@@ -4,8 +4,8 @@ import PhotosUI
 import Core
 import ComposableArchitecture
 
-struct SignUpCore: Reducer {
-  struct State: Equatable {
+public struct SignUpCore: Reducer {
+  public struct State: Equatable {
     var text: String = ""
     var errorMessage: String?
     var imageData: Data?
@@ -15,9 +15,11 @@ struct SignUpCore: Reducer {
     var isConfirmButtonEnabled: Bool {
       imageData != nil && (1...20).contains(text.count)
     }
+    
+    public init() {}
   }
   
-  enum Action: Equatable, BindableAction {
+  public enum Action: Equatable, BindableAction {
     case binding(BindingAction<State>)
     case textChanged(text: String)
     case tapConfirmButton
@@ -25,9 +27,11 @@ struct SignUpCore: Reducer {
     case setErrorMessage(String)
   }
   
+  public init() {}
+  
   @Dependency(\.network) var network
   
-  var body: some ReducerOf<Self> {
+  public var body: some ReducerOf<Self> {
     BindingReducer()
     Reduce { state, action in
       switch action {

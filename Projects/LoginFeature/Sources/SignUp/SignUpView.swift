@@ -34,6 +34,7 @@ struct SignUpView: View {
       .disabled(!viewStore.isConfirmButtonEnabled)
     }
     .padding(.horizontal, 18)
+    .navigationBarBackButtonHidden()
   }
 }
 
@@ -73,6 +74,7 @@ private extension SignUpView {
         .font(.ds(.title2(.semibold)))
     )
     .tint(.ds(.green1))
+    .foregroundColor(.ds(.green1))
     .frame(height: 60)
     .multilineTextAlignment(.center)
   }

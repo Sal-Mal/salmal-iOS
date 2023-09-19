@@ -15,7 +15,6 @@ public struct TermsView: View {
   public var body: some View {
     VStack(spacing: 0) {
       WelcomeHeader
-        .debug()
         .padding(.top, 160)
       
       Spacer()
@@ -23,15 +22,15 @@ public struct TermsView: View {
       VStack(spacing: 44) {
         Terms
           .padding(.horizontal, 4)
-        
-        SMBoxButton(title: "다음") {
-          // TODO: next
+
+        NavigationLink(state: LoginCore.Path.State.signUpScreen(.init())) {
+          SMBoxLabel(title: "다음")
+            .disabled(!viewStore.nextButtonState)
         }
-        .disabled(!viewStore.nextButtonState)
       }
-      .debug()
     }
     .padding(.horizontal, 18)
+    .navigationBarBackButtonHidden()
   }
 }
 
