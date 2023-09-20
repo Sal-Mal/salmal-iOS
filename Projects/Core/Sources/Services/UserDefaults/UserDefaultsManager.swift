@@ -1,4 +1,5 @@
 import Foundation
+import Dependencies
 
 // MARK: - UserDefaultsKey
 
@@ -11,17 +12,35 @@ enum UserDefaultsKey: String {
 
 // MARK: - UserDefaultsManager
 
-public enum UserDefaultManager {
+public struct UserDefaultManager {
+  public static let shared = UserDefaultManager()
+  
+  private init() { }
   
   @UserDefault(key: UserDefaultsKey.socialProvider)
-  public static var socialProvider: String?
+  public var socialProvider: String?
   
   @UserDefault(key: UserDefaultsKey.socialID)
-  public static var socialID: String?
+  public var socialID: String?
   
   @UserDefault(key: UserDefaultsKey.refreshToken)
-  public static var refreshToken: String?
+  public var refreshToken: String?
   
   @UserDefault(key: UserDefaultsKey.accessToken)
-  public static var accessToken: String?
+  public var accessToken: String?
+}
+
+// MARK: - Dependency
+
+public enum UserDefaultManagerKey: DependencyKey {
+  public static let liveValue = UserDefaultManager.shared
+  public static let previewValue = UserDefaultManager.shared
+  public static let testValue = UserDefaultManager.shared
+}
+
+public extension DependencyValues {
+  var userDefault: UserDefaultManager {
+    get { self[UserDefaultManagerKey.self] }
+    set { self[UserDefaultManagerKey.self] = newValue }
+  }
 }
