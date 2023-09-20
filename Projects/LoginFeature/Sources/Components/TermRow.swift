@@ -18,6 +18,7 @@ struct TermRow: View {
         .fit(size: 16)
         .padding(4)
         .background(RoundedRectangle(cornerRadius: 4).fill(isChecked ? Color.ds(.green1) : Color.ds(.gray3)))
+        .animation(.default, value: isChecked)
         .onTapGesture {
           isChecked.toggle()
         }

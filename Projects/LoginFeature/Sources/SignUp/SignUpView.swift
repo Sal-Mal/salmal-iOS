@@ -8,6 +8,7 @@ import UI
 struct SignUpView: View {
   let store: StoreOf<SignUpCore>
   @ObservedObject var viewStore: ViewStoreOf<SignUpCore>
+  @FocusState private var isFocused: Bool
   
   init(store: StoreOf<SignUpCore>) {
     self.store = store
@@ -35,6 +36,10 @@ struct SignUpView: View {
     }
     .padding(.horizontal, 18)
     .navigationBarBackButtonHidden()
+    .contentShape(Rectangle())
+    .onTapGesture {
+      isFocused = false
+    }
   }
 }
 
@@ -77,12 +82,13 @@ private extension SignUpView {
     .foregroundColor(.ds(.green1))
     .frame(height: 60)
     .multilineTextAlignment(.center)
+    .focused($isFocused)
   }
 }
 
 struct SignUpView_Previews: PreviewProvider {
   static var previews: some View {
-    SignUpView(store: .init(initialState: .init()) {
+    SignUpView(store: .init(initialState: .init(marketingAgreement: true)) {
       SignUpCore()
     })
       .preferredColorScheme(.dark)

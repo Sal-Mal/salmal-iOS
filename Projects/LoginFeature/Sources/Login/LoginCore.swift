@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import Core
 
 public struct LoginCore: Reducer {
   public struct State: Equatable {
@@ -15,6 +16,8 @@ public struct LoginCore: Reducer {
   
   public init() {}
   
+  @Dependency(\.userDefault) var userDefault
+  
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
@@ -22,14 +25,14 @@ public struct LoginCore: Reducer {
         return .none
         
       case let .moveToTerms(id, provider):
+        userDefault.socialID = id
+        userDefault.socialProvider = provider
+        
         state.path.append(.termsScreen())
         return .none
         
       case .moveToSignUp:
-        state.path.append(.signUpScreen())
-        return .none
-        
-      default:
+//        state.path.append(.signUpScreen())
         return .none
       }
     }
@@ -41,7 +44,7 @@ public struct LoginCore: Reducer {
   public struct Path: Reducer {
     public enum State: Equatable {
       case termsScreen(TermsCore.State = .init())
-      case signUpScreen(SignUpCore.State = .init())
+      case signUpScreen(SignUpCore.State)
     }
     
     public enum Action: Equatable {

@@ -50,7 +50,7 @@ extension VoteDTO {
     )
   }
   
-  public var toDomian: Vote {
+  public var toDomain: Vote {
     Vote(
       id: id,
       imageURL: imageUrl,

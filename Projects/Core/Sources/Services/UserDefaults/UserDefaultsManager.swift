@@ -12,7 +12,7 @@ enum UserDefaultsKey: String {
 
 // MARK: - UserDefaultsManager
 
-public struct UserDefaultManager {
+public final class UserDefaultManager {
   public static let shared = UserDefaultManager()
   
   private init() { }
@@ -28,6 +28,13 @@ public struct UserDefaultManager {
   
   @UserDefault(key: UserDefaultsKey.accessToken)
   public var accessToken: String?
+  
+  func removeAll() {
+    socialProvider = nil
+    socialID = nil
+    refreshToken = nil
+    accessToken = nil
+  }
 }
 
 // MARK: - Dependency

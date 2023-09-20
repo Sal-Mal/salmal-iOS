@@ -16,7 +16,11 @@ public struct SignUpCore: Reducer {
       imageData != nil && (1...20).contains(text.count)
     }
     
-    public init() {}
+    let marketingAgreement: Bool
+    
+    public init(marketingAgreement: Bool) {
+      self.marketingAgreement = marketingAgreement
+    }
   }
   
   public enum Action: Equatable, BindableAction {
@@ -29,6 +33,7 @@ public struct SignUpCore: Reducer {
   
   public init() {}
   
+  @Dependency(\.userDefault) var userDefault
   @Dependency(\.network) var network
   
   public var body: some ReducerOf<Self> {
@@ -57,16 +62,26 @@ public struct SignUpCore: Reducer {
         return .none
         
       case .tapConfirmButton:
-        return .run { [state] send in
-          // TODO: UserDefault
-          let model = SignUpDTO(
-            providerId: "",
-            nickName: state.text,
-            marketingInformationConsent: true
-          )
-          let api = AuthAPI.signUp(id: "kakao", body: model)
+        guard let id = userDefault.socialID,
+              let provider = userDefault.socialProvider,
+              let imageData = state.imageData
+        else {
+          return .none
+        }
+        
+        let model = SignUpDTO(
+          providerId: id,
+          nickName: state.text,
+          marketingInformationConsent: state.marketingAgreement
+        )
+        let api = AuthAPI.signUp(id: provider, body: model)
+        
+        return .run { send in
           let dto = try await network.request(api, type: TokenDTO.self)
-          // TODO: SaveToken
+          
+          debugPrint(dto)
+          userDefault.accessToken = dto.accessToken
+          userDefault.refreshToken = dto.refreshToken
         } catch: { error, send in
           // TODO: 에러처리
         }

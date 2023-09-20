@@ -23,7 +23,7 @@ public struct TermsView: View {
         Terms
           .padding(.horizontal, 4)
 
-        NavigationLink(state: LoginCore.Path.State.signUpScreen(.init())) {
+        NavigationLink(state: LoginCore.Path.State.signUpScreen(.init(marketingAgreement: viewStore.marketing))) {
           SMBoxLabel(title: "다음")
             .disabled(!viewStore.nextButtonState)
         }
