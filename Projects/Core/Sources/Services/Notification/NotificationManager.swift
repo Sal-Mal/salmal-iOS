@@ -24,7 +24,6 @@ public enum NotiManager {
     scheduler: some Scheduler = DispatchQueue.main
   ) -> AnyPublisher<[AnyHashable: Any], Never> {
     return center.publisher(for: noti.name)
-      .print()
       .receive(on: scheduler)
       .compactMap(\.userInfo)
       .eraseToAnyPublisher()
