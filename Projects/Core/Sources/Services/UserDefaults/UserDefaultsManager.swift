@@ -3,7 +3,7 @@ import Dependencies
 
 // MARK: - UserDefaultsKey
 
-enum UserDefaultsKey: String {
+public enum UserDefaultsKey: String {
   case socialProvider
   case socialID
   case refreshToken

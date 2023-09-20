@@ -13,8 +13,8 @@ struct LoginFeatureApp: App {
   
   var body: some Scene {
     WindowGroup {
-      LoginView(store: .init(initialState: .init()) {
-        LoginCore()
+      SplashView(store: .init(initialState: .init()) {
+        SplashCore()
       })
       .preferredColorScheme(.dark)
     }

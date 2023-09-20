@@ -22,11 +22,11 @@ public struct TermsView: View {
       VStack(spacing: 44) {
         Terms
           .padding(.horizontal, 4)
-
-        NavigationLink(state: LoginCore.Path.State.signUpScreen(.init(marketingAgreement: viewStore.marketing))) {
-          SMBoxLabel(title: "다음")
-            .disabled(!viewStore.nextButtonState)
+    
+        SMBoxButton(title: "다음") {
+          store.send(.moveToSignUpScreen(viewStore.marketing))
         }
+        .disabled(!viewStore.nextButtonState)
       }
     }
     .padding(.horizontal, 18)

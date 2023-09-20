@@ -5,6 +5,8 @@ public enum NotiManager {
   public enum Noti: String {
     case reportVote
     case banUser
+    case login
+    case logout
     
     var name: Notification.Name {
       return .init(self.rawValue)
@@ -21,6 +23,7 @@ public enum NotiManager {
     return center.publisher(for: noti.name)
       .receive(on: scheduler)
       .compactMap(\.userInfo)
+      .print()
       .eraseToAnyPublisher()
   }
 }

@@ -17,6 +17,7 @@ public struct TermsCore: Reducer {
   public enum Action: Equatable, BindableAction {
     case binding(BindingAction<State>)
     case toggleAll
+    case moveToSignUpScreen(Bool)
   }
   
   public init() {}
@@ -35,8 +36,8 @@ public struct TermsCore: Reducer {
         state.personalInformation = state.all
         state.marketing = state.all
         return .none
-
-      default:
+        
+      case .moveToSignUpScreen:
         return .none
       }
     }

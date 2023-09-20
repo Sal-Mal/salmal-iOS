@@ -135,7 +135,7 @@ extension SalMalContentView {
 struct SalMalContentView_Previews: PreviewProvider {
   
   static var previews: some View {
-    SalMalContentView(store: .init(initialState: .init(vote: VoteDTO.mock.toDomian)) {
+    SalMalContentView(store: .init(initialState: .init(vote: VoteDTO.mock.toDomain)) {
       SalMalContentCore()
         ._printChanges()
     })
