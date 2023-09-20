@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import Alamofire
 
 import Core
 import ComposableArchitecture
@@ -74,7 +75,7 @@ public struct SignUpCore: Reducer {
           nickName: state.text,
           marketingInformationConsent: state.marketingAgreement
         )
-        let api = AuthAPI.signUp(id: provider, body: model)
+        let api = AuthAPI.signUp(id: provider, params: model)
         
         return .run { send in
           let dto = try await network.request(api, type: TokenDTO.self)
@@ -83,7 +84,8 @@ public struct SignUpCore: Reducer {
           userDefault.accessToken = dto.accessToken
           userDefault.refreshToken = dto.refreshToken
         } catch: { error, send in
-          // TODO: 에러처리
+          // TODO: 에러처리 (중복 id, 통신 실패)
+          print(error)
         }
         
       case let .setImage(data):

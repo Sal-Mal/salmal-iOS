@@ -1,10 +1,10 @@
 import Foundation
 
 public enum AuthAPI: TargetType {
-  case logIn(id: String)
+  case logIn(params: Encodable)
   case logOut
-  case signUp(id: String, body: Encodable)
-  case requestToken(body: Encodable)
+  case signUp(id: String, params: Encodable)
+  case requestToken(params: Encodable)
   
   public var baseURL: String {
     return "http://3.38.192.126/api/auth"
@@ -32,34 +32,32 @@ public enum AuthAPI: TargetType {
     }
   }
   
-  public var parameters: Parameters {
+  public var parameters: Encodable? {
     switch self {
-    case let .logIn(id):
-      // TODO: return provider id
-      return [:]
+    case let .logIn(params):
+      return params
     case .logOut:
-      return [:]
-    case let .signUp(id, body):
-      // TODO: return body
-      return [:]
-    case .requestToken:
-      // TODO: return refreshToken
-      return [:]
+      return nil
+    case let .signUp(_, params):
+      return params
+    case let .requestToken(params):
+      return params
     }
   }
   
-  public var headers: HTTPHeaders {
+  public var headers: [String: String]? {
     switch self {
-    case let .logIn(id):
-      return []
+    case .logIn:
+      return nil
+      
     case .logOut:
-      // TODO: Header
-      return []
-    case let .signUp(id, body):
-      return []
+      return ["Authorization": "Bearer \(UserDefaultManager.shared.accessToken ?? "")"]
+      
+    case .signUp:
+      return nil
+      
     case .requestToken:
-      return []
+      return nil
     }
-    return []
   }
 }

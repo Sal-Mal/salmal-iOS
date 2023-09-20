@@ -19,11 +19,14 @@ public enum NotiManager {
     center.post(name: noti.name, object: nil, userInfo: userInfo)
   }
   
-  public static func publisher(_ noti: Noti, scheduler: some Scheduler = DispatchQueue.main) -> AnyPublisher<[AnyHashable: Any], Never> {
+  public static func publisher(
+    _ noti: Noti,
+    scheduler: some Scheduler = DispatchQueue.main
+  ) -> AnyPublisher<[AnyHashable: Any], Never> {
     return center.publisher(for: noti.name)
+      .print()
       .receive(on: scheduler)
       .compactMap(\.userInfo)
-      .print()
       .eraseToAnyPublisher()
   }
 }

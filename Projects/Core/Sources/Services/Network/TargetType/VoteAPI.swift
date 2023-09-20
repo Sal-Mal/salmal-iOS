@@ -61,13 +61,12 @@ public enum VoteAPI: TargetType {
     }
   }
   
-  public var parameters: Parameters {
+  public var parameters: Encodable? {
     // TODO: - Parameters
-    return [:]
+    return nil
   }
   
-  public var headers: HTTPHeaders {
-    // TODO: - AccessToken
-    return [.authorization(bearerToken: "토큰들어가야함")]
+  public var headers: [String: String]? {
+    return ["Authorization": "Bearer \(UserDefaultManager.shared.accessToken ?? "")"]
   }
 }

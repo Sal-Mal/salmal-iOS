@@ -8,7 +8,7 @@ public struct LoginCore: Reducer {
   
   public enum Action: Equatable {
     case saveSocialData(id: String, provider: String)
-    case requestAutoLogin(String)
+    case requestLogin(String)
     case moveToTermScreen
   }
   
@@ -24,12 +24,13 @@ public struct LoginCore: Reducer {
       case let .saveSocialData(id, provider):
         userDefault.socialID = id
         userDefault.socialProvider = provider
-        return .send(.requestAutoLogin(id))
+        return .send(.requestLogin(id))
         
-      case let .requestAutoLogin(id):
-
+      case let .requestLogin(id):
         return .run { send in
-          let dto = try await network.request(AuthAPI.logIn(id: id), type: TokenDTO.self)
+          let model = LoginDTO(providerId: id)
+          let api = AuthAPI.logIn(params: model)
+          let dto = try await network.request(api, type: TokenDTO.self)
           userDefault.accessToken = dto.accessToken
           userDefault.refreshToken = dto.refreshToken
           NotiManager.post(.login)

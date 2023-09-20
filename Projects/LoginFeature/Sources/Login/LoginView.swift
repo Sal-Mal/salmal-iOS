@@ -31,7 +31,7 @@ private extension LoginView {
   var KakaoButton: some View {
     Button {
       // TODO: kakao login
-      store.send(.saveSocialData(id: "sample-id", provider: "kakao"))
+      store.send(.saveSocialData(id: "Sample-Kakao-Id", provider: "kakao"))
     } label: {
       Text("카카오톡 으로 시작하기")
         .foregroundColor(.ds(.black))
@@ -64,7 +64,7 @@ private extension LoginView {
         }
         
         // TODO: apple login
-        store.send(.saveSocialData(id: "sample-id", provider: "apple"))
+        store.send(.saveSocialData(id: "sample-apple-id", provider: "apple"))
       }
     )
     .signInWithAppleButtonStyle(.white)

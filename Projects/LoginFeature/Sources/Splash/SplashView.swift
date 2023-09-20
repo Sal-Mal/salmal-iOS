@@ -1,6 +1,7 @@
 import SwiftUI
 
 import ComposableArchitecture
+import Core
 import UI
 
 public struct SplashView: View {

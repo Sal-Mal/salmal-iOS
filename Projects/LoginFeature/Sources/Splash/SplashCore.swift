@@ -38,7 +38,6 @@ public struct SplashCore: Reducer {
         }
         
       case .onAppeared:
-        //
         if let id = userDefault.socialID {
           return .send(.requestAutoLogin(id))
         }
@@ -47,12 +46,13 @@ public struct SplashCore: Reducer {
         
       case let .requestAutoLogin(id):
         return .run { send in
-          let dto = try await network.request(AuthAPI.logIn(id: id), type: TokenDTO.self)
+          let params = LoginDTO(providerId: id)
+          let dto = try await network.request(AuthAPI.logIn(params: params), type: TokenDTO.self)
           userDefault.accessToken = dto.accessToken
           userDefault.refreshToken = dto.refreshToken
           await send(.moveToMainScreen)
         } catch: { error, send in
-          
+          await send(.moveToLoginScreen)
         }
         
       case .moveToLoginScreen:
@@ -61,9 +61,6 @@ public struct SplashCore: Reducer {
         
       case .moveToMainScreen:
         NotiManager.post(.login)
-        return .none
-        
-      default:
         return .none
       }
     }
