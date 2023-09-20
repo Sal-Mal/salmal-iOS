@@ -6,6 +6,7 @@ import Core
 import UI
 
 struct SignUpView: View {
+  
   let store: StoreOf<SignUpCore>
   @ObservedObject var viewStore: ViewStoreOf<SignUpCore>
   @FocusState private var isFocused: Bool

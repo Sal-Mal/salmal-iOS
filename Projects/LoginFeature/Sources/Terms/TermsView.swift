@@ -15,13 +15,14 @@ public struct TermsView: View {
   public var body: some View {
     VStack(spacing: 0) {
       WelcomeHeader
-        .padding(.top, 160)
+        .padding(.top, 120)
       
       Spacer()
       
       VStack(spacing: 44) {
         Terms
           .padding(.horizontal, 4)
+          .frame(height: 240)
     
         SMBoxButton(title: "다음") {
           store.send(.moveToSignUpScreen(viewStore.marketing))
@@ -30,7 +31,7 @@ public struct TermsView: View {
       }
     }
     .padding(.horizontal, 18)
-    .navigationBarBackButtonHidden()
+    .smNavigationBar(title: "")
   }
 }
 
@@ -51,12 +52,29 @@ private extension TermsView {
   }
   
   var Terms: some View {
-    VStack(spacing: 0) {
+    List {
       TermRow(title: "약관 전체동의", isChecked: viewStore.binding(get: \.all, send: { _ in .toggleAll}))
-      TermRow(title: "이용약관동의(필수)", isChecked: viewStore.$termsOfUse) { }
-      TermRow(title: "개인정보 수집 및 이용동의(필수)", isChecked: viewStore.$personalInformation) { }
-      TermRow(title: "E-mail 및 SMS 광고성 정보 수신동의(선택)", isChecked: viewStore.$marketing) { }
+        .listRowInsets(.init())
+        .listRowSeparator(.hidden)
+      
+      NavigationLink(state: SplashCore.Path.State.termsDetailScreen(.init(url: "https://www.naver.com"))) {
+        TermRow(title: "이용약관동의(필수)", isChecked: viewStore.$termsOfUse)
+      }
+      .listRowInsets(.init())
+      .listRowSeparator(.hidden)
+      
+      NavigationLink(state: SplashCore.Path.State.termsDetailScreen(.init(url: "https://www.naver.com"))) {
+        TermRow(title: "개인정보 수집 및 이용동의(필수)", isChecked: viewStore.$personalInformation)
+      }
+      .listRowInsets(.init())
+      .listRowSeparator(.hidden)
+      
+      TermRow(title: "E-mail 및 SMS 광고성 정보 수신동의(선택)", isChecked: viewStore.$marketing)
+        .listRowInsets(.init())
+        .listRowSeparator(.hidden)
     }
+    .listStyle(.plain)
+    .scrollDisabled(true)
   }
 }
 

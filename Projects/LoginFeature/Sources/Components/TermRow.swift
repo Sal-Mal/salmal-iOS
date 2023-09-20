@@ -4,12 +4,10 @@ import UI
 struct TermRow: View {
   let title: String
   @Binding var isChecked: Bool
-  let tapAction: (() -> Void)?
   
-  init(title: String, isChecked: Binding<Bool>, tapAction: (() -> Void)? = nil) {
+  init(title: String, isChecked: Binding<Bool>) {
     self.title = title
     self._isChecked = isChecked
-    self.tapAction = tapAction
   }
   
   var body: some View {
@@ -36,10 +34,10 @@ struct TermRow: View {
 struct TermRow_Previews: PreviewProvider {
   static var previews: some View {
     VStack(spacing: 0) {
-      TermRow(title: "약관 전체동의", isChecked: .constant(true), tapAction: {})
-      TermRow(title: "약관 전체동의", isChecked: .constant(false), tapAction: {})
-      TermRow(title: "약관 전체동의", isChecked: .constant(false), tapAction: {})
-      TermRow(title: "약관 전체동의", isChecked: .constant(true), tapAction: {})
+      TermRow(title: "약관 전체동의", isChecked: .constant(true))
+      TermRow(title: "약관 전체동의", isChecked: .constant(false))
+      TermRow(title: "약관 전체동의", isChecked: .constant(false))
+      TermRow(title: "약관 전체동의", isChecked: .constant(true))
     }
     .padding()
     .preferredColorScheme(.dark)

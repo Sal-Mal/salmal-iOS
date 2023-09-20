@@ -76,24 +76,31 @@ extension SplashCore {
       case loginScreen(LoginCore.State = .init())
       case termsScreen(TermsCore.State = .init())
       case signUpScreen(SignUpCore.State)
+      case termsDetailScreen(TermDetailCore.State)
     }
     
     public enum Action: Equatable {
       case loginScreen(LoginCore.Action)
       case termsScreen(TermsCore.Action)
       case signUpScreen(SignUpCore.Action)
+      case termsDetailScreen(TermDetailCore.Action)
     }
     
     public var body: some ReducerOf<Self> {
       Scope(state: /State.loginScreen, action: /Action.loginScreen) {
         LoginCore()
       }
+      
       Scope(state: /State.termsScreen, action: /Action.termsScreen) {
         TermsCore()
       }
       
       Scope(state: /State.signUpScreen, action: /Action.signUpScreen) {
         SignUpCore()
+      }
+      
+      Scope(state: /State.termsDetailScreen, action: /Action.termsDetailScreen) {
+        TermDetailCore()
       }
     }
   }

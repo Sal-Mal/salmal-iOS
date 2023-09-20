@@ -16,7 +16,9 @@ public enum NotiManager {
   static let center = NotificationCenter.default
   
   public static func post(_ noti: Noti, userInfo: [AnyHashable: Any]? = nil) {
-    center.post(name: noti.name, object: nil, userInfo: userInfo)
+    DispatchQueue.main.async {
+      center.post(name: noti.name, object: nil, userInfo: userInfo)
+    }
   }
   
   public static func publisher(

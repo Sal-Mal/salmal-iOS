@@ -39,10 +39,16 @@ public struct SplashView: View {
            action: SplashCore.Path.Action.signUpScreen,
            then: SignUpView.init(store:)
         )
+      case .termsDetailScreen:
+        CaseLet(
+          /SplashCore.Path.State.termsDetailScreen,
+           action: SplashCore.Path.Action.termsDetailScreen,
+           then: TermDetailView.init(store:)
+        )
       }
     }
     .task {
-      try! await Task.sleep(for: .seconds(3))
+      try! await Task.sleep(for: .seconds(2))
       store.send(.onAppeared)
     }
   }
