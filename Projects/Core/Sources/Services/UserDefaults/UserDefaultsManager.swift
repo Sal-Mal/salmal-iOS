@@ -1,16 +1,27 @@
 import Foundation
 
-@propertyWrapper
-struct UserDefault<T> {
-  private let key: String
-//  private let defaultValue: T
+// MARK: - UserDefaultsKey
+
+enum UserDefaultsKey: String {
+  case socialProvider
+  case socialID
+  case refreshToken
+  case accessToken
+}
+
+// MARK: - UserDefaultsManager
+
+public enum UserDefaultManager {
   
-  var wrappedValue: T? {
-    get {
-      return UserDefaults.standard.object(forKey: key) as? T
-    }
-    set {
-      UserDefaults.standard.set(newValue, forKey: key)
-    }
-  }
+  @UserDefault(key: UserDefaultsKey.socialProvider)
+  public static var socialProvider: String?
+  
+  @UserDefault(key: UserDefaultsKey.socialID)
+  public static var socialID: String?
+  
+  @UserDefault(key: UserDefaultsKey.refreshToken)
+  public static var refreshToken: String?
+  
+  @UserDefault(key: UserDefaultsKey.accessToken)
+  public static var accessToken: String?
 }
