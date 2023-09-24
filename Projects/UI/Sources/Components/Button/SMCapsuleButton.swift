@@ -23,8 +23,8 @@ public struct SMCapsuleButton: View {
   public init(
     title: String,
     iconImage: Image? = nil,
-    foregroundColor: Color = .ds(.black),
-    backgroundColor: Color = .ds(.white),
+    foregroundColor: Color = .ds(.white),
+    backgroundColor: Color = .ds(.black),
     action: @escaping () -> Void
   ) {
     self.title = title
@@ -38,8 +38,8 @@ public struct SMCapsuleButton: View {
   public init(
     title: String,
     iconURL: URL,
-    foregroundColor: Color = .ds(.black),
-    backgroundColor: Color = .ds(.white),
+    foregroundColor: Color = .ds(.white),
+    backgroundColor: Color = .ds(.black),
     action: @escaping () -> Void
   ) {
     self.title = title
@@ -55,18 +55,25 @@ public struct SMCapsuleButton: View {
       self.action()
     } label: {
       HStack(spacing: 8) {
-        if let image = iconImage {
-          image
+        if let iconImage {
+          iconImage
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(width: 32, height: 32)
             .clipShape(Circle())
 
-        } else {
-          AsyncImage(url: iconURL)
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 32, height: 32)
-            .clipShape(Circle())
+        }
+        
+        if let iconURL {
+          
+          // TODO: 
+          CacheAsyncImage(url: iconURL) { phase in
+            if case let .success(image) = phase {
+              image
+                .fit(size: 32)
+                .clipShape(Circle())
+            }
+          }
         }
 
         Text(title)

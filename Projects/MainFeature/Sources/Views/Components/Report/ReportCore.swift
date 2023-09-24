@@ -17,6 +17,7 @@ public struct ReportCore: Reducer {
   }
   
   @Dependency(\.network) var network
+  @Dependency(\.dismiss) var dismiss
   
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
@@ -29,16 +30,20 @@ public struct ReportCore: Reducer {
             try await network.request(VoteAPI.report(id: id))
             NotiManager.post(.reportVote, userInfo: ["id": id])
             // TODO:  토스트 메시지 띄우기
+            await dismiss()
           } catch: { error, send in
             // TODO: 에러처리 (토스트)
+            await dismiss()
           }
         case 1:
           return .run { [id = state.memberID] send in
             try await network.request(MemberAPI.ban(id: id))
             NotiManager.post(.banUser, userInfo: ["id": id])
             // TODO:  토스트 메시지 띄우기
+            await dismiss()
           } catch: { error, send in
             // TODO: 에러처리 (토스트)
+            await dismiss()
           }
           
         default:

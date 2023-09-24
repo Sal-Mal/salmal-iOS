@@ -7,6 +7,8 @@ extension SM {
     case ic_check
     case ic_xmark
     case ic_exclamation
+    case ic_salmal
+    case ic_salmalApp
     case ic_send
     case ic_edit
     case ic_component

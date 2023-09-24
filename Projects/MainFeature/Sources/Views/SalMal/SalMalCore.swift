@@ -46,7 +46,7 @@ public struct SalMalCore: Reducer {
         
         state.salButtonState = .idle
         state.malButtonState = .idle
-        
+
         return .none
         
       case let .bestAction(.delegate(.updateVote(vote))):
@@ -58,7 +58,6 @@ public struct SalMalCore: Reducer {
         state.malButtonState = .idle
         
         return .none
-        
         
       case .moveToAlarm:
         // TODO: 알람화면으로 이동
@@ -76,6 +75,7 @@ public struct SalMalCore: Reducer {
           state.salButtonState = .selected
           state.malButtonState = .unSelected
         }
+        
         return .none
         
       case .notBuyTapped:

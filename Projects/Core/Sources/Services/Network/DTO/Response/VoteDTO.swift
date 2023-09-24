@@ -18,14 +18,21 @@ public struct VoteDTO: Responsable {
   public let imageUrl: String
   public let nickName: String
   public let memberImageUrl: String
-  public let memberID: Int
+  public let memberId: Int
   public let commentCnt: Int
   public let likeCnt: Int
   public let disLikeCnt: Int
   public let totalEvaludationCnt: Int
-  public let bookMarkCnt: Int
+//  public let bookMarkCnt: Int
   public let createdDate: Date
   public let isBookmarked: Bool
+  public let status: VoteStatus
+  
+  public enum VoteStatus: String, Decodable {
+    case like
+    case disLike
+    case none
+  }
 }
 
 extension VoteDTO {
@@ -39,14 +46,15 @@ extension VoteDTO {
       imageUrl: "https://picsum.photos/300/600",
       nickName: "dudu",
       memberImageUrl: "https://picsum.photos/100",
-      memberID: 0,
+      memberId: 0,
       commentCnt: (0...100).randomElement()!,
       likeCnt: sal,
       disLikeCnt: mal,
       totalEvaludationCnt: total,
-      bookMarkCnt: (100...1000).randomElement()!,
+//      bookMarkCnt: (100...1000).randomElement()!,
       createdDate: Date.now,
-      isBookmarked: Bool.random()
+      isBookmarked: Bool.random(),
+      status: [VoteStatus.like, .disLike, .none].randomElement()!
     )
   }
   
@@ -56,13 +64,14 @@ extension VoteDTO {
       imageURL: imageUrl,
       nickName: nickName,
       memberImageURL: memberImageUrl,
-      memberID: memberID,
+      memberID: memberId,
       commentCnt: commentCnt,
       likeCount: likeCnt,
       disLikeCount: disLikeCnt,
       totalVoteCount: totalEvaludationCnt,
-      bookmarkCount: bookMarkCnt,
-      isBookmarked: isBookmarked
+//      bookmarkCount: bookMarkCnt,
+      isBookmarked: isBookmarked,
+      voteStatus: .init(rawValue: status.rawValue)!
     )
   }
 }

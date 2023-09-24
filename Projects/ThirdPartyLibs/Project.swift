@@ -15,7 +15,6 @@ let project = Project(
       sources: ["Sources/**"],
       dependencies: [
         .external(name: "Alamofire"),
-        .external(name: "Kingfisher"),
         .external(name: "ComposableArchitecture")
       ]
     )
