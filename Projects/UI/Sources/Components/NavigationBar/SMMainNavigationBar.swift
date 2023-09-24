@@ -16,7 +16,7 @@ public struct SMMainNavigationBar: ViewModifier {
       .toolbar {
         ToolbarItem(placement: .navigationBarLeading) {
           Text("Home")
-            .font(.blackHanSans(size: 24))
+            .font(.ds(.title))
             .foregroundColor(selection == .home ? .ds(.green1) : .ds(.white36))
             .onTapGesture {
               withAnimation {
@@ -27,7 +27,7 @@ public struct SMMainNavigationBar: ViewModifier {
 
         ToolbarItem(placement: .navigationBarLeading) {
           Text("Best")
-            .font(.blackHanSans(size: 24))
+            .font(.ds(.title))
             .foregroundColor(selection == .best ? .ds(.green1) : .ds(.white36))
             .onTapGesture {
               withAnimation {

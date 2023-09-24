@@ -13,11 +13,12 @@ public struct CarouselCore: Reducer {
     let tab: SMMainNavigationBar.Tab
     let spacing: CGFloat = 20
     var index = 0
-    var votes: [Vote] = []
+    var votes: IdentifiedArrayOf<VoteItemCore.State> = []
     var hasNext = false
   }
   
   public enum Action: Equatable {
+    case vote(id: VoteItemCore.State.ID, action: VoteItemCore.Action)
     case requestVoteList
     case updateIndex(y: CGFloat)
     case voteResponse(hasNext: Bool, votes: [Vote])
@@ -37,6 +38,10 @@ public struct CarouselCore: Reducer {
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
+        
+      case let .vote(id, action):
+        return .none
+        
       case .delegate:
         return .none
       
@@ -60,11 +65,13 @@ public struct CarouselCore: Reducer {
         
       case let .voteResponse(hasNext, votes):
         state.hasNext = hasNext
-        state.votes.append(contentsOf: votes)
+        let newItems = votes.map { VoteItemCore.State(vote: $0) }
+        state.votes.append(contentsOf: newItems)
         
         /// 최초 로딩시 업데이트 시켜주기
         if state.index == 0 {
-          return .send(.delegate(.updateVote(vote: state.votes[state.index])))
+          let item = state.votes[state.index].vote
+          return .send(.delegate(.updateVote(vote: item)))
         }
         return .none
         
@@ -77,29 +84,32 @@ public struct CarouselCore: Reducer {
           state.index = min(state.votes.count - 1, state.index + 1)
         }
         
-        return .send(.delegate(.updateVote(vote: state.votes[state.index])))
+        let item = state.votes[state.index].vote
+        return .send(.delegate(.updateVote(vote: item)))
         
       case let .removeVote(id):
-        // TODO: 삭제 처리
-//        print(state.votes.map { $0.id })
-//        print(state.index)
-//
-//        if let index = state.votes.firstIndex (where: { $0.id == id}) {
-//          state.votes.remove(at: index)
-//        }
-//
-//        print(state.votes.map { $0.id })
-//        print(state.index)
-        
-        return .none
-        
+        return .run { send in
+          // 신고 요청
+          try await networkManager.request(VoteAPI.report(id: id))
+          // TODO: - ToastMessage를 띄운다
+          // TODO: - 내가 보고있던 Votes를 없애버린다
+        } catch: { error, send in
+          // TODO: - ToastMessage를 띄운다
+        }
+
       case let .removeAllVote(userID):
-        // TODO: 해당 유저 차단
-//        state.index = 0
-//        state.votes.removeAll()
-        
-        return .none
+        return .run { send in
+          // 차단 요청
+          try await networkManager.request(MemberAPI.ban(id: userID))
+          // TODO: - ToastMessage를 띄운다
+          // TODO: - 해당 유저의 게시물을 모두 지워버린다
+        } catch: { error, send in
+          // TODO: - ToastMessage를 띄운다
+        }
       }
+    }
+    .forEach(\.votes, action: /Action.vote(id:action:)) {
+      VoteItemCore()
     }
   }
 }
