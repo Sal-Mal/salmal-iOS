@@ -1,10 +1,3 @@
-//
-//  ButtonView.swift
-//  UIDemo
-//
-//  Created by 청새우 on 2023/09/11.
-//
-
 import SwiftUI
 import UI
 
