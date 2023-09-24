@@ -30,8 +30,8 @@ public struct SMCapsuleButton: View {
   public init(
     title: String,
     iconImage: Image? = nil,
-    foregroundColor: Color = .ds(.black),
-    backgroundColor: Color = .ds(.white),
+    foregroundColor: Color = .ds(.white),
+    backgroundColor: Color = .ds(.black),
     action: @escaping () -> Void
   ) {
     self.title = title
@@ -45,8 +45,8 @@ public struct SMCapsuleButton: View {
   public init(
     title: String,
     iconURL: URL,
-    foregroundColor: Color = .ds(.black),
-    backgroundColor: Color = .ds(.white),
+    foregroundColor: Color = .ds(.white),
+    backgroundColor: Color = .ds(.black),
     action: @escaping () -> Void
   ) {
     self.title = title

@@ -19,7 +19,6 @@ public struct LiveNetworkManager: NetworkManager {
   public func request<T: Responsable>(_ target: TargetType, type: T.Type) async throws -> T {
     let data = try await request(target)
     let result = try JSONDecoder().decode(type, from: data)
-    
     return result
   }
   
@@ -32,17 +31,6 @@ public struct LiveNetworkManager: NetworkManager {
   }
   
   private func dataRequest(_ target: TargetType) throws -> DataRequest {
-    guard let url = URL(string: "\(target.baseURL)/\(target.path)") else {
-      throw SMError.network(.invalidURL)
-    }
-    
-    return session.request(
-      url,
-      method: target.method,
-      parameters: target.parameters,
-      encoding: JSONEncoding.default,
-      headers: target.headers,
-      interceptor: RetryInterceptor(retryLimit: retryLimit)
-    )
+    return session.request(target)
   }
 }
