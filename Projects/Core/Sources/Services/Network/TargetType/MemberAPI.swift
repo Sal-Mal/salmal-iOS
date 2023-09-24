@@ -64,12 +64,11 @@ public enum MemberAPI: TargetType {
     }
   }
   
-  public var parameters: Parameters {
-    return [:]
+  public var parameters: Encodable? {
+    return nil
   }
   
-  public var headers: HTTPHeaders {
-    // TODO: - AccessToken
-    return [.authorization(bearerToken: "토큰들어가야함")]
+  public var headers: [String: String]? {
+    return ["Authorization": "Bearer \(UserDefaultManager.shared.accessToken ?? "")"]
   }
 }

@@ -58,7 +58,7 @@ public struct CarouselCore: Reducer {
           }
           
           let result = try await networkManager.request(api, type: VoteListDTO.self)
-          await send(.voteResponse(hasNext: result.hasNext, votes: result.votes.map { $0.toDomian }))
+          await send(.voteResponse(hasNext: result.hasNext, votes: result.votes.map { $0.toDomain }))
         } catch: { error, send in
           // TODO: Erorr 처리
         }

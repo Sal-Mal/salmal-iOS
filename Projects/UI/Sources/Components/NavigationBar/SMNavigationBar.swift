@@ -4,8 +4,8 @@ public extension View {
   // title, color 형태를 고정한 매서드
   func smNavigationBar(
     title: String,
-    @ViewBuilder leftItems: @escaping () -> some View,
-    @ViewBuilder rightItems: @escaping () -> some View,
+    @ViewBuilder leftItems: @escaping () -> some View = { EmptyView() },
+    @ViewBuilder rightItems: @escaping () -> some View = { EmptyView() },
     color: Color = .ds(.black)
   ) -> some View {
     modifier(SMNavigationBar(
