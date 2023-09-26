@@ -58,7 +58,7 @@ public struct CarouselCore: Reducer {
             api = .bestList(size: Const.size, cursor: cursor)
           }
           
-          let result = try await networkManager.request(api, type: VoteListDTO.self)
+          let result = try await networkManager.request(api, type: VoteListResponse.self)
 //          let result = try await networkManager.request(api)
           print(result)
 //          await send(.voteResponse(hasNext: result.hasNext, votes: result.votes.map { $0.toDomain }))

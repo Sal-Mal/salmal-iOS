@@ -124,7 +124,7 @@ extension VoteItemView {
 struct VoteItemView_Previews: PreviewProvider {
   
   static var previews: some View {
-    VoteItemView(store: .init(initialState: .init(vote: VoteDTO.mock.toDomain)) {
+    VoteItemView(store: .init(initialState: .init(vote: VoteResponse.mock.toDomain)) {
       VoteItemCore()
         ._printChanges()
     })
