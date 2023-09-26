@@ -10,8 +10,6 @@ public struct Vote: Equatable, Identifiable {
   public var likeCount: Int
   public var disLikeCount: Int
   public var totalVoteCount: Int
-//  public let bookmarkCount: Int
-//  public let createdDate: Date
   public var isBookmarked: Bool
   public var voteStatus: VoteStatus
   

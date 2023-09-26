@@ -33,6 +33,9 @@ public struct LoginCore: Reducer {
           let dto = try await network.request(api, type: TokenDTO.self)
           userDefault.accessToken = dto.accessToken
           userDefault.refreshToken = dto.refreshToken
+          
+          debugPrint(dto.accessToken, dto.refreshToken)
+          
           NotiManager.post(.login)
         } catch: { error, send in
           // 로그인 실패했으면 회원가입 flow

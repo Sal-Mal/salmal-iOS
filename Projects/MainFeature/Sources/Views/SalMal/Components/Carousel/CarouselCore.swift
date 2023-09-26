@@ -3,6 +3,7 @@ import Foundation
 import UI
 import Core
 import ComposableArchitecture
+import Alamofire
 
 fileprivate enum Const {
   static let size = 20
@@ -58,10 +59,12 @@ public struct CarouselCore: Reducer {
           }
           
           let result = try await networkManager.request(api, type: VoteListDTO.self)
-          await send(.voteResponse(hasNext: result.hasNext, votes: result.votes.map { $0.toDomain }))
+//          let result = try await networkManager.request(api)
+          print(result)
+//          await send(.voteResponse(hasNext: result.hasNext, votes: result.votes.map { $0.toDomain }))
         } catch: { error, send in
           // TODO: Erorr 처리
-          print(error.localizedDescription)
+          print(error)
         }
         
       case let .voteResponse(hasNext, votes):

@@ -28,15 +28,15 @@ public enum VoteAPI: TargetType {
       return "\(id)"
     case let .homeList(size, cursor):
       if let cursor {
-        return "home/?size=\(size)?cursor-id=\(cursor)"
+        return "?searchType=HOME&size=\(size)"
       } else {
-        return "home/?size=\(size)"
+        return "?searchType=HOME&size=\(size)"
       }
     case let .bestList(size, cursor):
       if let cursor {
-        return "best/?size=\(size)?cursor-id=\(cursor)"
+        return "?searchType=BEST&size=\(size)"
       } else {
-        return "best/?size=\(size)"
+        return "?searchType=BEST&size=\(size)"
       }
     }
   }

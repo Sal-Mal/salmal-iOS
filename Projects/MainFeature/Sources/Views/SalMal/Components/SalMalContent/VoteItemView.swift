@@ -71,12 +71,10 @@ extension VoteItemView {
           .contentShape(Rectangle())
         
       default:
-        ZStack {
-          ProgressView()
-            .progressViewStyle(.circular)
-            .tint(.ds(.green1))
-            .scaleEffect(2)
-        }
+        ProgressView()
+          .progressViewStyle(.circular)
+          .tint(.ds(.green1))
+          .scaleEffect(2)
       }
     }
   }

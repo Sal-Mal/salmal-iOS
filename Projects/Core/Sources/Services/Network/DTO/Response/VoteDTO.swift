@@ -2,13 +2,13 @@ import Foundation
 
 /// 투표 목록 조회에서 쓰는 DTO
 public struct VoteListDTO: Responsable {
-  public let hasNext: Bool
+  public let hashNext: Bool
   public let votes: [VoteDTO]
 }
 
 extension VoteListDTO {
   public static var mock: VoteListDTO {
-    VoteListDTO(hasNext: true, votes: [.mock, .mock, .mock, .mock, .mock])
+    VoteListDTO(hashNext: true, votes: [.mock, .mock, .mock, .mock, .mock])
   }
 }
 
@@ -19,13 +19,13 @@ public struct VoteDTO: Responsable {
   public let nickName: String
   public let memberImageUrl: String
   public let memberId: Int
-  public let commentCnt: Int
-  public let likeCnt: Int
-  public let disLikeCnt: Int
-  public let totalEvaludationCnt: Int
+  public let commentCount: Int
+  public let likeCount: Int
+  public let disLikeCount: Int
+  public let totalEvaluationCount: Int
 //  public let bookMarkCnt: Int
-  public let createdDate: Date
-  public let isBookmarked: Bool
+  public let createdAt: Date
+  public let bookmarked: Bool
   public let status: VoteStatus
   
   public enum VoteStatus: String, Decodable {
@@ -47,13 +47,13 @@ extension VoteDTO {
       nickName: "dudu",
       memberImageUrl: "https://picsum.photos/100",
       memberId: 0,
-      commentCnt: (0...100).randomElement()!,
-      likeCnt: sal,
-      disLikeCnt: mal,
-      totalEvaludationCnt: total,
+      commentCount: (0...100).randomElement()!,
+      likeCount: sal,
+      disLikeCount: mal,
+      totalEvaluationCount: total,
 //      bookMarkCnt: (100...1000).randomElement()!,
-      createdDate: Date.now,
-      isBookmarked: Bool.random(),
+      createdAt: Date.now,
+      bookmarked: Bool.random(),
       status: [VoteStatus.like, .disLike, .none].randomElement()!
     )
   }
@@ -65,12 +65,12 @@ extension VoteDTO {
       nickName: nickName,
       memberImageURL: memberImageUrl,
       memberID: memberId,
-      commentCnt: commentCnt,
-      likeCount: likeCnt,
-      disLikeCount: disLikeCnt,
-      totalVoteCount: totalEvaludationCnt,
+      commentCnt: commentCount,
+      likeCount: likeCount,
+      disLikeCount: disLikeCount,
+      totalVoteCount: totalEvaluationCount,
 //      bookmarkCount: bookMarkCnt,
-      isBookmarked: isBookmarked,
+      isBookmarked: bookmarked,
       voteStatus: .init(rawValue: status.rawValue)!
     )
   }
