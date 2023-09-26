@@ -1,5 +1,7 @@
 import SwiftUI
 
+import UI
+
 enum Demo: String, CaseIterable {
   case fonts = "폰트"
   case colors = "컬러"
@@ -29,12 +31,21 @@ enum Demo: String, CaseIterable {
   }
 }
 
+
 struct ContentView: View {
-  
+
+  @EnvironmentObject private var toastManager: SMToastManager
+
   var body: some View {
     NavigationStack {
-      List(Demo.allCases, id: \.rawValue) { demo in
-        NavigationLink(demo.rawValue, destination: demo.content)
+      VStack {
+        List(Demo.allCases, id: \.rawValue) { demo in
+          NavigationLink(demo.rawValue, destination: demo.content)
+        }
+
+        Button("토스트 열기") {
+          toastManager.showToast(.init(type: .success("토스트 열기")))
+        }
       }
     }
   }
