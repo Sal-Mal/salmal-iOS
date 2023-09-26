@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Comment {
+public struct Comment: Equatable {
   let id: Int
   let content: String
   let createdAt: Date
@@ -8,7 +8,8 @@ public struct Comment {
   let replys: [Reply]
 }
 
-public struct Reply {
+public struct Reply: Equatable
+{
   let id: Int
   let content: String
   let createdDate: Date

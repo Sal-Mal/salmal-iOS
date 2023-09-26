@@ -15,7 +15,7 @@ public protocol Responsable: Decodable {
 
 /// TCA DependencyKey를 정의
 public enum NetworkManagerKey: DependencyKey {
-  public static let liveValue: any NetworkManager = LiveNetworkManager()
+  public static let liveValue: any NetworkManager = MockNetworkManager()
   public static let previewValue: any NetworkManager = MockNetworkManager()
   public static let testValue: any NetworkManager = MockNetworkManager()
 }

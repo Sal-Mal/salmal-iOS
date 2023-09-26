@@ -34,7 +34,7 @@ public struct CommentResponse: Responsable {
     )
   }
   
-  var toDomain: Comment {
+  public var toDomain: Comment {
     .init(
       id: id,
       content: content,
@@ -55,7 +55,7 @@ public struct ReplyResponse: Responsable {
     .init(id: 1, content: "농부록 같아요...", createdDate: .now, updatedDate: .now)
   }
   
-  var toDomain: Reply {
+  public var toDomain: Reply {
     .init(
       id: id,
       content: content,
