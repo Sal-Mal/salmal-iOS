@@ -15,21 +15,27 @@ public struct CommentListResponse: Responsable {
 
 public struct CommentResponse: Responsable {
   let id: Int
+  let memberId: Int
+  let memberImageUrl: String
   let content: String
+  let liked: Bool
+  let likeCount: Int
   let createdAt: Date
   let updatedAt: Date
   let replys: [ReplyResponse]
   
   public static var mock: CommentResponse {
     .init(
-      id: 1,
-      content: "농부록 같아요...",
+      id: (0...10).randomElement()!,
+      memberId: (0...10).randomElement()!,
+      memberImageUrl: "https://picsum.photos/100",
+      content: "농부룩 같아요...!!!",
+      liked: Bool.random(),
+      likeCount: (0...100).randomElement()!,
       createdAt: .now,
       updatedAt: .now,
       replys: [
-        ReplyResponse.mock,
-        ReplyResponse.mock,
-        ReplyResponse.mock
+        .mock, .mock, .mock, .mock
       ]
     )
   }
@@ -37,7 +43,11 @@ public struct CommentResponse: Responsable {
   public var toDomain: Comment {
     .init(
       id: id,
+      memberId: memberId,
+      memberImageUrl: memberImageUrl,
       content: content,
+      liked: liked,
+      likeCount: likeCount,
       createdAt: createdAt,
       updatedAt: updatedAt,
       replys: replys.map(\.toDomain)
@@ -47,18 +57,35 @@ public struct CommentResponse: Responsable {
 
 public struct ReplyResponse: Responsable {
   let id: Int
+  let memberId: Int
+  let memberImageUrl: String
   let content: String
+  let liked: Bool
+  let likeCount: Int
   let createdDate: Date
   let updatedDate: Date
   
   public static var mock: ReplyResponse {
-    .init(id: 1, content: "농부록 같아요...", createdDate: .now, updatedDate: .now)
+    .init(
+      id: (0...10).randomElement()!,
+      memberId: (0...10).randomElement()!,
+      memberImageUrl: "https://picsum.photos/100",
+      content: "농부룩 같아요...",
+      liked: Bool.random(),
+      likeCount: (0...100).randomElement()!,
+      createdDate: .now,
+      updatedDate: .now
+    )
   }
   
   public var toDomain: Reply {
     .init(
       id: id,
+      memberId: memberId,
+      memberImageUrl: memberImageUrl,
       content: content,
+      liked: liked,
+      likeCount: likeCount,
       createdDate: createdDate,
       updatedDate: updatedDate
     )
