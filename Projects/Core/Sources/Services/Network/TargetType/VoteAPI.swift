@@ -10,7 +10,7 @@ public enum VoteAPI: TargetType {
   case bestList(size: Int, cursor: Int? = nil) // Best 목록 조회
   
   public var baseURL: String {
-    return "http://3.38.192.126/api/votes/"
+    return "http://3.38.192.126/api/votes"
   }
   
   public var path: String {
@@ -53,9 +53,7 @@ public enum VoteAPI: TargetType {
       return .get
     case .delete:
       return .delete
-    case .homeList:
-      return .get
-    case .bestList:
+    case .homeList, .bestList:
       return .get
     }
   }
@@ -66,6 +64,6 @@ public enum VoteAPI: TargetType {
   }
   
   public var headers: [String: String]? {
-    return ["Authorization": "Bearer \(UserDefaultManager.shared.accessToken ?? "")"]
+    return ["Authorization": "Bearer \(UDManager.shared.accessToken ?? "")"]
   }
 }

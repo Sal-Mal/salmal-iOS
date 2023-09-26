@@ -3,7 +3,7 @@ import Dependencies
 
 // MARK: - UserDefaultsKey
 
-public enum UserDefaultsKey: String {
+public enum UDKey: String {
   case socialProvider
   case socialID
   case refreshToken
@@ -12,21 +12,21 @@ public enum UserDefaultsKey: String {
 
 // MARK: - UserDefaultsManager
 
-public final class UserDefaultManager {
-  public static let shared = UserDefaultManager()
+public final class UDManager {
+  public static let shared = UDManager()
   
   private init() { }
   
-  @UserDefault(key: UserDefaultsKey.socialProvider)
+  @UD(key: UDKey.socialProvider)
   public var socialProvider: String?
   
-  @UserDefault(key: UserDefaultsKey.socialID)
+  @UD(key: UDKey.socialID)
   public var socialID: String?
   
-  @UserDefault(key: UserDefaultsKey.refreshToken)
+  @UD(key: UDKey.refreshToken)
   public var refreshToken: String?
   
-  @UserDefault(key: UserDefaultsKey.accessToken)
+  @UD(key: UDKey.accessToken)
   public var accessToken: String?
   
   func removeAll() {
@@ -39,15 +39,15 @@ public final class UserDefaultManager {
 
 // MARK: - Dependency
 
-public enum UserDefaultManagerKey: DependencyKey {
-  public static let liveValue = UserDefaultManager.shared
-  public static let previewValue = UserDefaultManager.shared
-  public static let testValue = UserDefaultManager.shared
+public enum UDManagerKey: DependencyKey {
+  public static let liveValue = UDManager.shared
+  public static let previewValue = UDManager.shared
+  public static let testValue = UDManager.shared
 }
 
 public extension DependencyValues {
-  var userDefault: UserDefaultManager {
-    get { self[UserDefaultManagerKey.self] }
-    set { self[UserDefaultManagerKey.self] = newValue }
+  var userDefault: UDManager {
+    get { self[UDManagerKey.self] }
+    set { self[UDManagerKey.self] = newValue }
   }
 }

@@ -19,6 +19,9 @@ extension TargetType {
     request.addValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpBody = parameters?.toJsonData()
     
+    
+    print("** Reuqest URL: ", url.absoluteString)
+    
     return request
   }
 }

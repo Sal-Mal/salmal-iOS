@@ -69,6 +69,6 @@ public enum MemberAPI: TargetType {
   }
   
   public var headers: [String: String]? {
-    return ["Authorization": "Bearer \(UserDefaultManager.shared.accessToken ?? "")"]
+    return ["Authorization": "Bearer \(UDManager.shared.accessToken ?? "")"]
   }
 }

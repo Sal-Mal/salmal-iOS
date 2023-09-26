@@ -1,5 +1,5 @@
 import Foundation
 
-public struct RequestTokenDTO {
+public struct RequestTokenDTO: Encodable {
   let refreshToken: String
 }
