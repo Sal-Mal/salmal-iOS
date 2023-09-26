@@ -5,11 +5,11 @@ import Core
 import UI
 
 public struct ProfileView: View {
-  
-  private let store: StoreOf<ProfileCore>
-  
+
   @State private var scrollOffsetY: CGFloat = 0
   @State private var viewHeight: CGFloat = 0
+
+  private let store: StoreOf<ProfileCore>
   
   public init(store: StoreOf<ProfileCore>) {
     self.store = store

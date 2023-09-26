@@ -28,6 +28,7 @@ struct BookmarkListView: View {
               default:
                 RoundedRectangle(cornerRadius: 24.0)
                   .fill(.gray)
+                  .aspectRatio(1, contentMode: .fit)
               }
             }
           }
