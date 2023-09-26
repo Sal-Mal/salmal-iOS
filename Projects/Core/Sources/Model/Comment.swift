@@ -1,25 +1,24 @@
 import Foundation
 
-public struct Comment: Equatable {
-  let id: Int
-  let memberId: Int
-  let memberImageUrl: String
-  let content: String
-  let liked: Bool
-  let likeCount: Int
-  let createdAt: Date
-  let updatedAt: Date
-  let replys: [Reply]
+public struct Comment: Equatable, Identifiable {
+  public let id: Int
+  public let memberId: Int
+  public let memberImageUrl: String
+  public let content: String
+  public let liked: Bool
+  public let likeCount: Int
+  public let createdAt: Date
+  public let updatedAt: Date
+  public let replys: [ReplyComment]?
 }
 
-public struct Reply: Equatable
-{
-  let id: Int
-  let memberId: Int
-  let memberImageUrl: String
-  let content: String
-  let liked: Bool
-  let likeCount: Int
-  let createdDate: Date
-  let updatedDate: Date
+public struct ReplyComment: Equatable, Identifiable {
+  public let id: Int
+  public let memberId: Int
+  public let memberImageUrl: String
+  public let content: String
+  public let liked: Bool
+  public let likeCount: Int
+  public let createdDate: Date
+  public let updatedDate: Date
 }

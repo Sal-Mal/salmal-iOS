@@ -18,13 +18,13 @@ public extension Image {
     if let size {
       self.resizable()
         .renderingMode(renderingMode)
-        .aspectRatio(1, contentMode: .fit)
+        .scaledToFit()
         .frame(width: size, height: size)
         .foregroundColor(color)
     } else {
       self.resizable()
         .renderingMode(renderingMode)
-        .aspectRatio(1, contentMode: .fit)
+        .scaledToFit()
         .foregroundColor(color)
     }
   }
@@ -38,13 +38,13 @@ public extension Image {
     if let size {
       self.resizable()
         .renderingMode(renderingMode)
-        .aspectRatio(1, contentMode: .fill)
+        .scaledToFill()
         .frame(width: size, height: size)
         .foregroundColor(color)
     } else {
       self.resizable()
         .renderingMode(renderingMode)
-        .aspectRatio(1, contentMode: .fill)
+        .scaledToFill()
         .foregroundColor(color)
     }
   }

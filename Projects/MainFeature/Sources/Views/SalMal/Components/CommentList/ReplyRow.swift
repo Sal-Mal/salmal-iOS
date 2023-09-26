@@ -4,24 +4,18 @@ import Core
 import UI
 import ComposableArchitecture
 
-public struct CommentCore: Reducer {
-  public struct State: Equatable, Identifiable {
-    let comment: Comment
-    
-    public var id: Int {
-      return comment.id
-    }
+struct ReplyCommentCore: Reducer {
+  struct State: Equatable {
+    let comment: ReplyComment
   }
   
-  public enum Action: Equatable {
-    case moreCommentToggle
-    case writeCommentToggle
+  enum Action: Equatable {
     case likeTapped
   }
   
   @Dependency(\.network) var network
   
-  public var body: some ReducerOf<Self> {
+  var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
       default:
@@ -31,11 +25,11 @@ public struct CommentCore: Reducer {
   }
 }
 
-struct CommentRow: View {
-  let store: StoreOf<CommentCore>
-  @ObservedObject var viewStore: ViewStoreOf<CommentCore>
+struct ReplyCommentRow: View {
+  let store: StoreOf<ReplyCommentCore>
+  @ObservedObject var viewStore: ViewStoreOf<ReplyCommentCore>
   
-  init(store: StoreOf<CommentCore>) {
+  init(store: StoreOf<ReplyCommentCore>) {
     self.store = store
     self.viewStore = ViewStore(self.store, observe: { $0 })
   }
@@ -79,25 +73,16 @@ struct CommentRow: View {
           
           Text("\(viewStore.comment.likeCount)")
             .padding(.trailing, 16)
-          
-          Button {
-            // TODO: 답글달기 눌렀을때
-            store.send(.writeCommentToggle)
-          } label: {
-            Text("답글 달기")
-              .font(.ds(.title4(.medium)))
-              .foregroundColor(.ds(.gray2))
-          }
         }
       }
     }
   }
 }
 
-struct CommentRow_Previews: PreviewProvider {
+struct ReplyCommentRow_Previews: PreviewProvider {
   static var previews: some View {
-    CommentRow(store: .init(initialState: CommentCore.State(comment: CommentResponse.mock.toDomain)) {
-      CommentCore()
+    ReplyCommentRow(store: .init(initialState: ReplyCommentCore.State(comment: ReplyResponse.mock.toDomain)) {
+      ReplyCommentCore()
     })
     .frame(maxWidth: .infinity, alignment: .leading)
     .previewLayout(.sizeThatFits)

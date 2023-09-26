@@ -1,5 +1,6 @@
 import SwiftUI
 
+import Core
 import ComposableArchitecture
 
 public struct CommentListView: View {
@@ -12,14 +13,24 @@ public struct CommentListView: View {
   }
   
   public var body: some View {
-    Text("")
+    List {
+      ForEachStore(store.scope(state: \.comments, action: CommentListCore.Action.comment(id:action:))) { subStore in
+        CommentRow(store: subStore)
+          .listRowSeparator(.hidden)
+      }
+    }
+    .listStyle(.plain)
+    .onAppear {
+      store.send(.requestComments)
+    }
   }
 }
 
 struct CommentListView_Previews: PreviewProvider {
   static var previews: some View {
-    CommentListView(store: .init(initialState: CommentListCore.State(voteID: 0)) {
+    CommentListView(store: .init(initialState: .init(voteID: 0)) {
       CommentListCore()
     })
+    .preferredColorScheme(.dark)
   }
 }

@@ -1,8 +1,8 @@
 import Foundation
 
 public struct CommentListResponse: Responsable {
-  let hashNext: Bool
-  let comments: [CommentResponse]
+  public let hashNext: Bool
+  public let comments: [CommentResponse]
   
   public static var mock: CommentListResponse {
     .init(hashNext: true, comments: [
@@ -78,7 +78,7 @@ public struct ReplyResponse: Responsable {
     )
   }
   
-  public var toDomain: Reply {
+  public var toDomain: ReplyComment {
     .init(
       id: id,
       memberId: memberId,
