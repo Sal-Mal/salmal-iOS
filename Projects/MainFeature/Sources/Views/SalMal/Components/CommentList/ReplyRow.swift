@@ -4,18 +4,22 @@ import Core
 import UI
 import ComposableArchitecture
 
-struct ReplyCommentCore: Reducer {
-  struct State: Equatable {
-    let comment: ReplyComment
+public struct ReplyCommentCore: Reducer {
+  public struct State: Equatable, Identifiable {
+    var comment: ReplyComment
+    
+    public var id: Int {
+      return comment.id
+    }
   }
   
-  enum Action: Equatable {
+  public enum Action: Equatable {
     case likeTapped
   }
   
   @Dependency(\.network) var network
   
-  var body: some ReducerOf<Self> {
+  public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
       default:
@@ -66,10 +70,14 @@ struct ReplyCommentRow: View {
           .foregroundColor(.ds(.white))
         
         HStack(spacing: .zero) {
-          Image(systemName: viewStore.comment.liked ? "heart.fill" : "heart")
-            .fit(size: 14, renderingMode: .template)
-            .tint(.ds(.white))
-            .padding(.trailing, 5)
+          Button {
+            store.send(.likeTapped)
+          } label: {
+            Image(systemName: viewStore.comment.liked ? "heart.fill" : "heart")
+              .fit(size: 14, renderingMode: .template)
+              .tint(.ds(.white))
+          }
+          .padding(.trailing, 5)
           
           Text("\(viewStore.comment.likeCount)")
             .padding(.trailing, 16)

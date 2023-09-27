@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import Core
+import Foundation
 
 public struct CommentListCore: Reducer {
   public struct State: Equatable {
@@ -10,6 +11,7 @@ public struct CommentListCore: Reducer {
   public enum Action: Equatable {
     case comment(id: CommentCore.State.ID, action: CommentCore.Action)
     case requestComments
+    case delete(IndexSet)
   }
   
   @Dependency(\.network) var network
@@ -26,6 +28,14 @@ public struct CommentListCore: Reducer {
         
         state.comments.append(contentsOf: states)
         return .none
+        
+      case let .delete(indexSet):
+        print(indexSet.description)
+        for index in indexSet {
+          print(index)
+        }
+        return .none
+        
       default:
         return .none
       }

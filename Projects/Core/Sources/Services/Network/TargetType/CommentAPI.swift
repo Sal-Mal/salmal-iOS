@@ -31,9 +31,9 @@ public enum CommentAPI: TargetType {
   public var method: HTTPMethod {
     switch self {
     case .list:
-      return .post
-    case .write:
       return .get
+    case .write:
+      return .post
     case .edit:
       return .put
     case .delete:
@@ -46,9 +46,9 @@ public enum CommentAPI: TargetType {
     case .list:
       return nil
     case let .write(_, text):
-      return CommentDTO(content: text)
+      return CommentRequest(content: text)
     case let .edit(_, text):
-      return CommentDTO(content: text)
+      return CommentRequest(content: text)
     case .delete:
       return nil
     }

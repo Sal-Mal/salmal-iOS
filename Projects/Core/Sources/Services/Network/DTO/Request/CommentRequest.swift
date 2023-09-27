@@ -1,5 +1,5 @@
 import Foundation
 
-public struct CommentDTO: Encodable {
+public struct CommentRequest: Encodable {
   let content: String
 }

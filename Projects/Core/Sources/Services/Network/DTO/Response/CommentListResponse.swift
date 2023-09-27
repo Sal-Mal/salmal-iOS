@@ -8,7 +8,14 @@ public struct CommentListResponse: Responsable {
     .init(hashNext: true, comments: [
       CommentResponse.mock,
       CommentResponse.mock,
-      CommentResponse.mock
+      CommentResponse.mock,
+      CommentResponse.mock,
+      CommentResponse.mock,
+      CommentResponse.mock,
+      CommentResponse.mock,
+      CommentResponse.mock,
+      CommentResponse.mock,
+      CommentResponse.mock,
     ])
   }
 }
@@ -26,8 +33,8 @@ public struct CommentResponse: Responsable {
   
   public static var mock: CommentResponse {
     .init(
-      id: (0...10).randomElement()!,
-      memberId: (0...10).randomElement()!,
+      id: (0...10000).randomElement()!,
+      memberId: (0...10000).randomElement()!,
       memberImageUrl: "https://picsum.photos/100",
       content: "농부룩 같아요...!!!",
       liked: Bool.random(),
@@ -67,8 +74,8 @@ public struct ReplyResponse: Responsable {
   
   public static var mock: ReplyResponse {
     .init(
-      id: (0...10).randomElement()!,
-      memberId: (0...10).randomElement()!,
+      id: (0...10000).randomElement()!,
+      memberId: (0...10000).randomElement()!,
       memberImageUrl: "https://picsum.photos/100",
       content: "농부룩 같아요...",
       liked: Bool.random(),
