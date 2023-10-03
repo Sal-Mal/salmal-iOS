@@ -1,4 +1,6 @@
 import UI
+import Core
+
 import ComposableArchitecture
 
 public struct SalMalCore: Reducer {
@@ -11,6 +13,9 @@ public struct SalMalCore: Reducer {
     var buyPercentage: Double = 0
     var notBuyPercentage: Double = 0
     var totalCount = 0
+    
+    var currentHomeIndex = 0
+    var currentBestIndex = 0 
     
     @BindingState var salButtonState: ButtonState = .idle
     @BindingState var malButtonState: ButtonState = .idle
@@ -36,6 +41,8 @@ public struct SalMalCore: Reducer {
   
   public init() { }
   
+  @Dependency(\.network) var network
+  
   public var body: some ReducerOf<Self> {
     BindingReducer()
     
@@ -57,7 +64,7 @@ public struct SalMalCore: Reducer {
         
         state.salButtonState = .idle
         state.malButtonState = .idle
-
+        
         return .none
         
       case let .bestAction(.delegate(.updateVote(vote))):

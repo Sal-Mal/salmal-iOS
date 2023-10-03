@@ -199,7 +199,7 @@ struct SMCapsuleTextField_Previews: PreviewProvider {
     SMCapsuleTextField(text: .constant("ddsas"), placeholder: "눌러서 댓글입력")
       .color(.foreground(.ds(.white)))
       .color(.tint(.ds(.green1)))
-      .leftImage(Image(icon: .cancel))
+      .leftImage(Image(icon: .ic_cancel))
       .padding()
       .previewLayout(.sizeThatFits)
   }

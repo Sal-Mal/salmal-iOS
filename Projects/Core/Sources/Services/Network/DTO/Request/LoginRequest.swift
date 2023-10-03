@@ -1,6 +1,7 @@
 import Foundation
 
-public struct LoginDTO: Encodable {
+/// 로그인
+public struct LoginRequest: Encodable {
   let providerId: String
   
   public init(providerId: String) {

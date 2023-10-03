@@ -24,11 +24,16 @@ public struct VoteItemCore: Reducer {
     case bookmarkTapped
     case commentTapped
     case moreTapped
+    case setBookmark(Bool)
     case onAppear
     case onDisappear
   }
   
   @Dependency(\.network) var networkManager
+  
+  enum CancelID {
+    case bookmark
+  }
 
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
@@ -39,8 +44,8 @@ public struct VoteItemCore: Reducer {
         }
 
         return .none
+        
       case .onDisappear:
-
         return .none
         
       case .report:
@@ -54,14 +59,22 @@ public struct VoteItemCore: Reducer {
         return .none
         
       case .bookmarkTapped:
-        state.vote.isBookmarked.toggle()
-        return .run { send in
-          // TODO: Request BookMark API
-          // TODO: Success ToastMessage
-          // TODO: UpdateUI
+        return .run { [state] send in
+          let api = state.vote.isBookmarked
+          ? VoteAPI.unBookmark(id: state.vote.id)
+          : VoteAPI.bookmark(id: state.vote.id)
+          
+          try await networkManager.request(api)
+          await send(.setBookmark(!state.vote.isBookmarked))
         } catch: { error, send in
-          // TODO: Error ToastMessage
+          // TODO: ToastMessage 띄우기
+          debugPrint(error.localizedDescription)
         }
+        .cancellable(id: CancelID.bookmark, cancelInFlight: true)
+      
+      case let .setBookmark(value):
+        state.vote.isBookmarked = value
+        return .none
         
       case .commentTapped:
         state.commentListState = .init(voteID: state.vote.id)

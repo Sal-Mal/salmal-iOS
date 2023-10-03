@@ -70,15 +70,17 @@ public struct SignUpCore: Reducer {
           return .none
         }
         
-        let model = SignUpDTO(
+        let model = SignUpRequest(
           providerId: id,
           nickName: state.text,
           marketingInformationConsent: state.marketingAgreement
         )
         let api = AuthAPI.signUp(id: provider, params: model)
         
+        print(model)
+        
         return .run { send in
-          let dto = try await network.request(api, type: TokenDTO.self)
+          let dto = try await network.request(api, type: TokenResponse.self)
           
           debugPrint(dto)
           userDefault.accessToken = dto.accessToken

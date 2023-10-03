@@ -28,9 +28,9 @@ public struct LoginCore: Reducer {
         
       case let .requestLogin(id):
         return .run { send in
-          let model = LoginDTO(providerId: id)
+          let model = LoginRequest(providerId: id)
           let api = AuthAPI.logIn(params: model)
-          let dto = try await network.request(api, type: TokenDTO.self)
+          let dto = try await network.request(api, type: TokenResponse.self)
           userDefault.accessToken = dto.accessToken
           userDefault.refreshToken = dto.refreshToken
           

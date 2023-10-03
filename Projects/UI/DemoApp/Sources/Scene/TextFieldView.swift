@@ -11,7 +11,7 @@ struct TextFieldView: View {
       
       SMCapsuleTextField(text: $text2, placeholder: "눌러서 댓글 입력")
         .lineLimit(3)
-        .leftImage(.init(icon: .cancel))
+        .leftImage(.init(icon: .ic_cancel))
     }
     .padding()
   }

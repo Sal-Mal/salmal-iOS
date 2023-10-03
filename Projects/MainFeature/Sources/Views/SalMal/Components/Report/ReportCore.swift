@@ -7,8 +7,8 @@ public struct ReportCore: Reducer {
     let voteID: Int
     let memberID: Int
     let items: [MenuItem] = [
-      .init(icon: .init(icon: .warning), title: "해당 게시물 신고하기"),
-      .init(icon: .init(icon: .cancel), title: "이 사용자 차단하기")
+      .init(icon: .init(icon: .ic_warning), title: "해당 게시물 신고하기"),
+      .init(icon: .init(icon: .ic_cancel), title: "이 사용자 차단하기")
     ]
   }
   
