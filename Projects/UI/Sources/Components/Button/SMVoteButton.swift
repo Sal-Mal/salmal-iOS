@@ -1,10 +1,3 @@
-//
-//  SMVoteButton.swift
-//  UI
-//
-//  Created by 청새우 on 2023/09/03.
-//
-
 import SwiftUI
 
 public struct SMVoteButton: View {

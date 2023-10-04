@@ -9,6 +9,9 @@ extension SM {
     case ic_exclamation
     case ic_salmal
     case ic_salmalApp
+    case ic_send
+    case ic_edit
+    case ic_component
 
     /// 레거시
     case chevron_left = "chevron.left"
