@@ -1,4 +1,5 @@
 import SwiftUI
+
 import UI
 
 @main
@@ -9,9 +10,13 @@ struct UIApp: App {
     SM.Font.initFonts()
   }
 
+  @StateObject private var toastManager = SMToastManager()
+
   var body: some Scene {
     WindowGroup {
       ContentView()
+        .environmentObject(toastManager)
+        .toast(on: $toastManager.toast)
     }
   }
 }
