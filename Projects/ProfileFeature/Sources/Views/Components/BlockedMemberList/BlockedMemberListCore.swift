@@ -7,9 +7,9 @@ public struct BlockedMemberListCore: Reducer {
   
   public struct State: Equatable {
     var blockedMembers: IdentifiedArrayOf<Member> = [
-      MemberDTO.mock.toDomain,
-      MemberDTO.mock.toDomain,
-      MemberDTO.mock.toDomain,
+      MemberResponse.mock.toDomain,
+      MemberResponse.mock.toDomain,
+      MemberResponse.mock.toDomain,
     ]
 
     public init() {}
@@ -30,7 +30,7 @@ public struct BlockedMemberListCore: Reducer {
       switch action {
       case .unblockButtonTapped(let member):
         return .run { [id = member.id] send in
-          try await network.request(MemberAPI.unBan(id: id))
+          try await network.request(MemberAPI.unBlock(id: id))
           // TODO: 차단해제 후 Reload 작업
 
         } catch: { error, send in

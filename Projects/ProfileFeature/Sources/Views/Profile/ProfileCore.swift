@@ -14,7 +14,7 @@ public struct ProfileCore: Reducer {
     var path = StackState<Path.State>()
 
     var tab: Tab = .uploads
-    var member: Member? = MemberDTO.mock.toDomain
+    var member: Member? = MemberResponse.mock.toDomain
     var votes: [Vote] = VoteListDTO.mock.votes.map(\.toDomain) + VoteListDTO.mock.votes.map(\.toDomain)
     var evaluations: [Vote] = VoteListDTO.mock.votes.map(\.toDomain) + VoteListDTO.mock.votes.map(\.toDomain)
 

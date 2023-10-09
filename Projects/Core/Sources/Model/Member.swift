@@ -20,6 +20,6 @@ public struct Member: Equatable, Identifiable {
   /// 싫어요 수
   public let disLikeCount: Int
 
-  /// 차단 날짜
-  public let blockedDate: Date?
+  /// 차단 여부
+  public let blocked: Bool
 }
