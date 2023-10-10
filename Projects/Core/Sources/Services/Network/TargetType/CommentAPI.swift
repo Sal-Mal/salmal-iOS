@@ -1,16 +1,20 @@
 import Foundation
+import ComposableArchitecture
 
 public enum CommentAPI: TargetType {
-  case list(id: String)
-  case write(id: String, text: String)
-  case edit(id: String, text: String)
-  case delete(id: String)
+  case list(id: Int)
+  case write(id: Int, text: String)
+  case edit(id: Int, text: String)
+  case delete(id: Int)
+  case like(id: Int)
+  case disLike(id: Int)
+  case report(id: Int)
   
   public var baseURL: String {
     switch self {
     case .list, .write:
       return "http://3.38.192.126/api/votes"
-    case .edit, .delete:
+    case .edit, .delete, .like, .disLike, .report:
       return "http://3.38.192.126/api/comments"
     }
   }
@@ -18,13 +22,20 @@ public enum CommentAPI: TargetType {
   public var path: String {
     switch self {
     case let .list(id):
-      return "\(id)/comments" // TODO: Query 추가
+      // TODO: Query 수정(all fetch 댓글로 변경)
+      return "\(id)/comments?size=1000"
     case let .write(id, _):
       return "\(id)/comments"
     case let .edit(id, _):
       return "\(id)"
     case let .delete(id):
       return "\(id)"
+    case let .like(id):
+      return "\(id)/likes"
+    case let .disLike(id):
+      return "\(id)/likes"
+    case let .report(id):
+      return "\(id)/reports"
     }
   }
   
@@ -38,6 +49,12 @@ public enum CommentAPI: TargetType {
       return .put
     case .delete:
       return .delete
+    case .like:
+      return .post
+    case .disLike:
+      return .delete
+    case .report:
+      return .delete
     }
   }
   
@@ -50,6 +67,12 @@ public enum CommentAPI: TargetType {
     case let .edit(_, text):
       return CommentRequest(content: text)
     case .delete:
+      return nil
+    case .like:
+      return nil
+    case .disLike:
+      return nil
+    case .report:
       return nil
     }
   }
