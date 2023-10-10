@@ -11,29 +11,29 @@ public struct CommentListCore: Reducer {
   public enum Action: Equatable {
     case comment(id: CommentCore.State.ID, action: CommentCore.Action)
     case requestComments
-    case delete(IndexSet)
+    case commentResponse(TaskResult<[Comment]>)
   }
   
-  @Dependency(\.network) var network
+  @Dependency(\.commentRepository) var commentRepo
   
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
       case .requestComments:
-        let dummy = CommentListResponse.mock.comments.map(\.toDomain)
-        
-        let states = dummy.map {
-          CommentCore.State(comment: $0)
+        return .run { [id = state.voteID] send in
+          await send(.commentResponse(
+            TaskResult {
+              try await commentRepo.list(id: id)
+            }
+          ))
         }
         
-        state.comments.append(contentsOf: states)
+      case let .commentResponse(.success(entity)):
+        let commentStates = entity.map { CommentCore.State(comment: $0) }
+        state.comments.append(contentsOf: commentStates)
         return .none
         
-      case let .delete(indexSet):
-        print(indexSet.description)
-        for index in indexSet {
-          print(index)
-        }
+      case let .commentResponse(.failure(error)):
         return .none
         
       default:
