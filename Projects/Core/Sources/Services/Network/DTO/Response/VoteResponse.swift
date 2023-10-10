@@ -2,13 +2,13 @@ import Foundation
 
 /// 투표 목록 조회에서 쓰는 DTO
 public struct VoteListResponse: Responsable {
-  public let hashNext: Bool
+  public let hasNext: Bool
   public let votes: [VoteResponse]
 }
 
 extension VoteListResponse {
   public static var mock: VoteListResponse {
-    VoteListResponse(hashNext: true, votes: [.mock, .mock, .mock, .mock, .mock])
+    VoteListResponse(hasNext: true, votes: [.mock, .mock, .mock, .mock, .mock])
   }
 }
 
@@ -22,16 +22,14 @@ public struct VoteResponse: Responsable {
   public let commentCount: Int
   public let likeCount: Int
   public let disLikeCount: Int
-  public let totalEvaluationCount: Int
-//  public let bookMarkCnt: Int
-  public let createdAt: Date
+  public let totalEvaluationCnt: Int
   public let bookmarked: Bool
   public let status: VoteStatus
   
   public enum VoteStatus: String, Decodable {
-    case like
-    case disLike
-    case none
+    case like = "LIKE"
+    case disLike = "DISLIKE"
+    case none = "NONE"
   }
 }
 
@@ -50,9 +48,7 @@ extension VoteResponse {
       commentCount: (0...100).randomElement()!,
       likeCount: sal,
       disLikeCount: mal,
-      totalEvaluationCount: total,
-//      bookMarkCnt: (100...1000).randomElement()!,
-      createdAt: Date.now,
+      totalEvaluationCnt: total,
       bookmarked: Bool.random(),
       status: [VoteStatus.like, .disLike, .none].randomElement()!
     )
@@ -68,8 +64,7 @@ extension VoteResponse {
       commentCnt: commentCount,
       likeCount: likeCount,
       disLikeCount: disLikeCount,
-      totalVoteCount: totalEvaluationCount,
-//      bookmarkCount: bookMarkCnt,
+      totalVoteCount: totalEvaluationCnt,
       isBookmarked: bookmarked,
       voteStatus: .init(rawValue: status.rawValue)!
     )

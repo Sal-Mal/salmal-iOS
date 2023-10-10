@@ -14,8 +14,8 @@ public struct Vote: Equatable, Identifiable {
   public var voteStatus: VoteStatus
   
   public enum VoteStatus: String {
-    case like
-    case disLike
-    case none
+    case like = "LIKE"
+    case disLike = "DISLIKE"
+    case none = "NONE"
   }
 }

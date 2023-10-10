@@ -57,7 +57,7 @@ public struct VoteItemView: View {
 extension VoteItemView {
   
   private var targetItem: some View {
-    CacheAsyncImage(url: URL(string: viewStore.vote.imageURL)!) { phase in
+    CacheAsyncImage(url: URL(string: viewStore.vote.imageURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!) { phase in
       switch phase {
       case let .success(image):
         image

@@ -60,7 +60,7 @@ public struct CarouselCore: Reducer {
           
           let result = try await networkManager.request(api, type: VoteListResponse.self)
           print(result)
-          await send(.voteResponse(hasNext: result.hashNext, votes: result.votes.map { $0.toDomain }))
+          await send(.voteResponse(hasNext: result.hasNext, votes: result.votes.map { $0.toDomain }))
         } catch: { error, send in
           // TODO: Erorr 처리
           print(error)
@@ -72,7 +72,7 @@ public struct CarouselCore: Reducer {
         state.votes.append(contentsOf: newItems)
         
         /// 최초 로딩시 업데이트 시켜주기
-        if state.index == 0 {
+        if state.index == 0 && state.votes.isEmpty == false {
           let item = state.votes[state.index].vote
           return .send(.delegate(.updateVote(vote: item)))
         }

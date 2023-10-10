@@ -1,11 +1,11 @@
 import Foundation
 
 public struct CommentListResponse: Responsable {
-  public let hashNext: Bool
+  public let hasNext: Bool
   public let comments: [CommentResponse]
   
   public static var mock: CommentListResponse {
-    .init(hashNext: true, comments: [
+    .init(hasNext: true, comments: [
       CommentResponse.mock,
       CommentResponse.mock,
       CommentResponse.mock,
