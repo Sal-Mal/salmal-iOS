@@ -72,7 +72,7 @@ struct CommentRow: View {
           image
             .fit(size: 32)
             .clipShape(Circle())
-            
+          
         default:
           Circle().fill(Color.ds(.gray1))
             .frame(width: 32)
@@ -88,6 +88,16 @@ struct CommentRow: View {
           Text("3시간 전")
             .font(.ds(.title4(.medium)))
             .foregroundColor(.ds(.gray2))
+          
+          Spacer()
+          
+          Button {
+            // MARK: - 더보기 버튼 탭
+          } label: {
+            Image(systemName: "apple.logo")
+              .fit(size: 16)
+          }
+          .padding(.trailing, 10)
         }
         
         Text(viewStore.comment.content)
@@ -128,21 +138,16 @@ struct CommentRow: View {
           }
           .padding(.top, 5)
           
-//          if viewStore.showMoreComment {
-//            List {
-//              ForEach(replys) { reply in
-//                ReplyCommentRow(store: .init(initialState: .init(comment: reply)) {
-//                  ReplyCommentCore()
-//                })
-//              }
-//              .onDelete { _ in
-//                
-//              }
-//              .listRowSeparator(.hidden)
-//            }
-//            .buttonStyle(.plain)
-//            .frame(height: CGFloat(replys.count) * 101)
-//          }
+          if viewStore.showMoreComment {
+            ForEach(replys) { reply in
+              ReplyCommentRow(store: .init(initialState: .init(comment: reply)) {
+                ReplyCommentCore()
+              })
+              .frame(height: 101)
+              .debug()
+            }
+            .buttonStyle(.plain)
+          }
         }
       }
     }

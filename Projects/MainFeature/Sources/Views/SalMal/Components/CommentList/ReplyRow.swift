@@ -63,6 +63,15 @@ struct ReplyCommentRow: View {
             .font(.ds(.title4(.medium)))
             .foregroundColor(.ds(.gray2))
           
+          Spacer()
+          
+          Button {
+            // MARK: - 더보기 버튼 탭
+          } label: {
+            Image(systemName: "apple.logo")
+              .fit(size: 16)
+          }
+          .padding(.trailing, 10)
         }
         
         Text(viewStore.comment.content)

@@ -43,20 +43,12 @@ public struct CommentListView: View {
         .padding(.top, 13)
       
       List {
-        ForEachStore(store.scope(state: \.comments, action: CommentListCore.Action.comment(id:action:))) { subStore in
-          Section {
-            CommentRow(store: subStore)
-              .listRowSeparator(.hidden)
-            
-            ForEachStore(subStore.scope(state: \.replys, action: CommentCore.Action.replayComment(id:action:))) { subStore in
-              ReplyCommentRow(store: subStore)
-                .listRowSeparator(.hidden)
-            }
-            .padding(.leading, 62)
-          }
-        }
-        .onDelete {
-          print($0.first!)
+        ForEachStore(store.scope(
+          state: \.comments,
+          action: CommentListCore.Action.comment(id:action:))
+        ) { subStore in
+          CommentRow(store: subStore)
+            .listRowSeparator(.hidden)
         }
       }
       .listStyle(.plain)
