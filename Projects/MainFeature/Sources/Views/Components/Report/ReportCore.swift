@@ -37,7 +37,7 @@ public struct ReportCore: Reducer {
           }
         case 1:
           return .run { [id = state.memberID] send in
-            try await network.request(MemberAPI.ban(id: id))
+            try await network.request(MemberAPI.block(id: id))
             NotiManager.post(.banUser, userInfo: ["id": id])
             // TODO:  토스트 메시지 띄우기
             await dismiss()

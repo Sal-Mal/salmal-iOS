@@ -44,7 +44,7 @@ public struct ProfileEditCore: Reducer {
       switch action {
       case .onAppear:
         return .run { send in
-          let memberDTO = try await network.request(MemberAPI.fetch(id: 1), type: MemberDTO.self)
+          let memberDTO = try await network.request(MemberAPI.fetch(id: 2), type: MemberResponse.self)
           let member = memberDTO.toDomain
           await send(.setMember(member))
         }
@@ -58,7 +58,7 @@ public struct ProfileEditCore: Reducer {
         print("확인 버튼 클릭")
         return .run { send in
           // TODO: 회원 이미지 데이터를 보내야함 + UpdateRequestDTO 처리
-          try await network.request(MemberAPI.update(id: 1))
+          try await network.request(MemberAPI.update(id: 2, nickName: "", introduction: ""))
           await dismiss()
 
         } catch: { error, send in
@@ -88,7 +88,7 @@ public struct ProfileEditCore: Reducer {
       case .deactivateButtonTapped:
         return .run { send in
           // TODO: 서비스 탈퇴 Sheet에서 "확인" 클릭 시 처리
-          try await network.request(MemberAPI.delete(id: 1))
+          try await network.request(MemberAPI.delete(id: 2))
 
         } catch: { error, send in
           // TODO: 에러 처리

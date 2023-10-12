@@ -1,41 +1,41 @@
 import Foundation
 
-public struct MemberDTO: Responsable {
+public struct MemberResponse: Responsable {
   public var id: Int?
   public var nickName: String?
   public var introduction: String?
   public var imageUrl: String?
-  public var likeCnt: Int?
-  public var disLikeCnt: Int?
-  public var blockedDate: Date? // 필요없을 듯
+  public var likeCount: Int?
+  public var disLikeCount: Int?
+  public var blocked: Bool?
 }
 
 
 // MARK: - Extension
 
-extension MemberDTO {
+extension MemberResponse {
 
-  public static var mock: MemberDTO {
-    return MemberDTO(
+  public static var mock: MemberResponse {
+    return MemberResponse(
       id: (0...1000).randomElement(),
       nickName: "관리자",
       introduction: "관리자 입니다.",
       imageUrl: "https://picsum.photos/300/600",
-      likeCnt: (0...100).randomElement(),
-      disLikeCnt: (0...100).randomElement(),
-      blockedDate: nil
+      likeCount: (0...100).randomElement(),
+      disLikeCount: (0...100).randomElement(),
+      blocked: false
     )
   }
 
-  public static var mockBlocked: MemberDTO {
-    return MemberDTO(
+  public static var mockBlocked: MemberResponse {
+    return MemberResponse(
       id: (0...1000).randomElement(),
       nickName: "유저 \((0...1000).randomElement()!)",
       introduction: "차단된 유저 입니다.",
       imageUrl: "https://picsum.photos/300/600",
-      likeCnt: (0...100).randomElement(),
-      disLikeCnt: (0...100).randomElement(),
-      blockedDate: Date.now
+      likeCount: (0...100).randomElement(),
+      disLikeCount: (0...100).randomElement(),
+      blocked: true
     )
   }
 
@@ -45,9 +45,9 @@ extension MemberDTO {
       nickName: nickName ?? "",
       introduction: introduction ?? "",
       imageURL: imageUrl ?? "",
-      likeCount: likeCnt ?? 0,
-      disLikeCount: disLikeCnt ?? 0,
-      blockedDate: blockedDate
+      likeCount: likeCount ?? 0,
+      disLikeCount: disLikeCount ?? 0,
+      blocked: blocked ?? false
     )
   }
 }

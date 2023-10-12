@@ -10,6 +10,11 @@ public protocol TargetType: URLRequestConvertible {
 }
 
 extension TargetType {
+
+  public var baseURL: String {
+    return "http://3.38.192.126/api"
+  }
+
   public func asURLRequest() throws -> URLRequest {
     let url = URL(string: baseURL + "/" + path)!
     
