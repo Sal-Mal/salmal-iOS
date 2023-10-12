@@ -1,5 +1,6 @@
 import SwiftUI
 
+import UI
 import Core
 import ComposableArchitecture
 
@@ -53,6 +54,18 @@ public struct CommentListView: View {
       }
       .listStyle(.plain)
       .buttonStyle(.plain)
+      
+      Divider()
+        .frame(height: 2)
+        .foregroundColor(.ds(.white20))
+      
+      SMCapsuleTextField(text: viewStore.$text, placeholder: "눌러서 댓글 입력")
+        .leftImage(.init(systemName: "swift"))
+        .rightButton("확인") {
+          store.send(.tapConfirmButton)
+        }
+        .lineLimit(3)
+        .padding(18)
     }
     .onAppear {
       store.send(.requestComments)

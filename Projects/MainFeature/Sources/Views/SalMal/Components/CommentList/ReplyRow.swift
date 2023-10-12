@@ -6,7 +6,7 @@ import ComposableArchitecture
 
 public struct ReplyCommentCore: Reducer {
   public struct State: Equatable, Identifiable {
-    var comment: ReplyComment
+    var comment: Comment
     
     public var id: Int {
       return comment.id
@@ -68,7 +68,7 @@ struct ReplyCommentRow: View {
           Button {
             // MARK: - 더보기 버튼 탭
           } label: {
-            Image(systemName: "apple.logo")
+            Image(systemName: "poweron")
               .fit(size: 16)
           }
           .padding(.trailing, 10)
@@ -98,7 +98,7 @@ struct ReplyCommentRow: View {
 
 struct ReplyCommentRow_Previews: PreviewProvider {
   static var previews: some View {
-    ReplyCommentRow(store: .init(initialState: ReplyCommentCore.State(comment: ReplyResponse.mock.toDomain)) {
+    ReplyCommentRow(store: .init(initialState: ReplyCommentCore.State(comment: CommentResponse.mock.toDomain)) {
       ReplyCommentCore()
     })
     .frame(maxWidth: .infinity, alignment: .leading)

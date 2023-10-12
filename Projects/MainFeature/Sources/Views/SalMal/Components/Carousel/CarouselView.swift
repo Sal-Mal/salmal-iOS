@@ -39,7 +39,7 @@ public struct CarouselView: View {
           }
         }
         .offset(y: yOffset)
-        .animation(.spring(), value: yOffset)
+        .animation(.easeInOut, value: yOffset)
         .gesture(dragGesture)
       }
       .scrollDisabled(true)

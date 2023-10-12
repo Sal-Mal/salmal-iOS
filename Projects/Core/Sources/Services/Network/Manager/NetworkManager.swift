@@ -3,7 +3,9 @@ import ComposableArchitecture
 
 /// Live & Mock Manager를 추상화한 Manager
 public protocol NetworkManager {
+  @discardableResult
   func request<T: Responsable>(_ target: TargetType, type: T.Type) async throws -> T
+  
   @discardableResult
   func request(_ target: TargetType) async throws -> Data
 }

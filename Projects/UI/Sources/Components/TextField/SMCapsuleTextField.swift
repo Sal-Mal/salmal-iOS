@@ -25,7 +25,7 @@ public extension SMCapsuleTextField {
   }
   
   /**
-    상단에 title 추가
+   상단에 title 추가
    */
   func title(
     _ text: String,
@@ -40,7 +40,7 @@ public extension SMCapsuleTextField {
   }
   
   /**
-    왼쪽에 image 삽입
+   왼쪽에 image 삽입
    */
   func leftImage(_ image: Image) -> Self {
     var new = self
@@ -49,7 +49,7 @@ public extension SMCapsuleTextField {
   }
   
   /**
-  오른쪽에 button 생성
+   오른쪽에 button 생성
    
    button의 font, color는 각각 .font(), .color() 로 설정된 값을 따름
    */
@@ -61,7 +61,7 @@ public extension SMCapsuleTextField {
   }
   
   /**
-    font를 변경
+   font를 변경
    */
   func font(_ font: Font) -> Self {
     var new = self
@@ -82,7 +82,7 @@ public extension SMCapsuleTextField {
 }
 
 /**
-Capsule 모양의 TextField
+ Capsule 모양의 TextField
  */
 public struct SMCapsuleTextField: View {
   
@@ -125,15 +125,16 @@ public struct SMCapsuleTextField: View {
       
       HStack(alignment: .bottom, spacing: 8) {
         imageView
-          .debug()
         
         HStack(alignment: .bottom) {
           textField
-            .debug()
           
           if let buttonTitle {
             Spacer()
-            Button(action: buttonAction) {
+            Button {
+              buttonAction()
+              focus = false
+            } label: {
               Text(buttonTitle)
                 .foregroundColor(tintColor)
                 .font(font)

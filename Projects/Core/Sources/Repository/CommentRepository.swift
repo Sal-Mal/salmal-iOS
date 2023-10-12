@@ -25,7 +25,7 @@ public final class CommentRepositoryImpl: CommentRepository {
   
   public func write(id: Int, text: String) async throws {
     let target = CommentAPI.write(id: id, text: text)
-    try await networkManager.request(target)
+    try await networkManager.request(target, type: EmptyEntity.self)
   }
   
   public func edit(id: Int, text: String) async throws {

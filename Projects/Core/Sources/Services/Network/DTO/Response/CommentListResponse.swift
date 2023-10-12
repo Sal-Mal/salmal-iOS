@@ -15,7 +15,7 @@ public struct CommentListResponse: Responsable {
       CommentResponse.mock,
       CommentResponse.mock,
       CommentResponse.mock,
-      CommentResponse.mock,
+      CommentResponse.mock
     ])
   }
 }
@@ -27,9 +27,8 @@ public struct CommentResponse: Responsable {
   let content: String
   let liked: Bool
   let likeCount: Int
-  let createdAt: Date
-  let updatedAt: Date
-  let replys: [ReplyResponse]
+  let createdAt: String
+  let updatedAt: String
   
   public static var mock: CommentResponse {
     .init(
@@ -39,11 +38,8 @@ public struct CommentResponse: Responsable {
       content: "농부룩 같아요...!!!",
       liked: Bool.random(),
       likeCount: (0...100).randomElement()!,
-      createdAt: .now,
-      updatedAt: .now,
-      replys: [
-        .mock, .mock, .mock, .mock
-      ]
+      createdAt: "2023-10-12T11:43:31.299933",
+      updatedAt: "2023-10-12T11:43:31.299933"
     )
   }
   
@@ -56,45 +52,7 @@ public struct CommentResponse: Responsable {
       liked: liked,
       likeCount: likeCount,
       createdAt: createdAt,
-      updatedAt: updatedAt,
-      replys: replys.map(\.toDomain)
-    )
-  }
-}
-
-public struct ReplyResponse: Responsable {
-  let id: Int
-  let memberId: Int
-  let memberImageUrl: String
-  let content: String
-  let liked: Bool
-  let likeCount: Int
-  let createdDate: Date
-  let updatedDate: Date
-  
-  public static var mock: ReplyResponse {
-    .init(
-      id: (0...10000).randomElement()!,
-      memberId: (0...10000).randomElement()!,
-      memberImageUrl: "https://picsum.photos/100",
-      content: "농부룩 같아요...",
-      liked: Bool.random(),
-      likeCount: (0...100).randomElement()!,
-      createdDate: .now,
-      updatedDate: .now
-    )
-  }
-  
-  public var toDomain: ReplyComment {
-    .init(
-      id: id,
-      memberId: memberId,
-      memberImageUrl: memberImageUrl,
-      content: content,
-      liked: liked,
-      likeCount: likeCount,
-      createdDate: createdDate,
-      updatedDate: updatedDate
+      updatedAt: updatedAt
     )
   }
 }

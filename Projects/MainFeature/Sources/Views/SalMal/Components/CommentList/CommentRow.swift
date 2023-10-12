@@ -14,10 +14,6 @@ public struct CommentCore: Reducer {
     public init(comment: Comment) {
       self.comment = comment
       self.replys = []
-      
-      if let states = comment.replys?.map({ ReplyCommentCore.State(comment: $0) }) {
-        self.replys.append(contentsOf: states)
-      }
     }
     
     public var id: Int {
@@ -94,7 +90,7 @@ struct CommentRow: View {
           Button {
             // MARK: - 더보기 버튼 탭
           } label: {
-            Image(systemName: "apple.logo")
+            Image(systemName: "poweron")
               .fit(size: 16)
           }
           .padding(.trailing, 10)
@@ -127,28 +123,28 @@ struct CommentRow: View {
           }
         }
         
-        if let replys = viewStore.comment.replys, replys.isEmpty == false {
-          Button {
-            store.send(.moreCommentToggle)
-          } label: {
-            Text("답글 \(replys.count)개 보기")
-              .font(.ds(.title4(.semibold)))
-              .foregroundColor(.ds(.green1))
-            
-          }
-          .padding(.top, 5)
-          
-          if viewStore.showMoreComment {
-            ForEach(replys) { reply in
-              ReplyCommentRow(store: .init(initialState: .init(comment: reply)) {
-                ReplyCommentCore()
-              })
-              .frame(height: 101)
-              .debug()
-            }
-            .buttonStyle(.plain)
-          }
-        }
+//        if let replys = viewStore.comment.replys, replys.isEmpty == false {
+//          Button {
+//            store.send(.moreCommentToggle)
+//          } label: {
+//            Text("답글 \(replys.count)개 보기")
+//              .font(.ds(.title4(.semibold)))
+//              .foregroundColor(.ds(.green1))
+//
+//          }
+//          .padding(.top, 5)
+//
+//          if viewStore.showMoreComment {
+//            ForEach(replys) { reply in
+//              ReplyCommentRow(store: .init(initialState: .init(comment: reply)) {
+//                ReplyCommentCore()
+//              })
+//              .frame(height: 101)
+//              .debug()
+//            }
+//            .buttonStyle(.plain)
+//          }
+//        }
       }
     }
   }
