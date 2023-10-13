@@ -8,6 +8,7 @@ public enum UDKey: String {
   case socialID
   case refreshToken
   case accessToken
+  case memberID
 }
 
 // MARK: - UserDefaultsManager
@@ -27,13 +28,38 @@ public final class UDManager {
   public var refreshToken: String?
   
   @UD(key: UDKey.accessToken)
-  public var accessToken: String?
+  public var accessToken: String? {
+    didSet {
+      if let accessToken { memberID = parseID(jwtToken: accessToken) }
+    }
+  }
   
-  func removeAll() {
+  @UD(key: UDKey.memberID)
+  public var memberID: Int?
+  
+  public func removeAll() {
     socialProvider = nil
     socialID = nil
     refreshToken = nil
     accessToken = nil
+    memberID = nil
+  }
+  
+  private func parseID(jwtToken jwt: String) -> Int? {
+    let value = jwt.components(separatedBy: ".")[1]
+    
+    let replacedValue = value
+      .replacingOccurrences(of: "-", with: "+")
+      .replacingOccurrences(of: "_", with: "/")
+    
+    let finalValue = replacedValue
+      .padding(toLength: ((replacedValue.count + 3) / 4) * 4, withPad: "=", startingAt: 0)
+    
+    guard let data = Data(base64Encoded: finalValue) else { return nil }
+    guard let payload = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else { return nil }
+    guard let memberID = payload["id"] as? Int else { return nil }
+    
+    return memberID
   }
 }
 
