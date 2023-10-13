@@ -77,7 +77,7 @@ public enum CommentAPI: TargetType {
     }
   }
   
-  public var headers: [String : String]? {
+  public var headers: [String: String]? {
     return ["Authorization": "Bearer \(UDManager.shared.accessToken ?? "")"]
   }
 }

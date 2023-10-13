@@ -25,7 +25,7 @@ public struct CommentListCore: Reducer {
       switch action {
       case .binding:
         return .none
-        
+    
       case .comment:
         return .none
         

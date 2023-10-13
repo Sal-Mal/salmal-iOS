@@ -30,27 +30,27 @@ public final class CommentRepositoryImpl: CommentRepository {
   
   public func edit(id: Int, text: String) async throws {
     let target = CommentAPI.edit(id: id, text: text)
-    try await networkManager.request(target)
+    try await networkManager.request(target, type: EmptyEntity.self)
   }
   
   public func delete(id: Int) async throws {
     let target = CommentAPI.delete(id: id)
-    try await networkManager.request(target)
+    try await networkManager.request(target, type: EmptyEntity.self)
   }
   
   public func like(id: Int) async throws {
     let target = CommentAPI.like(id: id)
-    try await networkManager.request(target)
+    try await networkManager.request(target, type: EmptyEntity.self)
   }
   
   public func disLike(id: Int) async throws {
     let target = CommentAPI.disLike(id: id)
-    try await networkManager.request(target)
+    try await networkManager.request(target, type: EmptyEntity.self)
   }
   
   public func report(id: Int) async throws {
     let target = CommentAPI.report(id: id)
-    try await networkManager.request(target)
+    try await networkManager.request(target, type: EmptyEntity.self)
   }
 }
 

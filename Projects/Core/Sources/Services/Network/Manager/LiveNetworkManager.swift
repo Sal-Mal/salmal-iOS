@@ -19,8 +19,7 @@ public struct LiveNetworkManager: NetworkManager {
   
   public func request<T: Responsable>(_ target: TargetType, type: T.Type) async throws -> T {
     let result = session.request(target)
-      .serializingDecodable(T.self)
-    
+      .serializingDecodable(T.self, emptyResponseCodes: Set(200..<300))
     return try await result.value
   }
   

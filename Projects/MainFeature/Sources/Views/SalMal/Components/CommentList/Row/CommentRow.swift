@@ -4,53 +4,6 @@ import Core
 import UI
 import ComposableArchitecture
 
-public struct CommentCore: Reducer {
-  public struct State: Equatable, Identifiable {
-    var comment: Comment
-    var replys: IdentifiedArrayOf<ReplyCommentCore.State>
-    
-    var showMoreComment = false
-    
-    public init(comment: Comment) {
-      self.comment = comment
-      self.replys = []
-    }
-    
-    public var id: Int {
-      return comment.id
-    }
-  }
-  
-  public enum Action: Equatable {
-    case replayComment(id: ReplyCommentCore.State.ID, action: ReplyCommentCore.Action)
-    case moreCommentToggle
-    case writeCommentToggle
-    case likeTapped
-  }
-  
-  @Dependency(\.network) var network
-  
-  public var body: some ReducerOf<Self> {
-    Reduce { state, action in
-      switch action {
-      case .moreCommentToggle:
-        state.showMoreComment.toggle()
-        return .none
-        
-      case .likeTapped:
-        state.comment.liked.toggle()
-        return .none
-        
-      default:
-        return .none
-      }
-    }
-    .forEach(\.replys, action: /Action.replayComment(id:action:)) {
-      ReplyCommentCore()
-    }
-  }
-}
-
 struct CommentRow: View {
   let store: StoreOf<CommentCore>
   @ObservedObject var viewStore: ViewStoreOf<CommentCore>
@@ -111,6 +64,7 @@ struct CommentRow: View {
           .padding(.trailing, 5)
           
           Text("\(viewStore.comment.likeCount)")
+            .monospacedDigit()
             .padding(.trailing, 16)
           
           Button {
