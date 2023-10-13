@@ -42,10 +42,10 @@ public extension SMCapsuleTextField {
   /**
    왼쪽에 image 삽입
    */
-
-  func leftImage(_ image: Image) -> Self {
+  
+  func leftImage(_ urlString: String) -> Self {
     var new = self
-    new.image = image
+    new.imageURL = urlString
     return new
   }
   
@@ -100,7 +100,7 @@ public struct SMCapsuleTextField: View {
   var titleColor: Color = .ds(.gray2)
   var titleFont: Font = .callout
   
-  var image: Image?
+  var imageURL: String?
   var buttonTitle: String?
   var buttonAction: () -> Void = {}
   var lineLimit: Int = 1
@@ -167,12 +167,21 @@ public struct SMCapsuleTextField: View {
   
   @ViewBuilder
   var imageView: some View {
-    if let image {
-      image
-        .resizable()
-        .aspectRatio(1, contentMode: .fit)
-        .frame(width: 54)
-        .clipShape(Circle())
+    if let imageURL, let url = URL(string: imageURL) {
+      CacheAsyncImage(url: url) { phase in
+        switch phase {
+        case let .success(image):
+          image
+            .resizable()
+            .aspectRatio(1, contentMode: .fit)
+            .frame(width: 54)
+            .clipShape(Circle())
+        default:
+          Circle()
+            .fill(Color.ds(.gray1))
+            .frame(width: 54)
+        }
+      }
     }
   }
   
@@ -201,7 +210,6 @@ struct SMCapsuleTextField_Previews: PreviewProvider {
     SMCapsuleTextField(text: .constant("ddsas"), placeholder: "눌러서 댓글입력")
       .color(.foreground(.ds(.white)))
       .color(.tint(.ds(.green1)))
-      .leftImage(Image(icon: .ic_cancel))
       .padding()
       .previewLayout(.sizeThatFits)
   }

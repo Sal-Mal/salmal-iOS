@@ -64,7 +64,7 @@ public struct CommentListView: View {
         .foregroundColor(.ds(.white20))
       
       SMCapsuleTextField(text: viewStore.$text, placeholder: "눌러서 댓글 입력")
-        .leftImage(.init(systemName: "swift"))
+// TODO: LeftImage 삽입해야함
         .rightButton("확인") {
           store.send(.tapConfirmButton)
         }
