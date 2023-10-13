@@ -77,7 +77,6 @@ struct CarouselView_Previews: PreviewProvider {
   static var previews: some View {
     CarouselView(store: .init(initialState: .init(tab: .home)) {
       CarouselCore()
-        ._printChanges()
     })
     .padding(.horizontal, 20)
     .preferredColorScheme(.dark)

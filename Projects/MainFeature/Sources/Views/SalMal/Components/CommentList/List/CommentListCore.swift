@@ -5,6 +5,7 @@ import Foundation
 public struct CommentListCore: Reducer {
   public struct State: Equatable {
     let voteID: Int
+    let commentCount: Int
     var comments: IdentifiedArrayOf<CommentCore.State> = []
     @BindingState var text: String = ""
     
@@ -89,12 +90,12 @@ public struct CommentListCore: Reducer {
         
       case .reset:
         state.editingCommentID = nil
+        state.text = ""
         return .none
       }
     }
     .forEach(\.comments, action: /Action.comment(id:action:)) {
       CommentCore()
-        ._printChanges()
     }
   }
 }

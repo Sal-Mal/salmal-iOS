@@ -42,6 +42,7 @@ public extension SMCapsuleTextField {
   /**
    왼쪽에 image 삽입
    */
+
   func leftImage(_ image: Image) -> Self {
     var new = self
     new.image = image

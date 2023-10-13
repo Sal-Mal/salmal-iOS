@@ -15,6 +15,9 @@ public struct ReportCommentView: View {
   
   public var body: some View {
     VStack(spacing: 0) {
+      DragIndicator()
+        .padding(.bottom, 23)
+      
       ForEach(viewStore.items.indices, id: \.self) { index in
         MenuRow(item: viewStore.items[index])
           .onTapGesture {
@@ -31,7 +34,6 @@ public struct ReportCommentView: View {
           }
       }
     }
-    .padding(.top, 43)
   }
 }
 

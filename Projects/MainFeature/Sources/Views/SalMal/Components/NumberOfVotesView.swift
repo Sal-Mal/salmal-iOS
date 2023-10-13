@@ -11,7 +11,7 @@ struct NumberOfVotesView: View {
   
   var body: some View {
     Text("🔥 현재 \(number)명 참여중!")
-      .font(.ds(.title4(.medium))) // TODO: Font
+      .font(.ds(.title4(.medium)))
       .foregroundColor(.ds(.white))
       .padding(.horizontal, 16)
       .padding(.vertical, 10)

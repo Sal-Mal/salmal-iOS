@@ -23,7 +23,7 @@ public struct CommentListView: View {
           .foregroundColor(.ds(.white))
           .padding(.leading, 20)
         
-        Text("365")
+        Text("\(viewStore.commentCount)")
           .font(.ds(.title5))
           .foregroundColor(.ds(.gray2))
         
@@ -50,10 +50,14 @@ public struct CommentListView: View {
         ) { subStore in
           CommentRow(store: subStore)
             .listRowSeparator(.hidden)
+            .listRowBackground(Color.ds(.gray4))
         }
       }
       .listStyle(.plain)
       .buttonStyle(.plain)
+      .onTapGesture {
+        UIApplication.shared.endEditing()
+      }
       
       Divider()
         .frame(height: 2)
@@ -75,7 +79,7 @@ public struct CommentListView: View {
 
 struct CommentListView_Previews: PreviewProvider {
   static var previews: some View {
-    CommentListView(store: .init(initialState: .init(voteID: 0)) {
+    CommentListView(store: .init(initialState: .init(voteID: 0, commentCount: 20)) {
       CommentListCore()
     })
     .preferredColorScheme(.dark)

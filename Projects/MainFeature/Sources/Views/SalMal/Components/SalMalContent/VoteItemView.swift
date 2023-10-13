@@ -42,13 +42,18 @@ public struct VoteItemView: View {
             }
           }
           .presentationDetents([.height(self.modalHeight)])
-          .presentationDragIndicator(.visible)
-        
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .background(Color.ds(.gray4))
       }
       .sheet(store: store.scope(state: \.$commentListState, action: VoteItemCore.Action.commentList)) { subStore in
-        CommentListView(store: subStore)
-          .presentationDetents([.large])
-          .presentationDragIndicator(.visible)
+        VStack(spacing: 0) {
+          DragIndicator()
+            .padding(.bottom, -20)
+          CommentListView(store: subStore)
+        }
+        .presentationDetents([.large, .medium])
+        .presentationDragIndicator(.hidden)
+        .background(Color.ds(.gray4))
       }
     }
   }
@@ -126,7 +131,6 @@ struct VoteItemView_Previews: PreviewProvider {
   static var previews: some View {
     VoteItemView(store: .init(initialState: .init(vote: VoteResponse.mock.toDomain)) {
       VoteItemCore()
-        ._printChanges()
     })
     .padding(20)
   }

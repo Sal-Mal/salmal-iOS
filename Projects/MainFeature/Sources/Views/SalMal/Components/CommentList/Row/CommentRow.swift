@@ -45,7 +45,7 @@ struct CommentRow: View {
           Button {
             store.send(.optionsTapped)
           } label: {
-            Image(systemName: "poweron")
+            Image(systemName: "command")
               .fit(size: 16)
           }
           .padding(.trailing, 10)
@@ -103,6 +103,7 @@ struct CommentRow: View {
 //        }
       }
     }
+    .background(Color.ds(.gray4))
     .sheet(store: store.scope(state: \.$report, action: CommentCore.Action.report)) { subStore in
       ReportCommentView(store: subStore)
         .readHeight()
@@ -112,7 +113,8 @@ struct CommentRow: View {
           }
         }
         .presentationDetents([.height(self.modalHeight)])
-        .presentationDragIndicator(.visible)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.ds(.gray4))
     }
   }
 }

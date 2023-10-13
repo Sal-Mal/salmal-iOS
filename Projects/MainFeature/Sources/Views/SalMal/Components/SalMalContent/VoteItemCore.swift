@@ -77,7 +77,7 @@ public struct VoteItemCore: Reducer {
         return .none
         
       case .commentTapped:
-        state.commentListState = .init(voteID: state.vote.id)
+        state.commentListState = .init(voteID: state.vote.id, commentCount: state.vote.commentCnt)
         return .none
         
       case .moreTapped:
