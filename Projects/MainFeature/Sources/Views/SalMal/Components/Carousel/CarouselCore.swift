@@ -103,7 +103,7 @@ public struct CarouselCore: Reducer {
       case let .removeAllVote(userID):
         return .run { send in
           // 차단 요청
-          try await networkManager.request(MemberAPI.ban(id: userID))
+          try await networkManager.request(MemberAPI.block(id: userID))
           // TODO: - ToastMessage를 띄운다
           // TODO: - 해당 유저의 게시물을 모두 지워버린다
         } catch: { error, send in

@@ -1,10 +1,3 @@
-//
-//  SMToastModifier.swift
-//  UI
-//
-//  Created by 청새우 on 2023/09/06.
-//
-
 import SwiftUI
 
 struct SMToastModifier: ViewModifier {

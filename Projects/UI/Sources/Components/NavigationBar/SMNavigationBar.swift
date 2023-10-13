@@ -11,10 +11,10 @@ public extension View {
     modifier(SMNavigationBar(
       leftItems: leftItems,
       rightItems: rightItems,
-      title: { Text(title)
-
-        .font(.title2)
-        .foregroundColor(.ds(.white))
+      title: {
+        Text(title)
+          .font(.ds(.title2(.semibold)))
+          .foregroundColor(.ds(.white))
       },
       color: color
     ))
