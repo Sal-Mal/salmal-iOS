@@ -2,12 +2,12 @@ import ComposableArchitecture
 
 public protocol CommentRepository {
   func list(id: Int) async throws -> [Comment]
-  func write(id: Int, text: String) async throws
-  func edit(id: Int, text: String) async throws
-  func delete(id: Int) async throws
-  func like(id: Int) async throws
-  func disLike(id: Int) async throws
-  func report(id: Int) async throws
+  func write(voteID: Int, text: String) async throws
+  func edit(commentID: Int, text: String) async throws
+  func delete(commentID: Int) async throws
+  func like(commentID: Int) async throws
+  func disLike(commentID: Int) async throws
+  func report(commentID: Int) async throws
 }
 
 public final class CommentRepositoryImpl: CommentRepository {
@@ -23,33 +23,33 @@ public final class CommentRepositoryImpl: CommentRepository {
     return dto.comments.map(\.toDomain)
   }
   
-  public func write(id: Int, text: String) async throws {
-    let target = CommentAPI.write(id: id, text: text)
+  public func write(voteID: Int, text: String) async throws {
+    let target = CommentAPI.write(id: voteID, text: text)
     try await networkManager.request(target, type: EmptyEntity.self)
   }
   
-  public func edit(id: Int, text: String) async throws {
-    let target = CommentAPI.edit(id: id, text: text)
+  public func edit(commentID: Int, text: String) async throws {
+    let target = CommentAPI.edit(id: commentID, text: text)
     try await networkManager.request(target, type: EmptyEntity.self)
   }
   
-  public func delete(id: Int) async throws {
-    let target = CommentAPI.delete(id: id)
+  public func delete(commentID: Int) async throws {
+    let target = CommentAPI.delete(id: commentID)
     try await networkManager.request(target, type: EmptyEntity.self)
   }
   
-  public func like(id: Int) async throws {
-    let target = CommentAPI.like(id: id)
+  public func like(commentID: Int) async throws {
+    let target = CommentAPI.like(id: commentID)
     try await networkManager.request(target, type: EmptyEntity.self)
   }
   
-  public func disLike(id: Int) async throws {
-    let target = CommentAPI.disLike(id: id)
+  public func disLike(commentID: Int) async throws {
+    let target = CommentAPI.disLike(id: commentID)
     try await networkManager.request(target, type: EmptyEntity.self)
   }
   
-  public func report(id: Int) async throws {
-    let target = CommentAPI.report(id: id)
+  public func report(commentID: Int) async throws {
+    let target = CommentAPI.report(id: commentID)
     try await networkManager.request(target, type: EmptyEntity.self)
   }
 }

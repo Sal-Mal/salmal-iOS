@@ -7,6 +7,8 @@ public struct CommentListCore: Reducer {
     let voteID: Int
     var comments: IdentifiedArrayOf<CommentCore.State> = []
     @BindingState var text: String = ""
+    
+    var editingCommentID: Int?
   }
   
   public enum Action: Equatable, BindableAction {
@@ -15,6 +17,7 @@ public struct CommentListCore: Reducer {
     case requestComments
     case commentsResponse(TaskResult<[Comment]>)
     case tapConfirmButton
+    case reset
   }
   
   @Dependency(\.commentRepository) var commentRepo
@@ -25,7 +28,20 @@ public struct CommentListCore: Reducer {
       switch action {
       case .binding:
         return .none
-    
+        
+      case let .comment(id, .delegate(.editComment)):
+        guard let comment = state.comments[id: id]?.comment else {
+          return .none
+        }
+        
+        state.text = comment.content
+        state.editingCommentID = comment.id
+        
+        return .none
+        
+      case .comment(_, .delegate(.refreshList)):
+        return .send(.requestComments)
+        
       case .comment:
         return .none
         
@@ -45,23 +61,40 @@ public struct CommentListCore: Reducer {
         return .none
         
       case let .commentsResponse(.failure(error)):
-        // TODO: 댓글 리스트 요청 실패
+        // TODO: 댓글 리스트 요청 실패 (Toast Message)
         print(error)
         return .none
         
       case .tapConfirmButton:
-        return .run { [id = state.voteID, text = state.text] send in
-          try await commentRepo.write(id: id, text: text)
-          // TODO: 코맨트 작성하고, 업로드하고, 댓글 다시 당겨오기
+        return .run { [state] send in
+          
+          let text = state.text
+          let voteID = state.voteID
+          
+          // editing
+          if let commentID = state.editingCommentID {
+            try await commentRepo.edit(commentID: commentID, text: text)
+          }
+          // writing
+          else {
+            try await commentRepo.write(voteID: voteID, text: text)
+          }
+
           await send(.requestComments)
+          await send(.reset)
         } catch: { error, send in
-          // TODO: 댓글 입력 업로드 실패
+          // TODO: 댓글 입력 업로드 실패 (Toast Message)
           print(error)
         }
+        
+      case .reset:
+        state.editingCommentID = nil
+        return .none
       }
     }
     .forEach(\.comments, action: /Action.comment(id:action:)) {
       CommentCore()
+        ._printChanges()
     }
   }
 }

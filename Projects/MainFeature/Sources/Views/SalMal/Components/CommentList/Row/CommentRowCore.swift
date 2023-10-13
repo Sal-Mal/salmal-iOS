@@ -5,6 +5,7 @@ public struct CommentCore: Reducer {
   public struct State: Equatable, Identifiable {
     var comment: Comment
     var replys: IdentifiedArrayOf<ReplyCommentCore.State>
+    @PresentationState var report: ReportCommentCore.State?
     
     var showMoreComment = false
     
@@ -19,11 +20,19 @@ public struct CommentCore: Reducer {
   }
   
   public enum Action: Equatable {
+    case delegate(Delegate)
+    case report(PresentationAction<ReportCommentCore.Action>)
     case replayComment(id: ReplyCommentCore.State.ID, action: ReplyCommentCore.Action)
+    case optionsTapped
     case moreCommentToggle
     case writeCommentToggle
     case likeTapped
     case setLiked(to: Bool)
+    
+    public enum Delegate: Equatable {
+      case refreshList
+      case editComment
+    }
   }
   
   @Dependency(\.commentRepository) var commentRepo
@@ -31,7 +40,23 @@ public struct CommentCore: Reducer {
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
+      case .delegate:
+        return .none
+        
+      case .report(.presented(.delegate(.editComment))):
+        return .send(.delegate(.editComment))
+        
+      case .report(.presented(.delegate(.refreshList))):
+        return .send(.delegate(.refreshList))
+        
+      case .report:
+        return .none
+        
       case .replayComment:
+        return .none
+        
+      case .optionsTapped:
+        state.report = .init(commentID: state.comment.id)
         return .none
         
       case .moreCommentToggle:
@@ -47,12 +72,12 @@ public struct CommentCore: Reducer {
           // 좋아요 해제하기
           if state.comment.liked {
             await send(.setLiked(to: false))
-            try await commentRepo.disLike(id: state.comment.id)
+            try await commentRepo.disLike(commentID: state.comment.id)
           }
           // 좋아요 누르기
           else {
             await send(.setLiked(to: true))
-            try await commentRepo.like(id: state.comment.id)
+            try await commentRepo.like(commentID: state.comment.id)
           }
           
         } catch: { [state] error, send in
@@ -69,6 +94,9 @@ public struct CommentCore: Reducer {
     }
     .forEach(\.replys, action: /Action.replayComment(id:action:)) {
       ReplyCommentCore()
+    }
+    .ifLet(\.$report, action: /Action.report) {
+      ReportCommentCore()
     }
   }
 }

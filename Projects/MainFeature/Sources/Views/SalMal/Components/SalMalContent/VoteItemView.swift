@@ -47,7 +47,7 @@ public struct VoteItemView: View {
       }
       .sheet(store: store.scope(state: \.$commentListState, action: VoteItemCore.Action.commentList)) { subStore in
         CommentListView(store: subStore)
-          .presentationDetents([.fraction(0.7), .large])
+          .presentationDetents([.large])
           .presentationDragIndicator(.visible)
       }
     }

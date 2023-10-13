@@ -8,6 +8,8 @@ struct CommentRow: View {
   let store: StoreOf<CommentCore>
   @ObservedObject var viewStore: ViewStoreOf<CommentCore>
   
+  @State var modalHeight: CGFloat = .zero
+  
   init(store: StoreOf<CommentCore>) {
     self.store = store
     self.viewStore = ViewStore(self.store, observe: { $0 })
@@ -41,7 +43,7 @@ struct CommentRow: View {
           Spacer()
           
           Button {
-            // MARK: - 더보기 버튼 탭
+            store.send(.optionsTapped)
           } label: {
             Image(systemName: "poweron")
               .fit(size: 16)
@@ -100,6 +102,17 @@ struct CommentRow: View {
 //          }
 //        }
       }
+    }
+    .sheet(store: store.scope(state: \.$report, action: CommentCore.Action.report)) { subStore in
+      ReportCommentView(store: subStore)
+        .readHeight()
+        .onPreferenceChange(HeightPreferenceKey.self) { height in
+          if let height {
+            self.modalHeight = height
+          }
+        }
+        .presentationDetents([.height(self.modalHeight)])
+        .presentationDragIndicator(.visible)
     }
   }
 }

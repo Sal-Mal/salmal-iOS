@@ -31,10 +31,9 @@ public struct LoginCore: Reducer {
           let model = LoginRequest(providerId: id)
           let api = AuthAPI.logIn(params: model)
           let dto = try await network.request(api, type: TokenResponse.self)
+          
           userDefault.accessToken = dto.accessToken
           userDefault.refreshToken = dto.refreshToken
-          
-          debugPrint(dto.accessToken, dto.refreshToken)
           
           NotiManager.post(.login)
         } catch: { error, send in
