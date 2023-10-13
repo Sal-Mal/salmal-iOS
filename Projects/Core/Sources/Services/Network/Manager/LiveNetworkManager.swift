@@ -20,13 +20,31 @@ public struct LiveNetworkManager: NetworkManager {
   public func request<T: Responsable>(_ target: TargetType, type: T.Type) async throws -> T {
     let result = session.request(target)
       .serializingDecodable(T.self, emptyResponseCodes: Set(200..<300))
-    return try await result.value
+    
+    do {
+      let value = try await result.value
+      debugPrint("Success!", value)
+      
+      return value
+    } catch {
+      debugPrint("ERROR!", error.localizedDescription)
+      
+      throw error
+    }
   }
   
   public func request(_ target: TargetType) async throws -> Data {
     let result = session.request(target)
       .serializingData()
     
-    return try await result.value
+    do {
+      let value = try await result.value
+      debugPrint("Success!")
+      
+      return value
+    } catch {
+      debugPrint("ERROR!", error.localizedDescription)
+      throw error
+    }
   }
 }
