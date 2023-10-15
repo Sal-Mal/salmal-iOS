@@ -21,15 +21,15 @@ public struct ReportCommentView: View {
       ForEach(viewStore.items.indices, id: \.self) { index in
         MenuRow(item: viewStore.items[index])
           .onTapGesture {
-            switch index {
-            case 0:
-              store.send(.edit)
-            case 1:
-              store.send(.delete)
-            case 2:
+            guard viewStore.isMyComment else {
               store.send(.report)
-            default:
-              break
+              return
+            }
+
+            if index == 0 {
+              store.send(.edit)
+            } else {
+              store.send(.delete)
             }
           }
       }
@@ -39,7 +39,7 @@ public struct ReportCommentView: View {
 
 struct ReportCommentView_Previews: PreviewProvider {
   static var previews: some View {
-    ReportCommentView(store: .init(initialState: .init(commentID: 2)) {
+    ReportCommentView(store: .init(initialState: .init(memberID: 2, commentID: 2)) {
       ReportCommentCore()
     })
   }

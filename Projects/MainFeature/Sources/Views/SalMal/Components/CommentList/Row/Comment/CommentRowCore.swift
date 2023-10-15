@@ -56,7 +56,10 @@ public struct CommentCore: Reducer {
         return .none
         
       case .optionsTapped:
-        state.report = .init(commentID: state.comment.id)
+        state.report = .init(
+          memberID: state.comment.memberId,
+          commentID: state.comment.id
+        )
         return .none
         
       case .moreCommentToggle:

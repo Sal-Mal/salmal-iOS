@@ -4,17 +4,23 @@ import ComposableArchitecture
 
 public struct ReportCommentCore: Reducer {
   public struct State: Equatable {
+    let memberID: Int
     let commentID: Int
     
     var isMyComment: Bool {
-      return commentID == UDManager.shared.memberID
+      return memberID == UDManager.shared.memberID
     }
     
-    var items: [MenuItem] = [
-      .init(icon: .init(icon: .ic_warning), title: "수정"),
-      .init(icon: .init(icon: .ic_warning), title: "삭제"),
-      .init(icon: .init(icon: .ic_warning), title: "신고")
-    ]
+    var items: [MenuItem] {
+      if isMyComment {
+        return [
+          .init(icon: .init(icon: .ic_warning), title: "수정"),
+          .init(icon: .init(icon: .ic_warning), title: "삭제"),
+        ]
+      } else {
+        return [.init(icon: .init(icon: .ic_warning), title: "신고")]
+      }
+    }
   }
   
   public enum Action: Equatable {
