@@ -11,31 +11,26 @@ public enum CommentAPI: TargetType {
   case report(id: Int)
   
   public var baseURL: String {
-    switch self {
-    case .list, .write:
-      return "http://3.38.192.126/api/votes"
-    case .edit, .delete, .like, .disLike, .report:
-      return "http://3.38.192.126/api/comments"
-    }
+    "http://3.38.192.126/api"
   }
   
   public var path: String {
     switch self {
     case let .list(id):
       // TODO: Query 수정(all fetch 댓글로 변경)
-      return "\(id)/comments?size=1000"
+      return "votes/\(id)/comments?size=1000"
     case let .write(id, _):
-      return "\(id)/comments"
+      return "votes/\(id)/comments"
     case let .edit(id, _):
-      return "\(id)"
+      return "comments/\(id)"
     case let .delete(id):
-      return "\(id)"
+      return "comments/\(id)"
     case let .like(id):
-      return "\(id)/likes"
+      return "comments/\(id)/likes"
     case let .disLike(id):
-      return "\(id)/likes"
+      return "comments/\(id)/likes"
     case let .report(id):
-      return "\(id)/reports"
+      return "comments/\(id)/reports"
     }
   }
   
