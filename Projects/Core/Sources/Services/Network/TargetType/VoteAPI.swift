@@ -1,7 +1,7 @@
 import Foundation
 
 public enum VoteAPI: TargetType {
-  case vote(id: Int, EvaluateVoteRequest) // 투표(살, 밀)
+  case vote(id: Int, EvaluateVoteRequestDTO) // 투표(살, 밀)
   case bookmark(id: Int) // 북마크
   case unBookmark(id: Int) // 북마크 해제
   case report(id: Int) // 신고

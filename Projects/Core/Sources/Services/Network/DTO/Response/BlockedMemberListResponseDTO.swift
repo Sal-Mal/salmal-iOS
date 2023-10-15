@@ -1,8 +1,8 @@
 import Foundation
 
-public struct BlockedMemberListResponse: Responsable {
+public struct BlockedMemberListResponseDTO: Responsable {
   public let hasNext: Bool
-  public let members: [MemberResponse]
+  public let members: [MemberResponseDTO]
 
   public enum CodingKeys: String, CodingKey {
     case hasNext
@@ -13,10 +13,10 @@ public struct BlockedMemberListResponse: Responsable {
 
 // MARK: - Extension
 
-extension BlockedMemberListResponse {
+extension BlockedMemberListResponseDTO {
 
-  public static var mock: BlockedMemberListResponse {
-    return BlockedMemberListResponse(
+  public static var mock: BlockedMemberListResponseDTO {
+    return BlockedMemberListResponseDTO(
       hasNext: true,
       members: [.mockBlocked, .mockBlocked, .mockBlocked, .mockBlocked]
     )

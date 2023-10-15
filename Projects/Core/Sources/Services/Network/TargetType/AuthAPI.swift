@@ -1,10 +1,10 @@
 import Foundation
 
 public enum AuthAPI: TargetType {
-  case logIn(params: LoginRequest)
+  case logIn(params: LoginRequestDTO)
   case logOut
-  case signUp(id: String, params: SignUpRequest)
-  case reIssueToken(params: AccessTokenRequest)
+  case signUp(id: String, params: SignUpRequestDTO)
+  case reIssueToken(params: AccessTokenRequestDTO)
   case checkToken
   
   public var baseURL: String {

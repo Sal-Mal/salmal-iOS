@@ -44,7 +44,7 @@ public final class MemberRepositoryImpl: MemberRepository {
 
   public func member(id: Int) async throws -> Member {
     let target = MemberAPI.fetch(id: id)
-    let response = try await networkManager.request(target, type: MemberResponse.self)
+    let response = try await networkManager.request(target, type: MemberResponseDTO.self)
     return response.toDomain
   }
 
@@ -54,7 +54,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.fetch(id: id)
-    let response = try await networkManager.request(target, type: MemberResponse.self)
+    let response = try await networkManager.request(target, type: MemberResponseDTO.self)
     return response.toDomain
   }
 
@@ -101,7 +101,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.fetchBlocks(id: id, cursorId: cursorId, size: size)
-    let response = try await networkManager.request(target, type: BlockedMemberListResponse.self)
+    let response = try await networkManager.request(target, type: BlockedMemberListResponseDTO.self)
     return MemberPage(hasNext: response.hasNext, members: response.members.map { $0.toDomain })
   }
 
@@ -111,7 +111,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.fetchVotes(id: id, cursorId: cursorId, size: size)
-    let response = try await networkManager.request(target, type: VoteListResponse.self)
+    let response = try await networkManager.request(target, type: VoteListResponseDTO.self)
     return response.votes.map { $0.toDomain }
   }
 
@@ -121,7 +121,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.fetchEvaluations(id: id, cursorId: cursorId, size: size)
-    let response = try await networkManager.request(target, type: VoteListResponse.self)
+    let response = try await networkManager.request(target, type: VoteListResponseDTO.self)
     return response.votes.map { $0.toDomain }
   }
 
@@ -131,7 +131,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.fetchBookmarks(id: id, cursorId: cursorId, size: size)
-    let response = try await networkManager.request(target, type: VoteListResponse.self)
+    let response = try await networkManager.request(target, type: VoteListResponseDTO.self)
     return response.votes.map { $0.toDomain }
   }
 }

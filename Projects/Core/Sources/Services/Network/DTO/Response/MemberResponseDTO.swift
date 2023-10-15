@@ -1,6 +1,6 @@
 import Foundation
 
-public struct MemberResponse: Responsable {
+public struct MemberResponseDTO: Responsable {
   public var id: Int?
   public var nickName: String?
   public var introduction: String?
@@ -13,10 +13,10 @@ public struct MemberResponse: Responsable {
 
 // MARK: - Extension
 
-extension MemberResponse {
+extension MemberResponseDTO {
 
-  public static var mock: MemberResponse {
-    return MemberResponse(
+  public static var mock: MemberResponseDTO {
+    return MemberResponseDTO(
       id: (0...1000).randomElement(),
       nickName: "관리자",
       introduction: "관리자 입니다.",
@@ -27,8 +27,8 @@ extension MemberResponse {
     )
   }
 
-  public static var mockBlocked: MemberResponse {
-    return MemberResponse(
+  public static var mockBlocked: MemberResponseDTO {
+    return MemberResponseDTO(
       id: (0...1000).randomElement(),
       nickName: "유저 \((0...1000).randomElement()!)",
       introduction: "차단된 유저 입니다.",

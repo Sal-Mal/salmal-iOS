@@ -85,9 +85,9 @@ extension MemberAPI: TargetType {
     case .fetch:
       return nil
     case .update(_, let nickName, let introduction):
-      return UpdateMemberRequest(nickName: nickName, introduction: introduction)
+      return UpdateMemberRequestDTO(nickName: nickName, introduction: introduction)
     case .updateImage(_, let data):
-      return UpdateMemberImageRequest(imageFile: data)
+      return UpdateMemberImageRequestDTO(imageFile: data)
     case .delete:
       return nil
     case .block:

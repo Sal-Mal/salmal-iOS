@@ -58,9 +58,9 @@ public enum CommentAPI: TargetType {
     case .list:
       return nil
     case let .write(_, text):
-      return CommentRequest(content: text)
+      return CommentRequestDTO(content: text)
     case let .edit(_, text):
-      return CommentRequest(content: text)
+      return CommentRequestDTO(content: text)
     case .delete:
       return nil
     case .like:

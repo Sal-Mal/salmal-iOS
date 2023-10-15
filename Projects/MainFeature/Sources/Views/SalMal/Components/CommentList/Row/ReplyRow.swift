@@ -98,7 +98,7 @@ struct ReplyCommentRow: View {
 
 struct ReplyCommentRow_Previews: PreviewProvider {
   static var previews: some View {
-    ReplyCommentRow(store: .init(initialState: ReplyCommentCore.State(comment: CommentResponse.mock.toDomain)) {
+    ReplyCommentRow(store: .init(initialState: ReplyCommentCore.State(comment: CommentResponseDTO.mock.toDomain)) {
       ReplyCommentCore()
     })
     .frame(maxWidth: .infinity, alignment: .leading)

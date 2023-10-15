@@ -1,26 +1,26 @@
 import Foundation
 
-public struct CommentListResponse: Responsable {
+public struct CommentListResponseDTO: Responsable {
   public let hasNext: Bool
-  public let comments: [CommentResponse]
+  public let comments: [CommentResponseDTO]
   
-  public static var mock: CommentListResponse {
+  public static var mock: CommentListResponseDTO {
     .init(hasNext: true, comments: [
-      CommentResponse.mock,
-      CommentResponse.mock,
-      CommentResponse.mock,
-      CommentResponse.mock,
-      CommentResponse.mock,
-      CommentResponse.mock,
-      CommentResponse.mock,
-      CommentResponse.mock,
-      CommentResponse.mock,
-      CommentResponse.mock
+      CommentResponseDTO.mock,
+      CommentResponseDTO.mock,
+      CommentResponseDTO.mock,
+      CommentResponseDTO.mock,
+      CommentResponseDTO.mock,
+      CommentResponseDTO.mock,
+      CommentResponseDTO.mock,
+      CommentResponseDTO.mock,
+      CommentResponseDTO.mock,
+      CommentResponseDTO.mock
     ])
   }
 }
 
-public struct CommentResponse: Responsable {
+public struct CommentResponseDTO: Responsable {
   let id: Int
   let memberId: Int
   let memberImageUrl: String
@@ -30,7 +30,7 @@ public struct CommentResponse: Responsable {
   let createdAt: String
   let updatedAt: String
   
-  public static var mock: CommentResponse {
+  public static var mock: CommentResponseDTO {
     .init(
       id: (0...10000).randomElement()!,
       memberId: (0...10000).randomElement()!,

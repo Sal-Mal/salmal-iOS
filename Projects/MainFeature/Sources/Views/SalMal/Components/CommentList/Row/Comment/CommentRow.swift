@@ -114,7 +114,7 @@ struct CommentRow: View {
 
 struct CommentRow_Previews: PreviewProvider {
   static var previews: some View {
-    CommentRow(store: .init(initialState: CommentCore.State(comment: CommentResponse.mock.toDomain)) {
+    CommentRow(store: .init(initialState: CommentCore.State(comment: CommentResponseDTO.mock.toDomain)) {
       CommentCore()
     })
     .frame(maxWidth: .infinity, alignment: .leading)

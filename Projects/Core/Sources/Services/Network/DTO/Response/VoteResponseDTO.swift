@@ -1,19 +1,19 @@
 import Foundation
 
 /// 투표 목록 조회에서 쓰는 DTO
-public struct VoteListResponse: Responsable {
+public struct VoteListResponseDTO: Responsable {
   public let hasNext: Bool
-  public let votes: [VoteResponse]
+  public let votes: [VoteResponseDTO]
 }
 
-extension VoteListResponse {
-  public static var mock: VoteListResponse {
-    VoteListResponse(hasNext: true, votes: [.mock, .mock, .mock, .mock, .mock])
+extension VoteListResponseDTO {
+  public static var mock: VoteListResponseDTO {
+    VoteListResponseDTO(hasNext: true, votes: [.mock, .mock, .mock, .mock, .mock])
   }
 }
 
 /// 투표 조회에서 쓰는 DTO
-public struct VoteResponse: Responsable {
+public struct VoteResponseDTO: Responsable {
   public let id: Int
   public let imageUrl: String
   public let nickName: String
@@ -33,13 +33,13 @@ public struct VoteResponse: Responsable {
   }
 }
 
-extension VoteResponse {
-  public static var mock: VoteResponse {
+extension VoteResponseDTO {
+  public static var mock: VoteResponseDTO {
     let total = (100...1000).randomElement()!
     let sal = (0...total).randomElement()!
     let mal = total - sal
     
-    return VoteResponse(
+    return VoteResponseDTO(
       id: (0...1000).randomElement()!,
       imageUrl: "https://picsum.photos/300/600",
       nickName: "dudu",

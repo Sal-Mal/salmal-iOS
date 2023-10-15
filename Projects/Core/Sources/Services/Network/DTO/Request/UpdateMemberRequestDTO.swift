@@ -1,6 +1,6 @@
 import Foundation
 
-public struct UpdateMemberRequest: Encodable {
+public struct UpdateMemberRequestDTO: Encodable {
   public let nickName: String
   public let introduction: String
 }

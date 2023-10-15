@@ -1,7 +1,7 @@
 import Foundation
 
 /// 회원가입
-public struct SignUpRequest: Encodable {
+public struct SignUpRequestDTO: Encodable {
   let providerId: String
   let nickName: String
   let marketingInformationConsent: Bool
