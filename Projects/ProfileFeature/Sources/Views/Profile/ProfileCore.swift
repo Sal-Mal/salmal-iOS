@@ -14,28 +14,55 @@ public struct ProfileCore: Reducer {
     var path = StackState<Path.State>()
 
     var tab: Tab = .uploads
-    var member: Member? = MemberResponse.mock.toDomain
-    var votes: [Vote] = VoteListDTO.mock.votes.map(\.toDomain) + VoteListDTO.mock.votes.map(\.toDomain)
-    var evaluations: [Vote] = VoteListDTO.mock.votes.map(\.toDomain) + VoteListDTO.mock.votes.map(\.toDomain)
+    var member: Member?
+    var votes: IdentifiedArrayOf<Vote> = []
+    var evaluations: IdentifiedArrayOf<Vote> = []
 
     public init() {}
   }
 
   public enum Action {
+    case onAppear
     case path(StackAction<Path.State, Path.Action>)
     case setTab(Tab)
+    case setMember(Member?)
+    case setVotes([Vote])
+    case setEvaluations([Vote])
   }
+
+  @Dependency(\.memberRepository) var memberRepository: MemberRepository
 
   public init() {}
 
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
+      case .onAppear:
+        return .run { send in
+          let member = try await memberRepository.myPage()
+          await send(.setMember(member))
+
+        } catch: { error, send in
+          print(error)
+        }
+
       case .path:
         return .none
 
       case .setTab(let tab):
         state.tab = tab
+        return .none
+
+      case .setMember(let member):
+        state.member = member
+        return .none
+
+      case .setVotes(let votes):
+        state.votes.append(contentsOf: votes)
+        return .none
+
+      case .setEvaluations(let evaluations):
+        state.evaluations.append(contentsOf: evaluations)
         return .none
       }
     }

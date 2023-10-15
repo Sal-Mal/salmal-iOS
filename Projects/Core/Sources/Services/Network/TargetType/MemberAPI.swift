@@ -43,14 +43,14 @@ extension MemberAPI: TargetType {
       return "members/\(id)/blocks"
     case let .unBlock(id):
       return "members/\(id)/blocks"
-    case let .fetchBlocks(id, _, _):
-      return "members/\(id)/blocks"
-    case let .fetchVotes(id, _, _):
-      return "members/\(id)/votes"
-    case let .fetchEvaluations(id, _, _):
-      return "members/\(id)/evaluations"
-    case let .fetchBookmarks(id, _, _):
-      return "members/\(id)/bookmarks"
+    case let .fetchBlocks(id, cursorId, size):
+      return "members/\(id)/blocks?cursor-id=\(cursorId)&size=\(size)"
+    case let .fetchVotes(id, cursorId, size):
+      return "members/\(id)/votes?cursor-id=\(cursorId)&size=\(size)"
+    case let .fetchEvaluations(id, cursorId, size):
+      return "members/\(id)/evaluations?cursor-id=\(cursorId)&size=\(size)"
+    case let .fetchBookmarks(id, cursorId, size):
+      return "members/\(id)/bookmarks?cursor-id=\(cursorId)&size=\(size)"
     }
   }
   
@@ -94,14 +94,14 @@ extension MemberAPI: TargetType {
       return nil
     case .unBlock:
       return nil
-    case .fetchBlocks(_, let cursorId, let size):
-      return GetBlockedMemberListRequest(cursorId: cursorId, size: size)
-    case .fetchVotes(_, let cursorId, let size):
-      return GetVoteListRequest(cursorId: cursorId, size: size)
-    case .fetchEvaluations(_, let cursorId, let size):
-      return GetVoteListRequest(cursorId: cursorId, size: size)
-    case .fetchBookmarks(_, let cursorId, let size):
-      return GetVoteListRequest(cursorId: cursorId, size: size)
+    case .fetchBlocks:
+      return nil
+    case .fetchVotes:
+      return nil
+    case .fetchEvaluations:
+      return nil
+    case .fetchBookmarks:
+      return nil
     }
   }
   

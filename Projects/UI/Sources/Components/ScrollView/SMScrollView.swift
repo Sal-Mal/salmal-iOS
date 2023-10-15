@@ -5,14 +5,14 @@ struct SMScrollViewPreferenceKey: PreferenceKey {
   static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {}
 }
 
-struct SMScrollView<Content: View>: View {
+public struct SMScrollView<Content: View>: View {
 
   let axis: Axis.Set
   let showIndicators: Bool
   let onChangedOffset: (CGPoint) -> Void
   let content: Content
 
-  init(
+  public init(
     axis: Axis.Set = .vertical,
     showIndicators: Bool = true,
     onChangedOffset: @escaping (CGPoint) -> Void = { _ in },
@@ -24,7 +24,7 @@ struct SMScrollView<Content: View>: View {
     self.content = content()
   }
 
-  var body: some View {
+  public var body: some View {
     ScrollView(axis, showsIndicators: showIndicators) {
       GeometryReader { proxy in
         Color.clear.preference(
@@ -37,5 +37,6 @@ struct SMScrollView<Content: View>: View {
     }
     .coordinateSpace(name: "SMScrollView")
     .onPreferenceChange(SMScrollViewPreferenceKey.self, perform: onChangedOffset)
+    .scrollIndicators(.hidden)
   }
 }

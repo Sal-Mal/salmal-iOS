@@ -9,7 +9,7 @@ public struct OtherProfileCore: Reducer {
     @BindingState var isBlockSheetPresented: Bool = false
 
     var member: Member? = MemberResponse.mock.toDomain
-    var votes: [Vote] = VoteListDTO.mock.votes.map(\.toDomain) + VoteListDTO.mock.votes.map(\.toDomain)
+    var votes: [Vote] = VoteListResponse.mock.votes.map(\.toDomain) + VoteListResponse.mock.votes.map(\.toDomain)
 
     public init() {}
   }
@@ -21,6 +21,7 @@ public struct OtherProfileCore: Reducer {
   }
 
   @Dependency(\.dismiss) var dismiss
+  @Dependency(\.memberRepository) var memberRepository: MemberRepository
 
   public init() {}
 

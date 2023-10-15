@@ -4,7 +4,7 @@ public struct BlockedMemberListResponse: Responsable {
   public let hasNext: Bool
   public let members: [MemberResponse]
 
-  private enum CodingKeys: String, CodingKey {
+  public enum CodingKeys: String, CodingKey {
     case hasNext
     case members = "blockedMembers"
   }
