@@ -36,7 +36,7 @@ struct CommentRow: View {
             .font(.ds(.title4(.semibold)))
             .foregroundColor(.ds(.white))
           
-          Text("3시간 전")
+          Text(viewStore.timeDifference)
             .font(.ds(.title4(.medium)))
             .foregroundColor(.ds(.gray2))
           
@@ -79,28 +79,21 @@ struct CommentRow: View {
           }
         }
         
-//        if let replys = viewStore.comment.replys, replys.isEmpty == false {
-//          Button {
-//            store.send(.moreCommentToggle)
-//          } label: {
-//            Text("답글 \(replys.count)개 보기")
-//              .font(.ds(.title4(.semibold)))
-//              .foregroundColor(.ds(.green1))
-//
-//          }
-//          .padding(.top, 5)
-//
-//          if viewStore.showMoreComment {
-//            ForEach(replys) { reply in
-//              ReplyCommentRow(store: .init(initialState: .init(comment: reply)) {
-//                ReplyCommentCore()
-//              })
-//              .frame(height: 101)
-//              .debug()
-//            }
-//            .buttonStyle(.plain)
-//          }
-//        }
+        if let subCommentCount = viewStore.comment.subComments {
+          Button {
+            store.send(.moreCommentToggle)
+          } label: {
+            Text("답글 \(subCommentCount)개 보기")
+              .font(.ds(.title4(.semibold)))
+              .foregroundColor(.ds(.green1))
+
+          }
+          .padding(.top, 5)
+          
+          if viewStore.showMoreComment {
+            Text("대댓글 UI")
+          }
+        }
       }
     }
     .background(Color.ds(.gray4))

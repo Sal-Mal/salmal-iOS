@@ -7,6 +7,7 @@ public struct Comment: Equatable, Identifiable {
   public let content: String
   public var liked: Bool
   public var likeCount: Int
-  public let createdAt: String
-  public let updatedAt: String
+  public let createdAt: Date
+  public let updatedAt: Date
+  public var subComments: Int? = 10
 }

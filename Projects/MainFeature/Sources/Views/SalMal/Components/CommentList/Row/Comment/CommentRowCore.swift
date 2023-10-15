@@ -8,14 +8,30 @@ public struct CommentCore: Reducer {
     @PresentationState var report: ReportCommentCore.State?
     
     var showMoreComment = false
+    var timeDifference: String {
+      let difference = comment.createdAt.timeIntervalSinceNow * -1
+      
+      let minute: Double = 60
+      let hour: Double = minute * 60
+      let day: Double = hour * 24
+      
+      switch difference {
+      // days
+      case day...:
+        return "\(Int((difference / day).rounded()))일 전"
+      case hour..<day:
+        return "\(Int((difference / hour).rounded()))시간 전"
+      case minute..<day:
+        return "\(Int((difference / minute).rounded()))분 전"
+      default:
+        return "방금전"
+      }
+    }
+    public var id: Int { return comment.id }
     
     public init(comment: Comment) {
       self.comment = comment
       self.replys = []
-    }
-    
-    public var id: Int {
-      return comment.id
     }
   }
   

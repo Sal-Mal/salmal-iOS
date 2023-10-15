@@ -51,8 +51,17 @@ public struct CommentResponse: Responsable {
       content: content,
       liked: liked,
       likeCount: likeCount,
-      createdAt: createdAt,
-      updatedAt: updatedAt
+      createdAt: createdAt.toDate,
+      updatedAt: updatedAt.toDate
     )
+  }
+}
+
+fileprivate extension String {
+  var toDate: Date {
+    let formatter = DateFormatter()
+    // TODO: Locale & TimeZone 설정
+    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+    return formatter.date(from: self) ?? .now
   }
 }
