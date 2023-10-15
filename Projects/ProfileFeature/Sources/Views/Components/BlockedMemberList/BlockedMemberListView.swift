@@ -18,7 +18,6 @@ public struct BlockedMemberListView: View {
         BlockedMemberListCell(member: member) {
           viewStore.send(.unblockButtonTapped(member))
         }
-        .buttonStyle(.plain)
         .listRowInsets(.init(top: 16, leading: 18, bottom: 16, trailing: 18))
         .listRowSeparator(.hidden)
       }
@@ -33,6 +32,9 @@ public struct BlockedMemberListView: View {
           }
         }
       )
+      .onAppear {
+        viewStore.send(.onAppear)
+      }
     }
   }
 }

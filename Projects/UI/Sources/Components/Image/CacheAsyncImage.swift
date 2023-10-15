@@ -49,9 +49,6 @@ private final class ImageCache {
   }
   
   func setValue(_ value: Image, forKey key: URL) {
-    /*
-     TODO: 실서버 연결시 주석해제해서 캐싱
-     cache[key] = value
-     */
+    cache[key] = value
   }
 }

@@ -8,7 +8,7 @@ public struct UploadListCore: Reducer {
   public struct State: Equatable {
     @BindingState var isDeletionPresented: Bool = false
 
-    var votes: [Vote] = VoteListDTO.mock.votes.map(\.toDomain)
+    var votes: [Vote] = VoteListResponseDTO.mock.votes.map(\.toDomain)
 
     public init() {}
   }

@@ -16,21 +16,11 @@ struct BookmarkListView: View {
     WithViewStore(store, observe: { $0 }) { viewStore in
       ScrollView {
         LazyVGrid(columns: [.init(), .init()], spacing: 8) {
-          ForEach(viewStore.bookmarkedList, id: \.id) { bookmark in
-            AsyncImage(url: URL(string: bookmark.imageURL)) { phase in
-              switch phase {
-              case .success(let image):
-                image
-                  .resizable()
-                  .aspectRatio(1, contentMode: .fit)
-                  .cornerRadius(24.0)
-
-              default:
-                RoundedRectangle(cornerRadius: 24.0)
-                  .fill(.gray)
-                  .aspectRatio(1, contentMode: .fit)
+          ForEach(viewStore.bookmarkedList) { bookmark in
+            BookmarkCell(bookmark: bookmark)
+              .onTapGesture {
+                viewStore.send(.bookmarkTapped(bookmark))
               }
-            }
           }
         }
       }
@@ -46,6 +36,32 @@ struct BookmarkListView: View {
       }
     }
   }
+
+  @ViewBuilder
+  func BookmarkCell(bookmark: Vote) -> some View {
+    if let url = URL(string: bookmark.imageURL) {
+      CacheAsyncImage(url: url) { phase in
+        switch phase {
+        case .success(let image):
+          image
+            .resizable()
+            .aspectRatio(1, contentMode: .fit)
+            .cornerRadius(24.0)
+
+        default:
+          RoundedRectangle(cornerRadius: 24.0)
+            .fill(Color.ds(.gray2))
+            .aspectRatio(1, contentMode: .fit)
+        }
+      }
+
+    } else {
+      RoundedRectangle(cornerRadius: 24.0)
+        .fill(Color.ds(.gray2))
+        .aspectRatio(1, contentMode: .fit)
+    }
+  }
+
 }
 
 struct BookmarkListView_Previews: PreviewProvider {

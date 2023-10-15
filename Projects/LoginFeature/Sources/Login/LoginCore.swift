@@ -28,12 +28,14 @@ public struct LoginCore: Reducer {
         
       case let .requestLogin(id):
         return .run { send in
-          let model = LoginDTO(providerId: id)
+          let model = LoginRequestDTO(providerId: id)
           let api = AuthAPI.logIn(params: model)
-          let dto = try await network.request(api, type: TokenDTO.self)
+          let dto = try await network.request(api, type: TokenResponseDTO.self)
+          
           userDefault.accessToken = dto.accessToken
           userDefault.refreshToken = dto.refreshToken
-          NotiManager.post(.login)
+          
+          NotificationService.post(.login)
         } catch: { error, send in
           // 로그인 실패했으면 회원가입 flow
           await send(.moveToTermScreen)

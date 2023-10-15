@@ -8,8 +8,8 @@ public struct OtherProfileCore: Reducer {
   public struct State: Equatable {
     @BindingState var isBlockSheetPresented: Bool = false
 
-    var member: Member? = MemberResponse.mock.toDomain
-    var votes: [Vote] = VoteListDTO.mock.votes.map(\.toDomain) + VoteListDTO.mock.votes.map(\.toDomain)
+    var member: Member? = MemberResponseDTO.mock.toDomain
+    var votes: [Vote] = VoteListResponseDTO.mock.votes.map(\.toDomain) + VoteListResponseDTO.mock.votes.map(\.toDomain)
 
     public init() {}
   }
@@ -21,6 +21,7 @@ public struct OtherProfileCore: Reducer {
   }
 
   @Dependency(\.dismiss) var dismiss
+  @Dependency(\.memberRepository) var memberRepository: MemberRepository
 
   public init() {}
 

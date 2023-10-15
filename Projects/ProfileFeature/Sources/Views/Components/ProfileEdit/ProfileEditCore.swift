@@ -1,4 +1,6 @@
-import Foundation
+import SwiftUI
+import PhotosUI
+import AVFoundation
 import ComposableArchitecture
 
 import Core
@@ -8,11 +10,14 @@ public struct ProfileEditCore: Reducer {
   public struct State: Equatable {
     @BindingState var nickName: String = ""
     @BindingState var introduction: String = ""
-    @BindingState var imageURL: String = ""
-    @BindingState var isPhotoPresented: Bool = false
-    @BindingState var isDeactivatePresented: Bool = false
+    @BindingState var isPhotoSheetPresented: Bool = false
+    @BindingState var isPhotoLibraryPresented: Bool = false
+    @BindingState var isTakePhotoPresented: Bool = false
+    @BindingState var isWithdrawalPresented: Bool = false
+    @BindingState var selectedItem: PhotosPickerItem?
 
     var member: Member?
+    var imageData: Data?
 
     public init() {}
   }
@@ -21,31 +26,30 @@ public struct ProfileEditCore: Reducer {
     case onAppear
     case dismissButtonTapped
     case confirmButtonTapped
-    // 프로필 사진 설정
     case selectInPhotoLibraryButtonTapped
     case takePhotoButtonTapped
-    case deleteCurrentPhotoButtonTapped
-    // 프로필 닉네임, 자기소개 설정
-    case binding(BindingAction<State>)
-    // 로그아웃, 서비스탈퇴
+    case cancelTakePhotoButtonTapped
+    case removeCurrentPhotoButtonTapped
     case logoutButtonTapped
-    case deactivateButtonTapped
+    case withdrawalButtonTapped
     case setMember(Member)
+    case setImage(Data?)
+    case binding(BindingAction<State>)
   }
 
-  @Dependency(\.network) var network
   @Dependency(\.dismiss) var dismiss
+  @Dependency(\.memberRepository) var memberRepository: MemberRepository
 
   public init() {}
 
   public var body: some ReducerOf<Self> {
     BindingReducer()
+
     Reduce { state, action in
       switch action {
       case .onAppear:
         return .run { send in
-          let memberDTO = try await network.request(MemberAPI.fetch(id: 2), type: MemberResponse.self)
-          let member = memberDTO.toDomain
+          let member = try await memberRepository.myPage()
           await send(.setMember(member))
         }
 
@@ -55,10 +59,12 @@ public struct ProfileEditCore: Reducer {
         }
 
       case .confirmButtonTapped:
-        print("확인 버튼 클릭")
-        return .run { send in
-          // TODO: 회원 이미지 데이터를 보내야함 + UpdateRequestDTO 처리
-          try await network.request(MemberAPI.update(id: 2, nickName: "", introduction: ""))
+        return .run { [state] send in
+          try await memberRepository.update(nickname: state.nickName, introduction: state.introduction)
+
+          if let data = state.imageData {
+            try await memberRepository.updateImage(data: data)
+          }
           await dismiss()
 
         } catch: { error, send in
@@ -66,16 +72,31 @@ public struct ProfileEditCore: Reducer {
         }
 
       case .selectInPhotoLibraryButtonTapped:
-        // TODO: 사진첩에서 선택하기 버튼 클릭
+        state.isPhotoLibraryPresented = true
+        state.isPhotoSheetPresented = false
         return .none
 
       case .takePhotoButtonTapped:
-        // TODO: 촬영하기 버튼 클릭
+        state.isPhotoSheetPresented = false
+        state.isTakePhotoPresented = true
         return .none
 
-      case .deleteCurrentPhotoButtonTapped:
-        // TODO: 현재 사진 삭제 버튼 클릭
+      case .removeCurrentPhotoButtonTapped:
+        state.isPhotoSheetPresented = false
+        state.imageData = nil
         return .none
+
+      case .cancelTakePhotoButtonTapped:
+        state.isTakePhotoPresented = false
+        return .none
+
+      case .binding(\.$selectedItem):
+        guard let item = state.selectedItem else { return .none }
+
+        return .run { send in
+          let data = try await item.loadTransferable(type: Data.self)
+          await send(.setImage(data))
+        }
 
       case .binding:
         return .none
@@ -85,13 +106,11 @@ public struct ProfileEditCore: Reducer {
           // TODO: 로그아웃 처리
         }
 
-      case .deactivateButtonTapped:
+      case .withdrawalButtonTapped:
         return .run { send in
-          // TODO: 서비스 탈퇴 Sheet에서 "확인" 클릭 시 처리
-          try await network.request(MemberAPI.delete(id: 2))
+          try await memberRepository.delete()
 
         } catch: { error, send in
-          // TODO: 에러 처리
           print(error)
         }
 
@@ -99,8 +118,10 @@ public struct ProfileEditCore: Reducer {
         state.member = member
         state.nickName = member.nickName
         state.introduction = member.introduction
-        state.imageURL = member.imageURL
+        return .none
 
+      case .setImage(let data):
+        state.imageData = data
         return .none
       }
     }

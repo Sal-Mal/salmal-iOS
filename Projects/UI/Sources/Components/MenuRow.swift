@@ -44,8 +44,8 @@ struct MenuRow_Previews: PreviewProvider {
     ZStack {
       Color.black
       VStack {
-        MenuRow(item: .init(icon: Image(icon: .warning), title: "해당 게시물 신고하기"))
-        MenuRow(item: .init(icon: Image(icon: .warning), title: "해당 게시물 신고하기"))
+        MenuRow(item: .init(icon: Image(icon: .ic_warning), title: "해당 게시물 신고하기"))
+        MenuRow(item: .init(icon: Image(icon: .ic_warning), title: "해당 게시물 신고하기"))
       }
     }
   }

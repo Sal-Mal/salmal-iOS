@@ -224,7 +224,7 @@ public struct OtherProfileView: View {
         Button {
           viewStore.send(.set(\.$isBlockSheetPresented, true))
         } label: {
-          Image(icon: .cancel)
+          Image(icon: .ic_cancel)
         }
       }
       .onAppear {

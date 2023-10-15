@@ -9,6 +9,7 @@ struct ContentView: View {
     NavigationStack {
       SalMalView(store: .init(initialState: SalMalCore.State()) {
         SalMalCore()
+          .dependency(\.network, MockNetworkService())
       })
     }
     .preferredColorScheme(.dark)
