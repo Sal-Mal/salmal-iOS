@@ -1,28 +1,30 @@
 import Foundation
 
-public enum AuthAPI: TargetType {
+public enum AuthAPI {
   case logIn(params: LoginRequestDTO)
   case logOut
   case signUp(id: String, params: SignUpRequestDTO)
   case reIssueToken(params: AccessTokenRequestDTO)
   case checkToken
-  
-  public var baseURL: String {
-    return "http://3.38.192.126/api/auth"
-  }
-  
+}
+
+
+// MARK: - Extension
+
+extension AuthAPI: TargetType {
+
   public var path: String {
     switch self {
     case .logIn:
-      return "login"
+      return "auth/login"
     case .logOut:
-      return "logout"
+      return "auth/logout"
     case let .signUp(id, _):
-      return "signup/\(id)"
+      return "auth/signup/\(id)"
     case .reIssueToken:
-      return "reissue"
+      return "auth/reissue"
     case .checkToken:
-      return "tokens"
+      return "auth/tokens"
     }
   }
   
@@ -58,7 +60,7 @@ public enum AuthAPI: TargetType {
       return nil
       
     case .logOut:
-      return ["Authorization": "Bearer \(UDManager.shared.accessToken ?? "")"]
+      return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
       
     case .signUp:
       return nil
@@ -67,7 +69,7 @@ public enum AuthAPI: TargetType {
       return nil
       
     case .checkToken:
-      return ["Authorization": "Bearer \(UDManager.shared.accessToken ?? "")"]
+      return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
     }
   }
 }

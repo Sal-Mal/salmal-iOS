@@ -28,7 +28,7 @@ public struct ReportCore: Reducer {
         case 0:
           return .run { [id = state.voteID] send in
             try await network.request(VoteAPI.report(id: id))
-            NotiManager.post(.reportVote, userInfo: ["id": id])
+            NotificationService.post(.reportVote, userInfo: ["id": id])
             // TODO:  토스트 메시지 띄우기
             await dismiss()
           } catch: { error, send in
@@ -38,7 +38,7 @@ public struct ReportCore: Reducer {
         case 1:
           return .run { [id = state.memberID] send in
             try await network.request(MemberAPI.block(id: id))
-            NotiManager.post(.banUser, userInfo: ["id": id])
+            NotificationService.post(.banUser, userInfo: ["id": id])
             // TODO:  토스트 메시지 띄우기
             await dismiss()
           } catch: { error, send in

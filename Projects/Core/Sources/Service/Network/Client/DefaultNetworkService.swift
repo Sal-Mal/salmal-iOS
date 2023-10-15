@@ -7,7 +7,7 @@ public typealias HTTPHeaders = Alamofire.HTTPHeaders
 public typealias EmptyResponse = Alamofire.EmptyResponse
 
 /// 실제로 쓰는 NetworkManager
-public struct LiveNetworkManager: NetworkManager {
+public struct DefaultNetworkService: NetworkService {
   
   private let session: Session
   private let retryLimit: Int

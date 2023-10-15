@@ -8,7 +8,7 @@ public struct ReportCommentCore: Reducer {
     let commentID: Int
     
     var isMyComment: Bool {
-      return memberID == UDManager.shared.memberID
+      return memberID == UserDefaultsService.shared.memberID
     }
     
     var items: [MenuItem] {

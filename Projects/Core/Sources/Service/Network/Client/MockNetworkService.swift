@@ -1,7 +1,7 @@
 import Foundation
 
 /// 테스트시 사용하는 NetworkManager
-public struct MockNetworkManager: NetworkManager {
+public struct MockNetworkService: NetworkService {
   
   public init() { }
   

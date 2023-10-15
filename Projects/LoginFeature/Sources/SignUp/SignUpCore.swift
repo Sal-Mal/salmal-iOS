@@ -83,7 +83,7 @@ public struct SignUpCore: Reducer {
           debugPrint(dto)
           userDefault.accessToken = dto.accessToken
           userDefault.refreshToken = dto.refreshToken
-          NotiManager.post(.login)
+          NotificationService.post(.login)
         } catch: { error, send in
           // TODO: 에러처리 (중복 id, 통신 실패)
           print(error)

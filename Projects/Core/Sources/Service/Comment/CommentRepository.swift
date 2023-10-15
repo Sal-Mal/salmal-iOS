@@ -11,9 +11,9 @@ public protocol CommentRepository {
 }
 
 public final class CommentRepositoryImpl: CommentRepository {
-  let networkManager: NetworkManager
+  let networkManager: NetworkService
   
-  init(networkManager: NetworkManager) {
+  init(networkManager: NetworkService) {
     self.networkManager = networkManager
   }
   
@@ -56,9 +56,9 @@ public final class CommentRepositoryImpl: CommentRepository {
 
 /// TCA DependencyKey를 정의
 public enum CommentRepositoryKey: DependencyKey {
-  public static let liveValue: any CommentRepository = CommentRepositoryImpl(networkManager: LiveNetworkManager())
-  public static let previewValue: any CommentRepository = CommentRepositoryImpl(networkManager: MockNetworkManager())
-  public static let testValue: any CommentRepository = CommentRepositoryImpl(networkManager: MockNetworkManager())
+  public static let liveValue: any CommentRepository = CommentRepositoryImpl(networkManager: DefaultNetworkService())
+  public static let previewValue: any CommentRepository = CommentRepositoryImpl(networkManager: MockNetworkService())
+  public static let testValue: any CommentRepository = CommentRepositoryImpl(networkManager: MockNetworkService())
 }
 
 /// TCA Dependency에 등록

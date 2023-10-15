@@ -18,9 +18,9 @@ public enum MemberAPI {
   /// 회원이 작성한 투표 목록 조회
   case fetchVotes(id: Int, cursorId: Int, size: Int)
   /// 회원이 투표한 목록 조회
-  case fetchEvaluations(id: Int, cursorId: Int, size: Int)
+  case fetchEvaluations(id: Int, cursorId: Int?, size: Int)
   /// 회원이 북마크한 목록 조회
-  case fetchBookmarks(id: Int, cursorId: Int, size: Int)
+  case fetchBookmarks(id: Int, cursorId: Int?, size: Int)
 }
 
 
@@ -29,7 +29,6 @@ public enum MemberAPI {
 extension MemberAPI: TargetType {
   
   public var path: String {
-    // TODO: - path
     switch self {
     case let .fetch(id):
       return "members/\(id)"
@@ -106,6 +105,6 @@ extension MemberAPI: TargetType {
   }
   
   public var headers: [String: String]? {
-    return ["Authorization": "Bearer \(UDManager.shared.accessToken ?? "")"]
+    return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
   }
 }

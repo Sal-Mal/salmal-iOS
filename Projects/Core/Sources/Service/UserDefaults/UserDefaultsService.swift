@@ -3,7 +3,7 @@ import Dependencies
 
 // MARK: - UserDefaultsKey
 
-public enum UDKey: String {
+public enum UserDefaultsKey: String {
   case socialProvider
   case socialID
   case refreshToken
@@ -11,30 +11,30 @@ public enum UDKey: String {
   case memberID
 }
 
-// MARK: - UserDefaultsManager
+// MARK: - UserDefaultsService
 
-public final class UDManager {
-  public static let shared = UDManager()
+public final class UserDefaultsService {
+  public static let shared = UserDefaultsService()
   
   private init() { }
   
-  @UD(key: UDKey.socialProvider)
+  @UserDefault(key: UserDefaultsKey.socialProvider)
   public var socialProvider: String?
   
-  @UD(key: UDKey.socialID)
+  @UserDefault(key: UserDefaultsKey.socialID)
   public var socialID: String?
   
-  @UD(key: UDKey.refreshToken)
+  @UserDefault(key: UserDefaultsKey.refreshToken)
   public var refreshToken: String?
   
-  @UD(key: UDKey.accessToken)
+  @UserDefault(key: UserDefaultsKey.accessToken)
   public var accessToken: String? {
     didSet {
       if let accessToken { memberID = parseID(jwtToken: accessToken) }
     }
   }
   
-  @UD(key: UDKey.memberID)
+  @UserDefault(key: UserDefaultsKey.memberID)
   public var memberID: Int?
   
   public func removeAll() {
@@ -66,13 +66,13 @@ public final class UDManager {
 // MARK: - Dependency
 
 public enum UDManagerKey: DependencyKey {
-  public static let liveValue = UDManager.shared
-  public static let previewValue = UDManager.shared
-  public static let testValue = UDManager.shared
+  public static let liveValue = UserDefaultsService.shared
+  public static let previewValue = UserDefaultsService.shared
+  public static let testValue = UserDefaultsService.shared
 }
 
 public extension DependencyValues {
-  var userDefault: UDManager {
+  var userDefault: UserDefaultsService {
     get { self[UDManagerKey.self] }
     set { self[UDManagerKey.self] = newValue }
   }

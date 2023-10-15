@@ -63,7 +63,7 @@ public struct SplashCore: Reducer {
         return .none
         
       case .moveToMainScreen:
-        NotiManager.post(.login)
+        NotificationService.post(.login)
         return .none
       }
     }

@@ -29,11 +29,11 @@ public protocol MemberRepository {
 
 public final class MemberRepositoryImpl: MemberRepository {
 
-  private let networkManager: NetworkManager
+  private let networkManager: NetworkService
 
   @Dependency(\.userDefault) var userDefault
 
-  public init(networkManager: NetworkManager) {
+  public init(networkManager: NetworkService) {
     self.networkManager = networkManager
 
     #if DEBUG
@@ -137,7 +137,7 @@ public final class MemberRepositoryImpl: MemberRepository {
 }
 
 public enum MemberRepositoryKey: DependencyKey {
-  public static let liveValue: any MemberRepository = MemberRepositoryImpl(networkManager: LiveNetworkManager())
+  public static let liveValue: any MemberRepository = MemberRepositoryImpl(networkManager: DefaultNetworkService())
 }
 
 public extension DependencyValues {

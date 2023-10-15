@@ -1,11 +1,11 @@
 import Foundation
 
 @propertyWrapper
-public struct UD<T> {
-  private let key: UDKey
+public struct UserDefault<T> {
+  private let key: UserDefaultsKey
   private let defaultValue: T?
   
-  init(key: UDKey, defaultValue: T? = nil) {
+  init(key: UserDefaultsKey, defaultValue: T? = nil) {
     self.key = key
     self.defaultValue = defaultValue
   }

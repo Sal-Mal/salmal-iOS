@@ -2,7 +2,7 @@ import Foundation
 import ComposableArchitecture
 
 /// Live & Mock Manager를 추상화한 Manager
-public protocol NetworkManager {
+public protocol NetworkService {
   @discardableResult
   func request<T: Responsable>(_ target: TargetType, type: T.Type) async throws -> T
   
@@ -17,14 +17,14 @@ public protocol Responsable: Decodable {
 
 /// TCA DependencyKey를 정의
 public enum NetworkManagerKey: DependencyKey {
-  public static let liveValue: any NetworkManager = LiveNetworkManager()
-  public static let previewValue: any NetworkManager = MockNetworkManager()
-  public static let testValue: any NetworkManager = MockNetworkManager()
+  public static let liveValue: any NetworkService = DefaultNetworkService()
+  public static let previewValue: any NetworkService = MockNetworkService()
+  public static let testValue: any NetworkService = MockNetworkService()
 }
 
 /// TCA Dependency에 등록
 public extension DependencyValues {
-  var network: NetworkManager {
+  var network: NetworkService {
     get { self[NetworkManagerKey.self] }
     set { self[NetworkManagerKey.self] = newValue }
   }

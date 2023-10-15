@@ -1,6 +1,6 @@
 import Foundation
 
-public enum VoteAPI: TargetType {
+public enum VoteAPI {
   case vote(id: Int, EvaluateVoteRequestDTO) // 투표(살, 밀)
   case bookmark(id: Int) // 북마크
   case unBookmark(id: Int) // 북마크 해제
@@ -9,42 +9,44 @@ public enum VoteAPI: TargetType {
   case delete(id: Int) // 삭제
   case homeList(size: Int, cursor: Int? = nil) // Home 목록 조회
   case bestList(size: Int, cursor: Int? = nil) // Best 목록 조회
-  
-  public var baseURL: String {
-    return "http://3.38.192.126/api/votes"
-  }
+}
+
+
+// MARK: - Extension
+
+extension VoteAPI: TargetType {
   
   public var path: String {
     switch self {
     case let .vote(id, _):
-      return "\(id)/evaluations"
+      return "votes/\(id)/evaluations"
       
     case let .bookmark(id):
-      return "\(id)/bookmarks"
+      return "votes/\(id)/bookmarks"
       
     case let .unBookmark(id):
-      return "\(id)/bookmarks"
+      return "votes/\(id)/bookmarks"
       
     case let .report(id):
-      return "\(id)/reports"
+      return "votes/\(id)/reports"
       
     case let .get(id):
-      return "\(id)"
+      return "votes/\(id)"
       
     case let .delete(id):
-      return "\(id)"
+      return "votes/\(id)"
       
     case let .homeList(size, cursor):
       if let cursor {
-        return "?searchType=HOME&size=\(size)"
+        return "votes?searchType=HOME&size=\(size)"
       } else {
-        return "?searchType=HOME&size=\(size)"
+        return "votes?searchType=HOME&size=\(size)"
       }
     case let .bestList(size, cursor):
       if let cursor {
-        return "?searchType=BEST&size=\(size)"
+        return "votes?searchType=BEST&size=\(size)"
       } else {
-        return "?searchType=BEST&size=\(size)"
+        return "votes?searchType=BEST&size=\(size)"
       }
     }
   }
@@ -96,6 +98,6 @@ public enum VoteAPI: TargetType {
   }
   
   public var headers: [String: String]? {
-    return ["Authorization": "Bearer \(UDManager.shared.accessToken ?? "")"]
+    return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
   }
 }

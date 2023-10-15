@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-public enum NotiManager {
+public enum NotificationService {
   public enum Noti: String {
     case reportVote
     case banUser

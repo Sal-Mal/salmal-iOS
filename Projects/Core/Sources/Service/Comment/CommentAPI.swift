@@ -1,7 +1,7 @@
 import Foundation
 import ComposableArchitecture
 
-public enum CommentAPI: TargetType {
+public enum CommentAPI {
   case list(id: Int)
   case write(id: Int, text: String)
   case edit(id: Int, text: String)
@@ -9,10 +9,12 @@ public enum CommentAPI: TargetType {
   case like(id: Int)
   case disLike(id: Int)
   case report(id: Int)
-  
-  public var baseURL: String {
-    "http://3.38.192.126/api"
-  }
+}
+
+
+// MARK: - Extension
+
+extension CommentAPI: TargetType {
   
   public var path: String {
     switch self {
@@ -73,6 +75,6 @@ public enum CommentAPI: TargetType {
   }
   
   public var headers: [String: String]? {
-    return ["Authorization": "Bearer \(UDManager.shared.accessToken ?? "")"]
+    return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
   }
 }

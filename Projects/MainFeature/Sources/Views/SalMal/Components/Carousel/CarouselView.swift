@@ -49,11 +49,11 @@ public struct CarouselView: View {
       // TODO: 무지성 로딩이아니라, 이전 커서를 유지해야함
       store.send(.requestVoteList)
     }
-    .onReceive(NotiManager.publisher(.reportVote)) { userInfo in
+    .onReceive(NotificationService.publisher(.reportVote)) { userInfo in
       guard let id = userInfo["id"] as? Int else { return }
       store.send(.removeVote(id: id))
     }
-    .onReceive(NotiManager.publisher(.banUser)) { userInfo in
+    .onReceive(NotificationService.publisher(.banUser)) { userInfo in
       guard let id = userInfo["id"] as? Int else { return }
       store.send(.removeAllVote(userID: id))
     }

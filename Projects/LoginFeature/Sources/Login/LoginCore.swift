@@ -35,7 +35,7 @@ public struct LoginCore: Reducer {
           userDefault.accessToken = dto.accessToken
           userDefault.refreshToken = dto.refreshToken
           
-          NotiManager.post(.login)
+          NotificationService.post(.login)
         } catch: { error, send in
           // 로그인 실패했으면 회원가입 flow
           await send(.moveToTermScreen)
