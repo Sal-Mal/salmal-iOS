@@ -8,6 +8,7 @@ public enum UserDefaultsKey: String {
   case socialID
   case refreshToken
   case accessToken
+  case memberID
 }
 
 // MARK: - UserDefaultsManager
@@ -28,12 +29,16 @@ public final class UserDefaultManager {
   
   @UserDefault(key: UserDefaultsKey.accessToken)
   public var accessToken: String?
+
+  @UserDefault(key: UserDefaultsKey.memberID)
+  public var memberID: Int?
   
   func removeAll() {
     socialProvider = nil
     socialID = nil
     refreshToken = nil
     accessToken = nil
+    memberID = nil
   }
 }
 
