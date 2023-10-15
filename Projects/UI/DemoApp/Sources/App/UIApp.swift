@@ -10,7 +10,7 @@ struct UIApp: App {
     SM.Font.initFonts()
   }
 
-  @StateObject private var toastManager = SMToastManager.shared
+  @StateObject private var toastManager = SMToastManager()
 
   var body: some Scene {
     WindowGroup {
