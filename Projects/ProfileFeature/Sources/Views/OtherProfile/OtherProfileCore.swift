@@ -21,6 +21,7 @@ public struct OtherProfileCore: Reducer {
   }
 
   @Dependency(\.dismiss) var dismiss
+  @Dependency(\.memberRepository) var memberRepository: MemberRepository
 
   public init() {}
 

@@ -1,4 +1,6 @@
 import SwiftUI
+import PhotosUI
+import AVFoundation
 import ComposableArchitecture
 
 import Core
@@ -18,18 +20,58 @@ public struct ProfileEditView: View {
         Spacer()
 
         VStack(spacing: 24) {
-          AsyncImage(url: URL(string: viewStore.imageURL))
-            .frame(width: 80, height: 80)
-            .background(.gray)
-            .clipShape(Circle())
-            .overlay {
+          if let imageData = viewStore.imageData, let uiImage = UIImage(data: imageData) {
+            Image(uiImage: uiImage)
+              .resizable()
+              .scaledToFill()
+              .frame(width: 80, height: 80)
+              .clipShape(Circle())
+              .overlay {
+                Circle()
+                  .stroke(lineWidth: 2)
+                  .foregroundColor(.ds(.white))
+              }
+          } else {
+            if let url = URL(string: viewStore.member?.imageURL ?? "") {
+              CacheAsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                  image
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 80, height: 80)
+                    .clipShape(Circle())
+                    .overlay {
+                      Circle()
+                        .stroke(lineWidth: 2)
+                        .foregroundColor(.ds(.white))
+                    }
+
+                default:
+                  Circle()
+                    .fill(.gray)
+                    .frame(width: 80, height: 80)
+                    .overlay {
+                      Circle()
+                        .stroke(lineWidth: 2)
+                        .foregroundColor(.ds(.white))
+                    }
+                }
+              }
+            } else {
               Circle()
-                .stroke(lineWidth: 2)
-                .foregroundColor(.ds(.white))
+                .fill(.gray)
+                .frame(width: 80, height: 80)
+                .overlay {
+                  Circle()
+                    .stroke(lineWidth: 2)
+                    .foregroundColor(.ds(.white))
+                }
             }
+          }
 
           Button {
-            viewStore.send(.binding(.set(\.$isPhotoPresented, true)))
+            viewStore.send(.binding(.set(\.$isPhotoSheetPresented, true)))
           } label: {
             Text("사진 변경")
               .font(.ds(.title4(.medium)))
@@ -75,7 +117,7 @@ public struct ProfileEditView: View {
           }
 
           Button {
-            viewStore.send(.binding(.set(\.$isDeactivatePresented, true)))
+            viewStore.send(.binding(.set(\.$isWithdrawalPresented, true)))
           } label: {
             Text("서비스 탈퇴")
               .font(.ds(.title4(.medium)))
@@ -104,7 +146,7 @@ public struct ProfileEditView: View {
           }
         }
       )
-      .bottomSheet(isPresented: viewStore.$isPhotoPresented) {
+      .bottomSheet(isPresented: viewStore.$isPhotoSheetPresented) {
         VStack(spacing: 0) {
           MenuButton(icon: Image(icon: .gallery), title: "사진첩에서 선택하기") {
             viewStore.send(.selectInPhotoLibraryButtonTapped)
@@ -115,20 +157,28 @@ public struct ProfileEditView: View {
           }
 
           MenuButton(icon: Image(icon: .trash), title: "현재 사진 삭제") {
-            viewStore.send(.deleteCurrentPhotoButtonTapped)
+            viewStore.send(.removeCurrentPhotoButtonTapped)
           }
         }
         .padding(.top, 43)
       }
       .alert(
-        isPresented: viewStore.$isDeactivatePresented,
+        isPresented: viewStore.$isWithdrawalPresented,
         alert: .withdrawal
       ) {
-        viewStore.send(.deactivateButtonTapped)
+        viewStore.send(.withdrawalButtonTapped)
       }
       .onAppear {
         viewStore.send(.onAppear)
       }
+      .sheet(isPresented: viewStore.$isTakePhotoPresented) {
+        SMImagePicker { data in
+          viewStore.send(.setImage(data))
+        } onDismiss: {
+          viewStore.send(.cancelTakePhotoButtonTapped)
+        }
+      }
+      .photosPicker(isPresented: viewStore.$isPhotoLibraryPresented, selection: viewStore.$selectedItem)
     }
   }
 

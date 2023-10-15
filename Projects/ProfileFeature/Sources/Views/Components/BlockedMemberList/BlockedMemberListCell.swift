@@ -1,5 +1,6 @@
 import SwiftUI
 
+import UI
 import Core
 
 public struct BlockedMemberListCell: View {
@@ -15,10 +16,25 @@ public struct BlockedMemberListCell: View {
   public var body: some View {
     HStack {
       HStack(spacing: 12) {
-        AsyncImage(url: URL(string: member.imageURL))
-          .frame(width: 48, height: 48)
-          .aspectRatio(1, contentMode: .fit)
-          .clipShape(Circle())
+        if let url = URL(string: member.imageURL) {
+          CacheAsyncImage(url: url) { phase in
+            switch phase {
+            case .success(let image):
+              image
+                .resizable()
+                .frame(width: 48, height: 48)
+                .scaledToFit()
+                .clipShape(Circle())
+
+            default:
+              Circle()
+                .frame(width: 48, height: 48)
+            }
+          }
+        } else {
+          Circle()
+            .frame(width: 48, height: 48)
+        }
 
         Text(member.nickName)
           .font(.ds(.title4(.semibold)))
@@ -37,6 +53,7 @@ public struct BlockedMemberListCell: View {
           .background(Color.ds(.green1))
           .clipShape(Capsule())
       }
+      .buttonStyle(.plain)
     }
   }
 }
