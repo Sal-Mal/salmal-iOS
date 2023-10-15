@@ -72,4 +72,11 @@ extension AuthAPI: TargetType {
       return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
     }
   }
+
+  public var task: HTTPTask {
+    switch self {
+    default:
+      return .requestPlain
+    }
+  }
 }

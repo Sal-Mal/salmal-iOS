@@ -47,7 +47,7 @@ public struct SMImagePicker: UIViewControllerRepresentable {
         return
       }
 
-      delegate.onCapture(image.jpegData(compressionQuality: 1.0))
+      delegate.onCapture(image.jpegData(compressionQuality: 0.1))
     }
 
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

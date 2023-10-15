@@ -7,6 +7,7 @@ public protocol TargetType: URLRequestConvertible {
   var method: HTTPMethod { get }
   var parameters: Encodable? { get }
   var headers: [String: String]? { get }
+  var task: HTTPTask { get }
 }
 
 extension TargetType {
@@ -21,9 +22,8 @@ extension TargetType {
     var request = URLRequest(url: url)
     request.httpMethod = method.rawValue
     request.allHTTPHeaderFields = headers
-    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpBody = parameters?.toJsonData()
-    
+
     print()
     debugPrint("****************** Network ******************")
     debugPrint("Reuqest URL: ", url.absoluteString)

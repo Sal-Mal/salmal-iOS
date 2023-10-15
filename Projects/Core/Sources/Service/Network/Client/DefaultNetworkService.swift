@@ -5,6 +5,7 @@ public typealias HTTPMethod = Alamofire.HTTPMethod
 public typealias Parameters = Alamofire.Parameters
 public typealias HTTPHeaders = Alamofire.HTTPHeaders
 public typealias EmptyResponse = Alamofire.EmptyResponse
+public typealias MultipartFormData = Alamofire.MultipartFormData
 
 /// 실제로 쓰는 NetworkManager
 public struct DefaultNetworkService: NetworkService {
@@ -18,8 +19,17 @@ public struct DefaultNetworkService: NetworkService {
   }
   
   public func request<T: Responsable>(_ target: TargetType, type: T.Type) async throws -> T {
-    let result = session.request(target)
-      .serializingDecodable(T.self, emptyResponseCodes: Set(200..<300))
+    let result: DataTask<T>
+
+    switch target.task {
+    case .requestPlain:
+      result = session.request(target)
+        .serializingDecodable(T.self, emptyResponseCodes: Set(200..<300))
+
+    case .uploadMultipartFormData(let multipartFormData):
+      result = session.upload(multipartFormData: multipartFormData, with: target)
+        .serializingDecodable(T.self, emptyResponseCodes: Set(200..<300))
+    }
     
     do {
       let value = try await result.value
@@ -34,8 +44,17 @@ public struct DefaultNetworkService: NetworkService {
   }
   
   public func request(_ target: TargetType) async throws -> Data {
-    let result = session.request(target)
-      .serializingData()
+    let result: DataTask<Data>
+
+    switch target.task {
+    case .requestPlain:
+      result = session.request(target)
+        .serializingData()
+
+    case .uploadMultipartFormData(let multipartFormData):
+      result = session.upload(multipartFormData: multipartFormData, with: target)
+        .serializingData()
+    }
     
     do {
       let value = try await result.value

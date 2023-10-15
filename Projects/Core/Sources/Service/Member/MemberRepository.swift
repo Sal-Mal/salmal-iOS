@@ -38,7 +38,7 @@ public final class MemberRepositoryImpl: MemberRepository {
 
     #if DEBUG
     userDefault.memberID = 8
-    userDefault.accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY5NzMwMTIzNywiZXhwIjoxNjk3MzEyMDM3LCJpZCI6OH0.Bqd-UqipwL41rzI3oO0XPkxJyyItdh3J-bapIcz0-LU"
+    userDefault.accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY5NzM3MjEyMywiZXhwIjoxNjk3MzgyOTIzLCJpZCI6OH0.nBCGt0l2oGBiHDCxXYzPYB_gnGba-6i-15D2LJv9bKo"
     #endif
   }
 
@@ -73,7 +73,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.updateImage(id: id, data: data)
-    try await networkManager.request(target)
+    try await networkManager.request(target, type: EmptyResponseDTO.self)
   }
 
   public func delete() async throws {

@@ -6,7 +6,7 @@ public enum MemberAPI {
   /// 마이페이지 수정
   case update(id: Int, nickName: String, introduction: String)
   /// 회원 이미지 수정
-  case updateImage(id: Int, data: Data)
+  case updateImage(id: Int, data: Data, boundary: String = UUID().uuidString)
   /// 회원탈퇴
   case delete(id: Int)
   /// 회원 차단
@@ -34,7 +34,7 @@ extension MemberAPI: TargetType {
       return "members/\(id)"
     case let .update(id, _, _):
       return "members/\(id)"
-    case let .updateImage(id, _):
+    case let .updateImage(id, _, _):
       return "members/\(id)/images"
     case let .delete(id):
       return "members/\(id)"
@@ -85,8 +85,9 @@ extension MemberAPI: TargetType {
       return nil
     case .update(_, let nickName, let introduction):
       return UpdateMemberRequestDTO(nickName: nickName, introduction: introduction)
-    case .updateImage(_, let data):
-      return UpdateMemberImageRequestDTO(imageFile: data)
+    case .updateImage(_, let data, _):
+      //return UpdateMemberImageRequestDTO(imageFile: data)
+      return nil
     case .delete:
       return nil
     case .block:
@@ -105,6 +106,31 @@ extension MemberAPI: TargetType {
   }
   
   public var headers: [String: String]? {
-    return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
+    switch self {
+    case .updateImage(_, _, let boundary):
+      return [
+        "Content-Type": "application/json; charset=UTF-8; boundary=\(boundary)",
+        "Content-Disposition": "form-data",
+        "Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"
+      ]
+
+    default:
+      return [
+        "Content-Type": "application/json; charset=UTF-8",
+        "Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"
+      ]
+    }
+  }
+
+  public var task: HTTPTask {
+    switch self {
+    case let .updateImage(_, data, boundary):
+      let multipartFormData = MultipartFormData(boundary: boundary)
+      multipartFormData.append(data, withName: "imageFile", fileName: "TestImage.jpg", mimeType: "image/jpeg")
+
+      return .uploadMultipartFormData(multipartFormData)
+    default:
+      return .requestPlain
+    }
   }
 }

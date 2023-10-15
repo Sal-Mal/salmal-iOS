@@ -77,4 +77,11 @@ extension CommentAPI: TargetType {
   public var headers: [String: String]? {
     return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
   }
+
+  public var task: HTTPTask {
+    switch self {
+    default:
+      return .requestPlain
+    }
+  }
 }
