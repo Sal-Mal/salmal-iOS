@@ -4,6 +4,7 @@ import Alamofire
 public typealias HTTPMethod = Alamofire.HTTPMethod
 public typealias Parameters = Alamofire.Parameters
 public typealias HTTPHeaders = Alamofire.HTTPHeaders
+public typealias EmptyResponse = Alamofire.EmptyResponse
 
 /// 실제로 쓰는 NetworkManager
 public struct LiveNetworkManager: NetworkManager {
@@ -17,20 +18,33 @@ public struct LiveNetworkManager: NetworkManager {
   }
   
   public func request<T: Responsable>(_ target: TargetType, type: T.Type) async throws -> T {
-    let data = try await request(target)
-    let result = try JSONDecoder().decode(type, from: data)
-    return result
+    let result = session.request(target)
+      .serializingDecodable(T.self, emptyResponseCodes: Set(200..<300))
+    
+    do {
+      let value = try await result.value
+      debugPrint("Success!", value)
+      
+      return value
+    } catch {
+      debugPrint("ERROR!", error.localizedDescription)
+      
+      throw error
+    }
   }
   
   public func request(_ target: TargetType) async throws -> Data {
-    let dataRequest = try dataRequest(target)
-    let result = dataRequest
-      .serializingResponse(using: .data)
+    let result = session.request(target)
+      .serializingData()
     
-    return try await result.value
-  }
-  
-  private func dataRequest(_ target: TargetType) throws -> DataRequest {
-    return session.request(target)
+    do {
+      let value = try await result.value
+      debugPrint("Success!")
+      
+      return value
+    } catch {
+      debugPrint("ERROR!", error.localizedDescription)
+      throw error
+    }
   }
 }

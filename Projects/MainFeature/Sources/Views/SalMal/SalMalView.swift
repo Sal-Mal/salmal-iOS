@@ -12,43 +12,54 @@ public struct SalMalView: View {
   }
   
   public var body: some View {
-    VStack(spacing: 13) {
-      ZStack(alignment: .bottom) {
-        if viewStore.tab == .home {
-          CarouselView(store: store.scope(state: \.homeState, action: { .homeAction($0) }))
+    NavigationStackStore(store.scope(state: \.path, action: SalMalCore.Action.path)) {
+      VStack(spacing: 13) {
+        ZStack(alignment: .bottom) {
+          if viewStore.tab == .home {
+            CarouselView(store: store.scope(state: \.homeState, action: { .homeAction($0) }))
+          }
+          
+          if viewStore.tab == .best {
+            CarouselView(store: store.scope(state: \.bestState, action: { .bestAction($0) }))
+          }
+          
+          NumberOfVotesView(number: viewStore.totalCount)
+            .offset(y: 7)
         }
         
-        if viewStore.tab == .best {
-          CarouselView(store: store.scope(state: \.bestState, action: { .bestAction($0) }))
-        }
-        
-        NumberOfVotesView(number: viewStore.totalCount)
-          .offset(y: 7)
-      }
-      
-      VStack(spacing: 9) {
-        SMVoteButton(
-          title: "👍🏻 살",
-          progress: viewStore.buyPercentage,
-          buttonState: viewStore.$salButtonState
-        ) {
+        VStack(spacing: 9) {
+          SMVoteButton(
+            title: "👍🏻 살",
+            progress: viewStore.buyPercentage,
+            buttonState: viewStore.$salButtonState
+          ) {
             store.send(.buyTapped)
           }
-        SMVoteButton(
-          title: "👎🏻 말", progress:
-            viewStore.notBuyPercentage,
-          buttonState: viewStore.$malButtonState) {
-            store.send(.notBuyTapped)
-          }
+          SMVoteButton(
+            title: "👎🏻 말", progress:
+              viewStore.notBuyPercentage,
+            buttonState: viewStore.$malButtonState) {
+              store.send(.notBuyTapped)
+            }
+        }
+        .padding(2)
       }
-      .padding(2)
-    }
-    .padding(16)
-    .smMainNavigationBar(
-      selection: viewStore.$tab,
-      isAlarmExist: true
-    ) {
-      store.send(.moveToAlarm)
+      .padding(16)
+      .smMainNavigationBar(
+        selection: viewStore.$tab,
+        isAlarmExist: true
+      ) {
+        store.send(.moveToAlarm)
+      }
+    } destination: { state in
+      switch state {
+      case .alarmScreen:
+        CaseLet(
+          /SalMalCore.Path.State.alarmScreen,
+           action: SalMalCore.Path.Action.alarmScreen,
+           then: AlarmView.init(store:)
+        )
+      }
     }
   }
 }

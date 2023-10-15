@@ -25,7 +25,7 @@ public extension SMCapsuleTextField {
   }
   
   /**
-    상단에 title 추가
+   상단에 title 추가
    */
   func title(
     _ text: String,
@@ -40,16 +40,17 @@ public extension SMCapsuleTextField {
   }
   
   /**
-    왼쪽에 image 삽입
+   왼쪽에 image 삽입
    */
-  func leftImage(_ image: Image) -> Self {
+  
+  func leftImage(_ urlString: String) -> Self {
     var new = self
-    new.image = image
+    new.imageURL = urlString
     return new
   }
   
   /**
-  오른쪽에 button 생성
+   오른쪽에 button 생성
    
    button의 font, color는 각각 .font(), .color() 로 설정된 값을 따름
    */
@@ -61,7 +62,7 @@ public extension SMCapsuleTextField {
   }
   
   /**
-    font를 변경
+   font를 변경
    */
   func font(_ font: Font) -> Self {
     var new = self
@@ -82,7 +83,7 @@ public extension SMCapsuleTextField {
 }
 
 /**
-Capsule 모양의 TextField
+ Capsule 모양의 TextField
  */
 public struct SMCapsuleTextField: View {
   
@@ -99,7 +100,7 @@ public struct SMCapsuleTextField: View {
   var titleColor: Color = .ds(.gray2)
   var titleFont: Font = .callout
   
-  var image: Image?
+  var imageURL: String?
   var buttonTitle: String?
   var buttonAction: () -> Void = {}
   var lineLimit: Int = 1
@@ -125,15 +126,16 @@ public struct SMCapsuleTextField: View {
       
       HStack(alignment: .bottom, spacing: 8) {
         imageView
-          .debug()
         
         HStack(alignment: .bottom) {
           textField
-            .debug()
           
           if let buttonTitle {
             Spacer()
-            Button(action: buttonAction) {
+            Button {
+              buttonAction()
+              focus = false
+            } label: {
               Text(buttonTitle)
                 .foregroundColor(tintColor)
                 .font(font)
@@ -165,12 +167,21 @@ public struct SMCapsuleTextField: View {
   
   @ViewBuilder
   var imageView: some View {
-    if let image {
-      image
-        .resizable()
-        .aspectRatio(1, contentMode: .fit)
-        .frame(width: 54)
-        .clipShape(Circle())
+    if let imageURL, let url = URL(string: imageURL) {
+      CacheAsyncImage(url: url) { phase in
+        switch phase {
+        case let .success(image):
+          image
+            .resizable()
+            .aspectRatio(1, contentMode: .fit)
+            .frame(width: 54)
+            .clipShape(Circle())
+        default:
+          Circle()
+            .fill(Color.ds(.gray1))
+            .frame(width: 54)
+        }
+      }
     }
   }
   
@@ -199,7 +210,6 @@ struct SMCapsuleTextField_Previews: PreviewProvider {
     SMCapsuleTextField(text: .constant("ddsas"), placeholder: "눌러서 댓글입력")
       .color(.foreground(.ds(.white)))
       .color(.tint(.ds(.green1)))
-      .leftImage(Image(icon: .cancel))
       .padding()
       .previewLayout(.sizeThatFits)
   }

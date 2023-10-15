@@ -1,4 +1,6 @@
 import UI
+import Core
+
 import ComposableArchitecture
 
 public struct SalMalCore: Reducer {
@@ -12,17 +14,22 @@ public struct SalMalCore: Reducer {
     var notBuyPercentage: Double = 0
     var totalCount = 0
     
+    var currentHomeIndex = 0
+    var currentBestIndex = 0 
+    
     @BindingState var salButtonState: ButtonState = .idle
     @BindingState var malButtonState: ButtonState = .idle
     
     var homeState = CarouselCore.State(tab: .home)
     var bestState = CarouselCore.State(tab: .best)
+    var path = StackState<Path.State>()
     
     public init() {}
   }
   
   public enum Action: Equatable, BindableAction {
     case binding(BindingAction<State>)
+    case path(StackAction<Path.State, Path.Action>)
     case homeAction(CarouselCore.Action)
     case bestAction(CarouselCore.Action)
     case salButtonAction(ButtonState)
@@ -34,11 +41,22 @@ public struct SalMalCore: Reducer {
   
   public init() { }
   
+  @Dependency(\.network) var network
+  
   public var body: some ReducerOf<Self> {
     BindingReducer()
     
     Reduce { state, action in
       switch action {
+      case let .path(action):
+        switch action {
+        case let .element(_, .alarmScreen(.listTapped)):
+          return .none
+          
+        default:
+          return .none
+        }
+        
       case let .homeAction(.delegate(.updateVote(vote))):
         state.totalCount = vote.totalVoteCount
         state.buyPercentage = Double(vote.likeCount) / Double(vote.totalVoteCount)
@@ -46,7 +64,7 @@ public struct SalMalCore: Reducer {
         
         state.salButtonState = .idle
         state.malButtonState = .idle
-
+        
         return .none
         
       case let .bestAction(.delegate(.updateVote(vote))):
@@ -60,7 +78,7 @@ public struct SalMalCore: Reducer {
         return .none
         
       case .moveToAlarm:
-        // TODO: 알람화면으로 이동
+        state.path.append(.alarmScreen())
         return .none
         
       case .buyTapped:
@@ -96,6 +114,9 @@ public struct SalMalCore: Reducer {
         return .none
       }
     }
+    .forEach(\.path, action: /Action.path) {
+      Path()
+    }
     
     Scope(state: \.homeState, action: /Action.homeAction) {
       CarouselCore()
@@ -103,6 +124,24 @@ public struct SalMalCore: Reducer {
     
     Scope(state: \.bestState, action: /Action.bestAction) {
       CarouselCore()
+    }
+  }
+}
+
+extension SalMalCore {
+  public struct Path: Reducer {
+    public enum State: Equatable {
+      case alarmScreen(AlarmCore.State = .init())
+    }
+    
+    public enum Action: Equatable {
+      case alarmScreen(AlarmCore.Action)
+    }
+    
+    public var body: some ReducerOf<Self> {
+      Scope(state: /State.alarmScreen, action: /Action.alarmScreen) {
+        AlarmCore()
+      }
     }
   }
 }

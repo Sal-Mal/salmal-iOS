@@ -79,19 +79,19 @@ public final class MemberRepositoryImpl: MemberRepository {
 
   public func votes(cursorId: Int, size: Int) async throws -> [Vote] {
     let target = MemberAPI.fetchVotes(id: 2, cursorId: cursorId, size: size)
-    let response = try await networkManager.request(target, type: VoteListDTO.self)
+    let response = try await networkManager.request(target, type: VoteListResponse.self)
     return response.votes.map { $0.toDomain }
   }
 
   public func evaluations(cursorId: Int, size: Int) async throws -> [Vote] {
     let target = MemberAPI.fetchEvaluations(id: 2, cursorId: cursorId, size: size)
-    let response = try await networkManager.request(target, type: VoteListDTO.self)
+    let response = try await networkManager.request(target, type: VoteListResponse.self)
     return response.votes.map { $0.toDomain }
   }
 
   public func bookmarks(cursorId: Int, size: Int) async throws -> [Vote] {
     let target = MemberAPI.fetchBookmarks(id: 2, cursorId: cursorId, size: size)
-    let response = try await networkManager.request(target, type: VoteListDTO.self)
+    let response = try await networkManager.request(target, type: VoteListResponse.self)
     return response.votes.map { $0.toDomain }
   }
 }

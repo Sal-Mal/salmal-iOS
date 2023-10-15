@@ -1,10 +1,11 @@
 import Foundation
 
 public enum AuthAPI: TargetType {
-  case logIn(params: Encodable)
+  case logIn(params: LoginRequest)
   case logOut
-  case signUp(id: String, params: Encodable)
-  case requestToken(params: Encodable)
+  case signUp(id: String, params: SignUpRequest)
+  case reIssueToken(params: AccessTokenRequest)
+  case checkToken
   
   public var baseURL: String {
     return "http://3.38.192.126/api/auth"
@@ -18,8 +19,10 @@ public enum AuthAPI: TargetType {
       return "logout"
     case let .signUp(id, _):
       return "signup/\(id)"
-    case .requestToken:
+    case .reIssueToken:
       return "reissue"
+    case .checkToken:
+      return "tokens"
     }
   }
   
@@ -27,7 +30,9 @@ public enum AuthAPI: TargetType {
     switch self {
     case .logIn, .logOut, .signUp:
       return .post
-    case .requestToken:
+    case .reIssueToken:
+      return .post
+    case .checkToken:
       return .get
     }
   }
@@ -40,8 +45,10 @@ public enum AuthAPI: TargetType {
       return nil
     case let .signUp(_, params):
       return params
-    case let .requestToken(params):
+    case let .reIssueToken(params):
       return params
+    case .checkToken:
+      return nil
     }
   }
   
@@ -51,13 +58,16 @@ public enum AuthAPI: TargetType {
       return nil
       
     case .logOut:
-      return ["Authorization": "Bearer \(UserDefaultManager.shared.accessToken ?? "")"]
+      return ["Authorization": "Bearer \(UDManager.shared.accessToken ?? "")"]
       
     case .signUp:
       return nil
       
-    case .requestToken:
+    case .reIssueToken:
       return nil
+      
+    case .checkToken:
+      return ["Authorization": "Bearer \(UDManager.shared.accessToken ?? "")"]
     }
   }
 }

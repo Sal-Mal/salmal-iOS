@@ -1,6 +1,20 @@
 import SwiftUI
 
-/// Bottom Sheet의 Drag Handle
+public struct DragIndicator: View {
+  let color: Color
+  
+  public init(color: Color = .ds(.white20)) {
+    self.color = color
+  }
+  
+  public var body: some View {
+    Capsule()
+      .foregroundColor(color)
+      .frame(width: 39, height: 4)
+      .padding(.top, 16)
+  }
+}
+
 public struct SheetDragIndicator: View {
   let color: Color
   

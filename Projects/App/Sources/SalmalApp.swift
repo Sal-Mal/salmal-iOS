@@ -1,5 +1,6 @@
 import SwiftUI
 
+import UI
 import Core
 import MainFeature
 import LoginFeature
@@ -7,6 +8,10 @@ import LoginFeature
 @main
 struct SalmalApp: App {
   @State private var isLogined = false
+  
+  init() {
+    SM.Font.initFonts()
+  }
   
   var body: some Scene {
     WindowGroup {

@@ -22,7 +22,7 @@ struct BottomSheetView: View {
   var Views: some View {
     VStack(spacing: 0) {
       ForEach(0..<3, id: \.self) { _ in
-        MenuRow(item: .init(icon: Image(icon: .warning), title: "해당 게시물 신고하기"))
+        MenuRow(item: .init(icon: Image(icon: .ic_warning), title: "해당 게시물 신고하기"))
       }
     }.padding(.top, 43)
   }

@@ -46,10 +46,13 @@ public struct SplashCore: Reducer {
         
       case let .requestAutoLogin(id):
         return .run { send in
-          let params = LoginDTO(providerId: id)
-          let dto = try await network.request(AuthAPI.logIn(params: params), type: TokenDTO.self)
+          let params = LoginRequest(providerId: id)
+          let dto = try await network.request(AuthAPI.logIn(params: params), type: TokenResponse.self)
           userDefault.accessToken = dto.accessToken
           userDefault.refreshToken = dto.refreshToken
+          
+          debugPrint(dto.accessToken, dto.refreshToken)
+          
           await send(.moveToMainScreen)
         } catch: { error, send in
           await send(.moveToLoginScreen)
