@@ -70,7 +70,7 @@ public struct SignUpCore: Reducer {
           return .none
         }
         
-        let model = SignUpDTO(
+        let model = SignUpRequest(
           providerId: id,
           nickName: state.text,
           marketingInformationConsent: state.marketingAgreement
@@ -78,11 +78,12 @@ public struct SignUpCore: Reducer {
         let api = AuthAPI.signUp(id: provider, params: model)
         
         return .run { send in
-          let dto = try await network.request(api, type: TokenDTO.self)
+          let dto = try await network.request(api, type: TokenResponse.self)
           
           debugPrint(dto)
           userDefault.accessToken = dto.accessToken
           userDefault.refreshToken = dto.refreshToken
+          NotiManager.post(.login)
         } catch: { error, send in
           // TODO: 에러처리 (중복 id, 통신 실패)
           print(error)

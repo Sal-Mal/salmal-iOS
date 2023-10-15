@@ -111,7 +111,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.fetchVotes(id: id, cursorId: cursorId, size: size)
-    let response = try await networkManager.request(target, type: VoteListDTO.self)
+    let response = try await networkManager.request(target, type: VoteListResponse.self)
     return response.votes.map { $0.toDomain }
   }
 
@@ -121,7 +121,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.fetchEvaluations(id: id, cursorId: cursorId, size: size)
-    let response = try await networkManager.request(target, type: VoteListDTO.self)
+    let response = try await networkManager.request(target, type: VoteListResponse.self)
     return response.votes.map { $0.toDomain }
   }
 
@@ -131,7 +131,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.fetchBookmarks(id: id, cursorId: cursorId, size: size)
-    let response = try await networkManager.request(target, type: VoteListDTO.self)
+    let response = try await networkManager.request(target, type: VoteListResponse.self)
     return response.votes.map { $0.toDomain }
   }
 }

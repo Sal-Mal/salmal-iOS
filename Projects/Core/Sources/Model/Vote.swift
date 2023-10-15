@@ -10,14 +10,12 @@ public struct Vote: Equatable, Identifiable {
   public var likeCount: Int
   public var disLikeCount: Int
   public var totalVoteCount: Int
-//  public let bookmarkCount: Int
-//  public let createdDate: Date
   public var isBookmarked: Bool
   public var voteStatus: VoteStatus
   
   public enum VoteStatus: String {
-    case like
-    case disLike
-    case none
+    case like = "LIKE"
+    case disLike = "DISLIKE"
+    case none = "NONE"
   }
 }

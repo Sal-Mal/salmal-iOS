@@ -1,8 +1,9 @@
 import Foundation
 
 public enum VoteAPI: TargetType {
-  case vote(id: Int) // 투표(살, 밀)
-  case bookmark(id: Int, check: Bool) // 북마크
+  case vote(id: Int, EvaluateVoteRequest) // 투표(살, 밀)
+  case bookmark(id: Int) // 북마크
+  case unBookmark(id: Int) // 북마크 해제
   case report(id: Int) // 신고
   case get(id: Int) // 조회
   case delete(id: Int) // 삭제
@@ -10,33 +11,40 @@ public enum VoteAPI: TargetType {
   case bestList(size: Int, cursor: Int? = nil) // Best 목록 조회
   
   public var baseURL: String {
-    return "http://3.38.192.126/api/votes/"
+    return "http://3.38.192.126/api/votes"
   }
   
   public var path: String {
     switch self {
-    case let .vote(id):
+    case let .vote(id, _):
       return "\(id)/evaluations"
-    case let .bookmark(id, check):
-      // TODO: check uncheck 처리
-      return "\(id)/bookmarks\(check)"
+      
+    case let .bookmark(id):
+      return "\(id)/bookmarks"
+      
+    case let .unBookmark(id):
+      return "\(id)/bookmarks"
+      
     case let .report(id):
       return "\(id)/reports"
+      
     case let .get(id):
       return "\(id)"
+      
     case let .delete(id):
       return "\(id)"
+      
     case let .homeList(size, cursor):
       if let cursor {
-        return "home/?size=\(size)?cursor-id=\(cursor)"
+        return "?searchType=HOME&size=\(size)"
       } else {
-        return "home/?size=\(size)"
+        return "?searchType=HOME&size=\(size)"
       }
     case let .bestList(size, cursor):
       if let cursor {
-        return "best/?size=\(size)?cursor-id=\(cursor)"
+        return "?searchType=BEST&size=\(size)"
       } else {
-        return "best/?size=\(size)"
+        return "?searchType=BEST&size=\(size)"
       }
     }
   }
@@ -45,27 +53,49 @@ public enum VoteAPI: TargetType {
     switch self {
     case .vote:
       return .post
+      
     case .bookmark:
       return .post
+      
+    case .unBookmark:
+      return .delete
+      
     case .report:
       return .post
+      
     case .get:
       return .get
+      
     case .delete:
       return .delete
-    case .homeList:
-      return .get
-    case .bestList:
+      
+    case .homeList, .bestList:
       return .get
     }
   }
   
   public var parameters: Encodable? {
-    // TODO: - Parameters
-    return nil
+    switch self {
+    case let .vote(_, params):
+      return params
+    case .bookmark:
+      return nil
+    case .unBookmark:
+      return nil
+    case .report:
+      return nil
+    case .get:
+      return nil
+    case .delete:
+      return nil
+    case .homeList:
+      return nil
+    case .bestList:
+      return nil
+    }
   }
   
   public var headers: [String: String]? {
-    return ["Authorization": "Bearer \(UserDefaultManager.shared.accessToken ?? "")"]
+    return ["Authorization": "Bearer \(UDManager.shared.accessToken ?? "")"]
   }
 }

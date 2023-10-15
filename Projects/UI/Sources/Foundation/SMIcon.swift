@@ -12,6 +12,8 @@ extension SM {
     case ic_send
     case ic_edit
     case ic_component
+    case ic_cancel
+    case ic_warning
 
     /// 레거시
     case chevron_left = "chevron.left"
@@ -23,7 +25,6 @@ extension SM {
     case bookmark_fill = "bookmark.fill"
     case bookmark = "bookmark"
     case camera = "camera"
-    case cancel = "cancel"
     case check = "check"
     case delete = "delete"
     case edit = "edit"
@@ -37,7 +38,6 @@ extension SM {
     case plus = "plus"
     case send = "send"
     case setting = "setting"
-    case warning = "warning"
     case xmark_circle = "xmark.circle"
     case xmark = "xmark"
     case trash = "trash"
