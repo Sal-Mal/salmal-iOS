@@ -1,5 +1,10 @@
 import Foundation
 
+public struct VoteList: Equatable {
+  public let hasNext: Bool
+  public let votes: [Vote]
+}
+
 public struct Vote: Equatable, Identifiable {
   public let id: Int
   public let imageURL: String

@@ -57,19 +57,25 @@ extension AuthAPI: TargetType {
   public var headers: [String: String]? {
     switch self {
     case .logIn:
-      return nil
+      return ["Content-Type": "application/json; charset=UTF-8"]
       
     case .logOut:
-      return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
+      return [
+        "Content-Type": "application/json; charset=UTF-8",
+        "Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"
+      ]
       
     case .signUp:
-      return nil
+      return ["Content-Type": "application/json; charset=UTF-8"]
       
     case .reIssueToken:
-      return nil
+      return ["Content-Type": "application/json; charset=UTF-8"]
       
     case .checkToken:
-      return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
+      return [
+        "Content-Type": "application/json; charset=UTF-8",
+        "Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"
+      ]
     }
   }
 
