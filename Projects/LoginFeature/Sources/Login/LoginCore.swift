@@ -15,7 +15,7 @@ public struct LoginCore: Reducer {
   public init() {}
   
   @Dependency(\.userDefault) var userDefault
-  @Dependency(\.network) var network
+  @Dependency(\.authRepository) var authRepository
   
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
@@ -28,12 +28,7 @@ public struct LoginCore: Reducer {
         
       case let .requestLogin(id):
         return .run { send in
-          let model = LoginRequestDTO(providerId: id)
-          let api = AuthAPI.logIn(params: model)
-          let dto = try await network.request(api, type: TokenResponseDTO.self)
-          
-          userDefault.accessToken = dto.accessToken
-          userDefault.refreshToken = dto.refreshToken
+          try await authRepository.logIn(providerID: id)
           
           NotificationService.post(.login)
         } catch: { error, send in

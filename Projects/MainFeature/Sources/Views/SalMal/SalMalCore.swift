@@ -59,8 +59,14 @@ public struct SalMalCore: Reducer {
         
       case let .homeAction(.delegate(.updateVote(vote))):
         state.totalCount = vote.totalVoteCount
-        state.buyPercentage = Double(vote.likeCount) / Double(vote.totalVoteCount)
-        state.notBuyPercentage = Double(vote.disLikeCount) / Double(vote.totalVoteCount)
+        
+        if vote.totalVoteCount == 0 {
+          state.buyPercentage = 0
+          state.notBuyPercentage = 0
+        } else {
+          state.buyPercentage = Double(vote.likeCount) / Double(vote.totalVoteCount)
+          state.notBuyPercentage = Double(vote.disLikeCount) / Double(vote.totalVoteCount)
+        }
         
         state.salButtonState = .idle
         state.malButtonState = .idle
@@ -69,8 +75,14 @@ public struct SalMalCore: Reducer {
         
       case let .bestAction(.delegate(.updateVote(vote))):
         state.totalCount = vote.totalVoteCount
-        state.buyPercentage = Double(vote.likeCount) / Double(vote.totalVoteCount)
-        state.notBuyPercentage = Double(vote.disLikeCount) / Double(vote.totalVoteCount)
+        
+        if vote.totalVoteCount == 0 {
+          state.buyPercentage = 0
+          state.notBuyPercentage = 0
+        } else {
+          state.buyPercentage = Double(vote.likeCount) / Double(vote.totalVoteCount)
+          state.notBuyPercentage = Double(vote.disLikeCount) / Double(vote.totalVoteCount)
+        }
         
         state.salButtonState = .idle
         state.malButtonState = .idle

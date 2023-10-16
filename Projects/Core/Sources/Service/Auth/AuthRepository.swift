@@ -78,3 +78,18 @@ public final class AuthRepositoryImpl: AuthRepository {
     try await networkManager.request(target, type: TokenValidResponseDTO.self)
   }
 }
+
+/// TCA DependencyKey를 정의
+public enum AuthRepositoryKey: DependencyKey {
+  public static let liveValue: any AuthRepository = AuthRepositoryImpl(networkManager: DefaultNetworkService())
+  public static let previewValue: any AuthRepository = AuthRepositoryImpl(networkManager: MockNetworkService())
+  public static let testValue: any AuthRepository = AuthRepositoryImpl(networkManager: MockNetworkService())
+}
+
+/// TCA Dependency에 등록
+public extension DependencyValues {
+  var authRepository: AuthRepository {
+    get { self[AuthRepositoryKey.self] }
+    set { self[AuthRepositoryKey.self] = newValue }
+  }
+}
