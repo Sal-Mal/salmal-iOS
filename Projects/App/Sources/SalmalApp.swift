@@ -33,7 +33,7 @@ struct SalmalApp: App {
             
             Rectangle()
             .tabItem {
-              Image(icon: tabIndex == 1 ? .plus_circle : .plus)
+              Image(icon: .ic_upload_circle)
                 .fit(size: 32)
             }
             .tag(1)
