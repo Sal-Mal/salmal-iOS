@@ -10,6 +10,7 @@ public struct CommentListCore: Reducer {
     @BindingState var text: String = ""
     
     var editingCommentID: Int?
+    var profileImageURL: String?
   }
   
   public enum Action: Equatable, BindableAction {
@@ -17,11 +18,14 @@ public struct CommentListCore: Reducer {
     case comment(id: CommentCore.State.ID, action: CommentCore.Action)
     case requestComments
     case commentsResponse(TaskResult<[Comment]>)
+    case requestMyPage
+    case myPageResponse(Member)
     case tapConfirmButton
     case reset
   }
   
   @Dependency(\.commentRepository) var commentRepo
+  @Dependency(\.memberRepository) var memberRepo
   
   public var body: some ReducerOf<Self> {
     BindingReducer()
@@ -63,7 +67,20 @@ public struct CommentListCore: Reducer {
         
       case let .commentsResponse(.failure(error)):
         // TODO: 댓글 리스트 요청 실패 (Toast Message)
-        print(error)
+        print(error.localizedDescription)
+        return .none
+        
+      case .requestMyPage:
+        return .run { send in
+          let result = try await memberRepo.myPage()
+          await send(.myPageResponse(result))
+        } catch: { error, send in
+          // TODO: 마이페이지 이미지 url 다운로드 실패
+          print(error.localizedDescription)
+        }
+        
+      case let .myPageResponse(member):
+        state.profileImageURL = member.imageURL
         return .none
         
       case .tapConfirmButton:
