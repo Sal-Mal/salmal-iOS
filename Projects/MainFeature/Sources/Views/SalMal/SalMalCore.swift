@@ -14,8 +14,23 @@ public struct SalMalCore: Reducer {
     var notBuyPercentage: Double = 0
     var totalCount = 0
     
-    var currentHomeIndex = 0
-    var currentBestIndex = 0 
+    var currentIndex: Int {
+      if tab == .home {
+        return homeState.index
+      } else {
+        return bestState.index
+      }
+    }
+    
+    var currentVote: Vote {
+      if tab == .home {
+        let index = homeState.index
+        return homeState.votes[index].vote
+      } else {
+        let index = bestState.index
+        return bestState.votes[index].vote
+      }
+    }
     
     @BindingState var salButtonState: ButtonState = .idle
     @BindingState var malButtonState: ButtonState = .idle
@@ -32,24 +47,30 @@ public struct SalMalCore: Reducer {
     case path(StackAction<Path.State, Path.Action>)
     case homeAction(CarouselCore.Action)
     case bestAction(CarouselCore.Action)
-    case salButtonAction(ButtonState)
-    case malButtonAction(ButtonState)
-    case moveToAlarm
-    case buyTapped
-    case notBuyTapped
+    
+    case moveToAlarm // 알람 화면으로 이동
+    case buyTapped // 살 버튼 눌렀을때
+    case notBuyTapped // 말 버튼 눌렀을때
+    case requestVote(id: Int) // id에 해당하는 Vote 데이터 요청
+    case updateVote(Vote) // ChildCore의 voteList 배열 업데이트
+    case updateUI(Vote) // 현재화면 업데이트
   }
   
   public init() { }
   
-  @Dependency(\.network) var network
+  @Dependency(\.voteRepository) var voteRepository
   
   public var body: some ReducerOf<Self> {
     BindingReducer()
     
     Reduce { state, action in
       switch action {
+      case .binding:
+        return .none
+        
       case let .path(action):
         switch action {
+          
         case let .element(_, .alarmScreen(.listTapped)):
           return .none
           
@@ -57,36 +78,18 @@ public struct SalMalCore: Reducer {
           return .none
         }
         
+      // homeTab의 index가 바뀔때마다 실행
       case let .homeAction(.delegate(.updateVote(vote))):
-        state.totalCount = vote.totalVoteCount
+        return .send(.updateVote(vote))
         
-        if vote.totalVoteCount == 0 {
-          state.buyPercentage = 0
-          state.notBuyPercentage = 0
-        } else {
-          state.buyPercentage = Double(vote.likeCount) / Double(vote.totalVoteCount)
-          state.notBuyPercentage = Double(vote.disLikeCount) / Double(vote.totalVoteCount)
-        }
-        
-        state.salButtonState = .idle
-        state.malButtonState = .idle
-        
+      case .homeAction:
         return .none
         
+      // bestTab의 index가 바뀔때마다 실행
       case let .bestAction(.delegate(.updateVote(vote))):
-        state.totalCount = vote.totalVoteCount
+        return .send(.updateVote(vote))
         
-        if vote.totalVoteCount == 0 {
-          state.buyPercentage = 0
-          state.notBuyPercentage = 0
-        } else {
-          state.buyPercentage = Double(vote.likeCount) / Double(vote.totalVoteCount)
-          state.notBuyPercentage = Double(vote.disLikeCount) / Double(vote.totalVoteCount)
-        }
-        
-        state.salButtonState = .idle
-        state.malButtonState = .idle
-        
+      case .bestAction:
         return .none
         
       case .moveToAlarm:
@@ -94,35 +97,87 @@ public struct SalMalCore: Reducer {
         return .none
         
       case .buyTapped:
-        switch state.salButtonState {
-        case .idle:
-          state.salButtonState = .selected
-          state.malButtonState = .unSelected
-        case .selected:
-          state.salButtonState = .idle
-          state.malButtonState = .idle
-        case .unSelected:
-          state.salButtonState = .selected
-          state.malButtonState = .unSelected
-        }
         
-        return .none
+        return .run { [state] send in
+          switch state.salButtonState {
+          // 투표
+          case .idle:
+            try await voteRepository.evaluate(voteID: state.currentVote.id, param: .init(voteEvaluationType: .like))
+            await send(.requestVote(id: state.currentVote.id))
+          // 투표 취소
+          case .selected:
+            try await voteRepository.unEvaluate(voteID: state.currentVote.id)
+            await send(.requestVote(id: state.currentVote.id))
+          // 투표 불가
+          case .unSelected:
+            break
+          }
+        } catch: { error, send in
+          print(error.localizedDescription)
+        }
         
       case .notBuyTapped:
-        switch state.malButtonState {
-        case .idle:
+        
+        return .run { [state] send in
+          switch state.malButtonState {
+          // 투표
+          case .idle:
+            try await voteRepository.evaluate(voteID: state.currentVote.id, param: .init(voteEvaluationType: .dislike))
+            await send(.requestVote(id: state.currentVote.id))
+          // 투표 취소
+          case .selected:
+            try await voteRepository.unEvaluate(voteID: state.currentVote.id)
+            await send(.requestVote(id: state.currentVote.id))
+          // 투표 불가
+          case .unSelected:
+            break
+          }
+        } catch: { error, send in
+          print(error.localizedDescription)
+        }
+        
+      case let .requestVote(id):
+        
+        return .run { send in
+          let vote = try await voteRepository.getVote(id: id)
+          await send(.updateVote(vote))
+        }
+        
+      case let .updateVote(vote):
+        
+        if state.tab == .home {
+          state.homeState.votes[state.currentIndex] = .init(vote: vote)
+        } else {
+          state.bestState.votes[state.currentIndex] = .init(vote: vote)
+        }
+        
+        return .send(.updateUI(vote))
+        
+      case let .updateUI(vote):
+        state.totalCount = vote.totalVoteCount
+        
+        if vote.totalVoteCount == 0 {
+          state.buyPercentage = 0
+          state.notBuyPercentage = 0
+        } else {
+          state.buyPercentage = Double(vote.likeCount) / Double(vote.totalVoteCount)
+          state.notBuyPercentage = Double(vote.disLikeCount) / Double(vote.totalVoteCount)
+        }
+        
+        switch vote.voteStatus {
+        case .like:
+          state.salButtonState = .selected
+          state.malButtonState = .unSelected
+          
+        case .disLike:
           state.salButtonState = .unSelected
           state.malButtonState = .selected
-        case .selected:
+          
+        case .none:
           state.salButtonState = .idle
           state.malButtonState = .idle
-        case .unSelected:
-          state.salButtonState = .unSelected
-          state.malButtonState = .selected
         }
-        return .none
         
-      default:
         return .none
       }
     }
@@ -140,8 +195,8 @@ public struct SalMalCore: Reducer {
   }
 }
 
-extension SalMalCore {
-  public struct Path: Reducer {
+public extension SalMalCore {
+  struct Path: Reducer {
     public enum State: Equatable {
       case alarmScreen(AlarmCore.State = .init())
     }

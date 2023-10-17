@@ -11,7 +11,7 @@ public struct SalMalView: View {
     self.viewStore = ViewStore(self.store, observe: { $0 })
   }
   
-  public var body: some View {
+  public var body: some View {    
     NavigationStackStore(store.scope(state: \.path, action: SalMalCore.Action.path)) {
       VStack(spacing: 13) {
         ZStack(alignment: .bottom) {
