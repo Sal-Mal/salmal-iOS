@@ -79,9 +79,8 @@ extension CommentAPI: TargetType {
       "Content-Type": "application/json; charset=UTF-8",
       "Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"
     ]
-//    return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
   }
-
+  
   public var task: HTTPTask {
     switch self {
     default:

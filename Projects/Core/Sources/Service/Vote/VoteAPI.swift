@@ -116,7 +116,10 @@ extension VoteAPI: TargetType {
   }
   
   public var headers: [String: String]? {
-    return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
+    return [
+      "Content-Type": "application/json; charset=UTF-8",
+      "Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"
+    ]
   }
 
   public var task: HTTPTask {
