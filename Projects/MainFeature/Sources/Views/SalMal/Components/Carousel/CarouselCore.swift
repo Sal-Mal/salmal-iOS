@@ -43,7 +43,11 @@ public struct CarouselCore: Reducer {
     Reduce { state, action in
       switch action {
         
-      case let .vote(id, action):
+      case let .vote(id, .delegate(.updateVote(vote))):
+        state.votes[id: id] = .init(vote: vote)
+        return .none
+        
+      case .vote:
         return .none
         
       case .delegate:
@@ -79,7 +83,6 @@ public struct CarouselCore: Reducer {
         state.cursorID = result.votes.last?.id
         state.cursorLikes = result.votes.last?.likeCount
         
-        
         let newItems = result.votes.map { VoteItemCore.State(vote: $0) }
         state.votes.append(contentsOf: newItems)
         
@@ -100,7 +103,15 @@ public struct CarouselCore: Reducer {
         }
         
         let item = state.votes[state.index].vote
-        return .send(.delegate(.updateVote(vote: item)))
+        
+        if state.index + 2 >= state.votes.count && state.hasNext {
+          return .concatenate(
+            .send(.requestVoteList),
+            .send(.delegate(.updateVote(vote: item)))
+          )
+        } else {
+          return .send(.delegate(.updateVote(vote: item)))
+        }
         
       case let .removeVote(id):
         return .run { send in

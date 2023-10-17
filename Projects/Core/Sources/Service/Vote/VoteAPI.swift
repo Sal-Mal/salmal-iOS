@@ -43,13 +43,13 @@ extension VoteAPI: TargetType {
       
     case let .homeList(size, cursor, cursorLike):
       if let cursor, let cursorLike {
-        return "votes?cursorId=\(cursor)&cursorLikes=\(cursorLike)size=\(size)&searchType=HOME"
+        return "votes?cursorId=\(cursor)&cursorLikes=\(cursorLike)&size=\(size)&searchType=HOME"
       } else {
         return "votes?size=\(size)&searchType=HOME"
       }
     case let .bestList(size, cursor, cursorLike):
       if let cursor, let cursorLike {
-        return "votes?cursorId=\(cursor)&cursorLikes=\(cursorLike)searchType=BEST&size=\(size)"
+        return "votes?cursorId=\(cursor)&cursorLikes=\(cursorLike)&searchType=BEST&size=\(size)"
       } else {
         return "votes?searchType=BEST&size=\(size)"
       }

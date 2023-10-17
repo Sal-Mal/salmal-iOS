@@ -17,7 +17,7 @@ public struct ReplyCommentCore: Reducer {
     case likeTapped
   }
   
-  @Dependency(\.network) var network
+  @Dependency(\.commentRepository) var commentRepository
   
   public var body: some ReducerOf<Self> {
     Reduce { state, action in

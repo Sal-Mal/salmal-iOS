@@ -24,18 +24,11 @@ public struct CarouselView: View {
       ScrollView(.vertical, showsIndicators: false) {
         LazyVStack(spacing: 0) {
           ForEachStore(store.scope(state: \.votes, action: CarouselCore.Action.vote(id:action:))) { subStore in
-            
             VoteItemView(store: subStore)
               .frame(width: width, height: height)
               .cornerRadius(24)
               .padding(.bottom, 20)
               .background(Color.ds(.black))
-              .onAppear {
-                subStore.send(.onAppear)
-              }
-              .onDisappear {
-                subStore.send(.onDisappear)
-              }
           }
         }
         .padding(600)
