@@ -20,34 +20,7 @@ struct SalmalApp: App {
     WindowGroup {
       Group {
         if isLogined {
-          
-          TabView(selection: $tabIndex) {
-            SalMalView(store: .init(initialState: .init()) {
-              SalMalCore()
-            })
-            .tabItem {
-              Image(icon: tabIndex == 0 ? .home_fill : .home)
-                .fit(size: 32)
-            }
-            .tag(0)
-            
-            Rectangle()
-            .tabItem {
-              Image(icon: .ic_upload_circle)
-                .fit(size: 32)
-            }
-            .tag(1)
-            
-            ProfileView(store: .init(initialState: .init()) {
-              ProfileCore()
-            })
-            .tabItem {
-              Image(icon: tabIndex == 2 ? .person_fill : .person)
-                .fit(size: 32)
-            }
-            .tag(2)
-          }
-          
+          MainScene
         } else {
           SplashView(store: .init(initialState: .init()) {
             SplashCore()
@@ -61,6 +34,35 @@ struct SalmalApp: App {
       .onReceive(NotificationCenter.default.publisher(for: .init("logout"))) { _ in
         isLogined = false
       }
+    }
+  }
+  
+  var MainScene: some View {
+    TabView(selection: $tabIndex) {
+      SalMalView(store: .init(initialState: .init()) {
+        SalMalCore()
+      })
+      .tabItem {
+        Image(icon: tabIndex == 0 ? .home_fill : .home)
+          .fit(size: 32)
+      }
+      .tag(0)
+      
+      Rectangle()
+      .tabItem {
+        Image(icon: .ic_upload_circle)
+          .fit(size: 32)
+      }
+      .tag(1)
+      
+      ProfileView(store: .init(initialState: .init()) {
+        ProfileCore()
+      })
+      .tabItem {
+        Image(icon: tabIndex == 2 ? .person_fill : .person)
+          .fit(size: 32)
+      }
+      .tag(2)
     }
   }
 }
