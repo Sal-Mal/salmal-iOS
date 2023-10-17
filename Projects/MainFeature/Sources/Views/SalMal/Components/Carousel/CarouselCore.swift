@@ -94,6 +94,8 @@ public struct CarouselCore: Reducer {
         return .none
         
       case let .updateIndex(y):
+        let startIndex = state.index
+        
         if y > 0 {
           state.index = max(0, state.index - 1)
         }
@@ -101,6 +103,9 @@ public struct CarouselCore: Reducer {
         if y < 0 {
           state.index = min(state.votes.count - 1, state.index + 1)
         }
+        
+        /// Index의 변화가 없을 경우
+        if startIndex == state.index { return .none }
         
         let item = state.votes[state.index].vote
         
