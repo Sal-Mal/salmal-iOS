@@ -56,9 +56,10 @@ public struct SalMalView: View {
       case .alarmScreen:
         CaseLet(
           /SalMalCore.Path.State.alarmScreen,
-           action: SalMalCore.Path.Action.alarmScreen,
-           then: AlarmView.init(store:)
-        )
+           action: SalMalCore.Path.Action.alarmScreen) { store in
+             AlarmView(store: store)
+               .toolbar(.hidden, for: .tabBar)
+           }
       }
     }
   }

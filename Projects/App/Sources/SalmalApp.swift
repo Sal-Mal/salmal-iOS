@@ -2,6 +2,7 @@ import SwiftUI
 
 import UI
 import Core
+import ComposableArchitecture
 
 import LoginFeature
 import MainFeature
@@ -37,32 +38,39 @@ struct SalmalApp: App {
     }
   }
   
+  private let mainStore: StoreOf<SalMalCore> = .init(initialState: .init()) {
+    SalMalCore()
+  }
+  
+  private let profileStore: StoreOf<ProfileCore> = .init(initialState: .init()) {
+    ProfileCore()
+  }
+  
   var MainScene: some View {
     TabView(selection: $tabIndex) {
-      SalMalView(store: .init(initialState: .init()) {
-        SalMalCore()
-      })
-      .tabItem {
-        Image(icon: tabIndex == 0 ? .home_fill : .home)
-          .fit(size: 32)
-      }
-      .tag(0)
+      SalMalView(store: mainStore)
+        .tabItem {
+          Image(icon: tabIndex == 0 ? .home_fill : .home)
+            .fit(size: 32)
+        }
+        .toolbarBackground(.hidden, for: .tabBar)
+        .tag(0)
       
       Rectangle()
-      .tabItem {
-        Image(icon: .ic_upload_circle)
-          .fit(size: 32)
-      }
-      .tag(1)
+        .tabItem {
+          Image(icon: .ic_upload_circle)
+            .fit(size: 32)
+        }
+        .toolbarBackground(.hidden, for: .tabBar)
+        .tag(1)
       
-      ProfileView(store: .init(initialState: .init()) {
-        ProfileCore()
-      })
-      .tabItem {
-        Image(icon: tabIndex == 2 ? .person_fill : .person)
-          .fit(size: 32)
-      }
-      .tag(2)
+      ProfileView(store: profileStore)
+        .tabItem {
+          Image(icon: tabIndex == 2 ? .person_fill : .person)
+            .fit(size: 32)
+        }
+        .toolbarBackground(.hidden, for: .tabBar)
+        .tag(2)
     }
   }
 }
