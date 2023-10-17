@@ -8,6 +8,10 @@ public struct VoteItemCore: Reducer {
     
     public var id: Int { return vote.id }
     
+    var isMine: Bool {
+      return UserDefaultsService.shared.memberID == vote.memberID
+    }
+    
     init(vote: Vote) {
       self.vote = vote
       self.originalVote = vote
@@ -29,7 +33,7 @@ public struct VoteItemCore: Reducer {
     case onDisappear
   }
   
-  @Dependency(\.network) var networkManager
+  @Dependency(\.voteRepository) var voteRepository
   
   enum CancelID {
     case bookmark
@@ -60,11 +64,12 @@ public struct VoteItemCore: Reducer {
         
       case .bookmarkTapped:
         return .run { [state] send in
-          let api = state.vote.isBookmarked
-          ? VoteAPI.unBookmark(id: state.vote.id)
-          : VoteAPI.bookmark(id: state.vote.id)
+          if state.vote.isBookmarked {
+            try await voteRepository.unBookmark(voteID: state.vote.id)
+          } else {
+            try await voteRepository.bookmark(voteID: state.vote.id)
+          }
           
-          try await networkManager.request(api)
           await send(.setBookmark(!state.vote.isBookmarked))
         } catch: { error, send in
           // TODO: ToastMessage 띄우기
