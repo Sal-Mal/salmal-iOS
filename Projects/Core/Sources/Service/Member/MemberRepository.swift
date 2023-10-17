@@ -36,10 +36,10 @@ public final class MemberRepositoryImpl: MemberRepository {
   public init(networkManager: NetworkService) {
     self.networkManager = networkManager
 
-    #if DEBUG
-    userDefault.memberID = 8
-    userDefault.accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY5NzM3MjEyMywiZXhwIjoxNjk3MzgyOTIzLCJpZCI6OH0.nBCGt0l2oGBiHDCxXYzPYB_gnGba-6i-15D2LJv9bKo"
-    #endif
+//    #if DEBUG
+//    userDefault.memberID = 8
+//    userDefault.accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY5NzM3MjEyMywiZXhwIjoxNjk3MzgyOTIzLCJpZCI6OH0.nBCGt0l2oGBiHDCxXYzPYB_gnGba-6i-15D2LJv9bKo"
+//    #endif
   }
 
   public func member(id: Int) async throws -> Member {

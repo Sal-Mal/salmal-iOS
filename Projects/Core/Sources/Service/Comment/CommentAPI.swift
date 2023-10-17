@@ -20,7 +20,7 @@ extension CommentAPI: TargetType {
     switch self {
     case let .list(id):
       // TODO: Query 수정(all fetch 댓글로 변경)
-      return "votes/\(id)/comments?size=1000"
+      return "votes/\(id)/comments?size=100"
     case let .write(id, _):
       return "votes/\(id)/comments"
     case let .edit(id, _):
@@ -75,7 +75,11 @@ extension CommentAPI: TargetType {
   }
   
   public var headers: [String: String]? {
-    return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
+    return [
+      "Content-Type": "application/json; charset=UTF-8",
+      "Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"
+    ]
+//    return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
   }
 
   public var task: HTTPTask {
