@@ -38,10 +38,12 @@ public struct CarouselView: View {
               }
           }
         }
+        .padding(600)
         .offset(y: yOffset)
         .animation(.easeInOut, value: yOffset)
         .gesture(dragGesture)
       }
+      .padding(-600)
       .scrollDisabled(true)
       .clipped()
     }
