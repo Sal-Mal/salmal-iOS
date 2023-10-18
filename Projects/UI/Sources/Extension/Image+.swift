@@ -1,8 +1,15 @@
 import SwiftUI
+import UIKit
 
 public extension Image {
   init(icon: SM.Icon) {
     self.init(icon.rawValue, bundle: SM.bundle)
+  }
+}
+
+public extension UIImage {
+  convenience init?(icon: SM.Icon) {
+    self.init(named: icon.rawValue, in: SM.bundle, compatibleWith: nil)
   }
 }
 
