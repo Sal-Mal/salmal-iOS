@@ -5,7 +5,7 @@ public extension View {
     modifier(FrameDebugModifier(color: color))
   }
 
-  public func toast(on toast: Binding<SMToast?>) -> some View {
-    modifier(SMToastModifier(toast: toast))
+  func toast(on toast: Binding<SMSwiftUIToast?>) -> some View {
+    modifier(SMToastSwiftUIModifier(toast: toast))
   }
 }
