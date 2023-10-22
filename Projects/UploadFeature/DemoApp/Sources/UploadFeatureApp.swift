@@ -15,6 +15,7 @@ struct UploadFeatureApp: App {
       NavigationStack {
         UploadView(store: .init(initialState: .init(), reducer: {
           UploadCore()
+            ._printChanges()
         }))
       }
     }

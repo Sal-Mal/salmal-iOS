@@ -114,6 +114,7 @@ public struct PaletteView: View {
                       .foregroundColor(.ds(.black))
                       .font(font)
                   }
+                  .frame(width: 50, height: 50)
               }
               .buttonStyle(.plain)
             }
