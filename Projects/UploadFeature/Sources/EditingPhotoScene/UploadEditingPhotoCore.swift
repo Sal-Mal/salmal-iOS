@@ -1,9 +1,6 @@
-import Foundation
+import UIKit
 import ComposableArchitecture
-import CoreImage
 import CoreImage.CIFilterBuiltins
-import SwiftUI
-import PhotosUI
 
 import Core
 
@@ -11,27 +8,24 @@ public struct UploadEditingPhotoCore: Reducer {
 
   public struct State: Equatable {
 
-    @PresentationState var textUploadState: UploadEditingTextCore.State?
-    @BindingState var isPhotoLibraryPresented: Bool = false
-    @BindingState var selectedItem: PhotosPickerItem?
-
-    var imageData: Data = .init()
+    @PresentationState var uploadEditingTextState: UploadEditingTextCore.State?
+    var image: UIImage?
+    var originalImage: UIImage?
     var filteredImage: [FilteredImage] = []
 
-    public init(uiImage: UIImage?) {
-      #warning("TODO: UIImage를 사용하도록 변경해야함")
-      imageData = uiImage!.pngData()!
+    public init(image: UIImage?) {
+      self.image = image
+      self.originalImage = image
     }
   }
 
-  public enum Action: BindableAction {
-    case textUpload(PresentationAction<UploadEditingTextCore.Action>)
-    case textUploadButtonTapped
-    case cancelButtonTapped
+  public enum Action {
+    case onAppear
+    case backButtonTapped
     case confirmButtonTapped
-    case applyImageFilters(Data)
-    case setImage(Data?)
-    case binding(BindingAction<State>)
+    case uploadEditingTextButtonTapped
+    case uploadEditingText(PresentationAction<UploadEditingTextCore.Action>)
+    case filteredImageSelected(FilteredImage)
   }
 
   let filters: [CIFilter] = [
@@ -48,64 +42,49 @@ public struct UploadEditingPhotoCore: Reducer {
   public init() {}
 
   public var body: some ReducerOf<Self> {
-    BindingReducer()
     Reduce { state, action in
       switch action {
-      case .textUpload:
+      case .onAppear:
+        guard let image = state.image else { return .none }
+        state.filteredImage = applyFilters(image)
         return .none
 
-      case .textUploadButtonTapped:
-        state.textUploadState = .init()
+      case .uploadEditingTextButtonTapped:
+        state.uploadEditingTextState = .init()
         return .none
 
-      case .cancelButtonTapped:
-        if state.textUploadState == nil {
-          return .run { send in
-            await dismiss()
-          }
+      case .uploadEditingText:
+        return .none
 
-        } else {
-          state.textUploadState = nil
+      case .backButtonTapped:
+        guard state.uploadEditingTextState == nil else {
+          state.uploadEditingTextState = nil
           return .none
         }
 
-      case .confirmButtonTapped:
-        state.isPhotoLibraryPresented = true
-        return .none
-
-      case .binding(\.$selectedItem):
-        guard let item = state.selectedItem else { return .none }
-
         return .run { send in
-          let data = try await item.loadTransferable(type: Data.self)
-          await send(.setImage(data))
+          await dismiss()
         }
 
-      case .binding:
-        print("A")
+      case .confirmButtonTapped:
         return .none
 
-      case .setImage(let data):
-        state.imageData = data ?? .init()
-        return .none
-
-      case .applyImageFilters(let imageData):
-        state.filteredImage = applyFilters(imageData)
-        print(state.filteredImage)
+      case .filteredImageSelected(let filteredImage):
+        state.image = filteredImage.image
         return .none
       }
     }
-    .ifLet(\.$textUploadState, action: /Action.textUpload) {
+    .ifLet(\.$uploadEditingTextState, action: /Action.uploadEditingText) {
       UploadEditingTextCore()
     }
   }
 
-  private func applyFilters(_ data: Data) -> [FilteredImage] {
+  private func applyFilters(_ image: UIImage) -> [FilteredImage] {
     let context = CIContext()
     var images = [FilteredImage]()
 
     filters.forEach { imageFilter in
-      let ciImage = CIImage(data: data)
+      let ciImage = CIImage(image: image)
       imageFilter.setValue(ciImage, forKey: kCIInputImageKey)
 
       guard let newImage = imageFilter.outputImage else { return }

@@ -75,7 +75,7 @@ public struct UploadCore: Reducer {
         return .none
 
       case .libraryPhotoSelected(let image):
-        state.path.append(.uploadEditingPhoto(.init(uiImage: image)))
+        state.path.append(.uploadEditingPhoto(.init(image: image)))
         return .none
 
       case .setImageMenus(let images):

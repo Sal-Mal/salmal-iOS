@@ -1,13 +1,12 @@
 import SwiftUI
 import ComposableArchitecture
-import PhotosUI
 
 import UI
 
 public struct UploadEditingPhotoView: View {
 
   private let store: StoreOf<UploadEditingPhotoCore>
-  @ObservedObject var viewStore: ViewStoreOf<UploadEditingPhotoCore>
+  @ObservedObject private var viewStore: ViewStoreOf<UploadEditingPhotoCore>
 
   public init(store: StoreOf<UploadEditingPhotoCore>) {
     self.store = store
@@ -16,43 +15,51 @@ public struct UploadEditingPhotoView: View {
 
   public var body: some View {
     ZStack {
+      // 이미지 필터링
       VStack(spacing: 0) {
-        Image(uiImage: UIImage(data: viewStore.imageData) ?? .init())
-          .resizable()
-          .scaledToFit()
-          .frame(maxHeight: .infinity)
-          .background(.green)
-          .cornerRadius(24)
-          .padding(.horizontal, 16)
-          .debug()
-          .onChange(of: viewStore.imageData) { data in
-            print(data)
-            viewStore.send(.applyImageFilters(data))
-          }
+        // 메인 사진
+        if let uiImage = viewStore.image {
+          Image(uiImage: uiImage)
+            .resizable()
+            .clipShape(
+              RoundedRectangle(cornerRadius: 24)
+            )
+            .padding(.horizontal, 16)
+
+        } else {
+          Rectangle()
+            .frame(maxHeight: .infinity)
+            .foregroundColor(Color.ds(.gray1))
+            .cornerRadius(24)
+            .padding(.horizontal, 16)
+        }
 
         Spacer().frame(height: 12)
 
-        ScrollView(.horizontal) {
+        // 필터 처리된 사진
+        ScrollView(.horizontal, showsIndicators: false) {
           HStack {
             Spacer()
             ForEach(viewStore.filteredImage) { filteredImage in
-              Image(uiImage: filteredImage.image)
-                .resizable()
-                .aspectRatio(1, contentMode: .fit)
-                .frame(width: 86, height: 86)
-                .cornerRadius(12)
+              Button {
+                viewStore.send(.filteredImageSelected(filteredImage))
+              } label: {
+                Image(uiImage: filteredImage.image)
+                  .resizable()
+                  .aspectRatio(1, contentMode: .fit)
+                  .frame(width: 86, height: 86)
+                  .cornerRadius(12)
+              }
+              .buttonStyle(.plain)
             }
           }
-          .padding(.horizontal, 16)
         }
-        .scrollIndicators(.hidden)
-        .frame(height: 86)
-        .debug()
 
         Spacer().frame(height: 24)
 
+        // 텍스트 추가 버튼
         Button {
-          viewStore.send(.textUploadButtonTapped, animation: .linear(duration: 0.2))
+          viewStore.send(.uploadEditingTextButtonTapped, animation: .linear(duration: 0.2))
         } label: {
           HStack(spacing: 8) {
             Circle()
@@ -70,20 +77,20 @@ public struct UploadEditingPhotoView: View {
         }
       }
       .ignoresSafeArea(.keyboard, edges: .bottom)
+      .onAppear {
+        viewStore.send(.onAppear)
+      }
 
-      if viewStore.textUploadState != nil {
-        UploadEditingTextView(store: .init(initialState: .init(), reducer: {
-          UploadEditingTextCore()
-        }))
-
+      // 텍스트 설정 모달
+      IfLetStore(store.scope(state: \.$uploadEditingTextState, action: { .uploadEditingText($0) })) { store in
+        UploadEditingTextView(store: store)
       }
     }
-    .tabViewStyle(.page)
     .smNavigationBar(
       title: "",
       leftItems: {
         Button {
-          viewStore.send(.cancelButtonTapped, animation: .linear(duration: 0.1))
+          viewStore.send(.backButtonTapped)
         } label: {
           Text("취소")
             .foregroundColor(.ds(.white80))
@@ -101,7 +108,6 @@ public struct UploadEditingPhotoView: View {
         }
       }
     )
-    .photosPicker(isPresented: viewStore.$isPhotoLibraryPresented, selection: viewStore.$selectedItem)
   }
 }
 
@@ -109,7 +115,7 @@ public struct UploadEditingPhotoView: View {
 struct UploadEditPhotoView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
-      UploadEditingPhotoView(store: .init(initialState: .init(uiImage: nil), reducer: {
+      UploadEditingPhotoView(store: .init(initialState: .init(image: nil), reducer: {
         UploadEditingPhotoCore()
       }))
     }
