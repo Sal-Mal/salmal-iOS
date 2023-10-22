@@ -1,108 +1,73 @@
+import UIKit
 import SwiftUI
 
-public struct SMToast: Equatable {
-  let type: SMToastView.ToastType
-  let duration: TimeInterval
-
-  public init(
-    type: SMToastView.ToastType,
-    duration: TimeInterval = 3.0
-  ) {
-    self.type = type
-    self.duration = duration
+public final class SMToastView: UIView {
+  
+  lazy var containerView: UIStackView = {
+    $0.translatesAutoresizingMaskIntoConstraints = false
+    $0.backgroundColor = .ds(.gray4)
+    $0.axis = .horizontal
+    $0.spacing = 8
+    return $0
+  }(UIStackView())
+  
+  lazy var iconImageView: UIImageView = {
+    $0.translatesAutoresizingMaskIntoConstraints = false
+    $0.backgroundColor = toast.color
+    $0.clipsToBounds = true
+    $0.layer.cornerRadius = 12
+    $0.image = toast.iconImage
+    $0.contentMode = .scaleAspectFit
+    return $0
+  }(UIImageView())
+  
+  lazy var textLabel: UILabel = {
+    $0.translatesAutoresizingMaskIntoConstraints = false
+    $0.textColor = .ds(.white)
+    $0.font = .ds(.title4(.medium))
+    $0.text = toast.title
+    return $0
+  }(UILabel())
+  
+  let toast: SMToast
+  
+  public init(toast: SMToast) {
+    self.toast = toast
+    super.init(frame: .zero)
+    
+    setupUI()
+    setupConstraints()
   }
-}
-
-public struct SMToastView: View {
-
-  public enum ToastType: Equatable {
-    case error(String)
-    case warning(String)
-    case success(String)
-
-    var title: String {
-      switch self {
-      case .error(let title):
-        return title
-      case .warning(let title):
-        return title
-      case .success(let title):
-        return title
-      }
-    }
-
-    var color: Color {
-      switch self {
-      case .error:
-        return .ds(.red)
-      case .warning:
-        return .ds(.orange)
-      case .success:
-        return .ds(.green1)
-      }
-    }
-
-    var iconImage: Image {
-      switch self {
-      case .error:
-        return .init(icon: .ic_xmark)
-      case .warning:
-        return .init(icon: .ic_exclamation)
-      case .success:
-        return .init(icon: .ic_check)
-      }
-    }
+  
+  required public init?(coder: NSCoder) {
+    fatalError()
   }
-
-  private let title: String
-  private let type: ToastType
-
-  public init(
-    for type: ToastType
-  ) {
-    self.title = type.title
-    self.type = type
+  
+  private func setupUI() {
+    layer.cornerRadius = 24
+    backgroundColor = .ds(.gray4)
+    clipsToBounds = true
+    
+    addSubview(containerView)
+    containerView.addArrangedSubview(iconImageView)
+    containerView.addArrangedSubview(textLabel)
   }
-
-  public var body: some View {
-    HStack {
-      Circle()
-        .fill(type.color)
-        .frame(width: 24, height: 24)
-        .overlay {
-          type.iconImage
-            .resizable()
-            .aspectRatio(1, contentMode: .fit)
-            .frame(width: 18, height: 18)
-        }
-
-      Text(title)
-        .font(.ds(.title4(.medium)))
-        .foregroundColor(.ds(.white))
-    }
-    .padding()
-    .frame(height: 48)
-    .background(Color.ds(.gray4))
-    .clipShape(Capsule())
-    .shadow(radius: 4)
-  }
-}
-
-struct SMToastView_Previews: PreviewProvider {
-
-  static var previews: some View {
-    Group {
-      SMToastView(for: .success("살말 업로드 완료!"))
-        .previewDisplayName("성공 토스트")
-        .previewLayout(.sizeThatFits)
-
-      SMToastView(for: .warning("화면 캡처를 감지했어요."))
-        .previewDisplayName("경고 토스트")
-        .previewLayout(.sizeThatFits)
-
-      SMToastView(for: .error("더 이상 해당 사용자가 피드에서 보이지 않아요."))
-        .previewDisplayName("에러 토스트")
-        .previewLayout(.sizeThatFits)
-    }
+  
+  private func setupConstraints() {
+    NSLayoutConstraint.activate([
+      heightAnchor.constraint(equalToConstant: 48)
+    ])
+    
+    NSLayoutConstraint.activate([
+      containerView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+      containerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
+      containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+      containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
+    ])
+    
+    NSLayoutConstraint.activate([
+      iconImageView.heightAnchor.constraint(equalToConstant: 24),
+      iconImageView.widthAnchor.constraint(equalToConstant: 24)
+    ])
   }
 }

@@ -1,4 +1,29 @@
 import SwiftUI
+import UIKit
+
+public extension UIFont {
+  static func pretendard(_ weight: SM.Font.PretendardWeight, size: CGFloat) -> UIFont {
+    return UIFont(name: weight.name, size: size) ?? .systemFont(ofSize: size)
+  }
+  
+  static func ds(_ style: SM.Font.Style) -> UIFont {
+    switch style {
+    case .title:
+      return .pretendard(.bold, size: 30)
+    case .title1:
+      return .pretendard(.semiBold, size: 24)
+    case .title2:
+      return .pretendard(.semiBold, size: 20)
+    case .title3(let weight):
+      return .pretendard(weight.pretendardWeght, size: 16)
+    case .title4(let weight):
+      return .pretendard(weight.pretendardWeght, size: 13)
+    case .title5:
+      return .pretendard(.medium, size: 11)
+    }
+  }
+
+}
 
 extension Font {
 

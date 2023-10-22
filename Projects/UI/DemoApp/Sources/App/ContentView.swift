@@ -1,6 +1,7 @@
 import SwiftUI
 
 import UI
+import ComposableArchitecture
 
 enum Demo: String, CaseIterable {
   case fonts = "폰트"
@@ -34,7 +35,8 @@ enum Demo: String, CaseIterable {
 
 struct ContentView: View {
 
-  @EnvironmentObject private var toastManager: SMToastManager
+  @Dependency(\.toastManager) var tm
+  
 
   var body: some View {
     NavigationStack {
@@ -44,7 +46,7 @@ struct ContentView: View {
         }
 
         Button("토스트 열기") {
-          toastManager.showToast(.init(type: .success("토스트 열기")))
+          tm.showToast(.success("토스트 열기"))
         }
       }
     }
