@@ -2,6 +2,8 @@
 
 import ProjectDescription
 
+let nativeAppKey = "5d5170916ea2715b891b88b5dc7cba0f"
+
 let project = Project(
   name: "SalmalApp",
   options: .options(
@@ -18,7 +20,14 @@ let project = Project(
       infoPlist: .extendingDefault(with: [
         "CFBundleShortVersionString": "1.0",
         "CFBundleVersion": "1",
-        "UILaunchStoryboardName": "LaunchScreen"
+        "UILaunchStoryboardName": "LaunchScreen",
+        "LSApplicationQueriesSchemes": ["kakaokompassauth"],
+        "CFBundleURLTypes": [
+          [
+            "CFBundleURLSchemes": ["kakao\(nativeAppKey)"],
+            "CFBundleURLName": "com.salmal.app"
+          ]
+        ]
       ]),
       sources: ["Sources/**"],
       resources: ["Resources/**"],
