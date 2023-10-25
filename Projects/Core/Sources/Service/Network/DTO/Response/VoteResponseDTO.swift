@@ -10,6 +10,13 @@ extension VoteListResponseDTO {
   public static var mock: VoteListResponseDTO {
     VoteListResponseDTO(hasNext: true, votes: [.mock, .mock, .mock, .mock, .mock])
   }
+  
+  public var toDomain: VoteList {
+    VoteList(
+      hasNext: hasNext,
+      votes: votes.map(\.toDomain)
+    )
+  }
 }
 
 /// 투표 조회에서 쓰는 DTO

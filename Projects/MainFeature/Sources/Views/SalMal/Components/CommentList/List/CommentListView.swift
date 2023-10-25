@@ -64,7 +64,7 @@ public struct CommentListView: View {
         .foregroundColor(.ds(.white20))
       
       SMCapsuleTextField(text: viewStore.$text, placeholder: "눌러서 댓글 입력")
-// TODO: LeftImage 삽입해야함
+        .leftImage(viewStore.profileImageURL)
         .rightButton("확인") {
           store.send(.tapConfirmButton)
         }
@@ -73,6 +73,7 @@ public struct CommentListView: View {
     }
     .onAppear {
       store.send(.requestComments)
+      store.send(.requestMyPage)
     }
   }
 }

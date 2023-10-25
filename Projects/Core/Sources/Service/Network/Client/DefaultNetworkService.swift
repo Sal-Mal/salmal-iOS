@@ -31,9 +31,12 @@ public struct DefaultNetworkService: NetworkService {
         .serializingDecodable(T.self, emptyResponseCodes: Set(200..<300))
     }
     
+    let httpResponse = await result.response.response
+    debugPrint("StatusCode: \(httpResponse?.statusCode)")
+    
     do {
       let value = try await result.value
-      debugPrint("Success!", value)
+      debugPrint("Success!")
       
       return value
     } catch {
@@ -55,6 +58,9 @@ public struct DefaultNetworkService: NetworkService {
       result = session.upload(multipartFormData: multipartFormData, with: target)
         .serializingData()
     }
+    
+    let httpResponse = await result.response.response
+    debugPrint("StatusCode: \(httpResponse?.statusCode)")
     
     do {
       let value = try await result.value

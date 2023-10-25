@@ -17,7 +17,7 @@ public struct SplashCore: Reducer {
   
   public init() { }
   
-  @Dependency(\.network) var network
+  @Dependency(\.authRepository) var authRepository
   @Dependency(\.userDefault) var userDefault
   
   public var body: some ReducerOf<Self> {
@@ -46,12 +46,8 @@ public struct SplashCore: Reducer {
         
       case let .requestAutoLogin(id):
         return .run { send in
-          let params = LoginRequestDTO(providerId: id)
-          let dto = try await network.request(AuthAPI.logIn(params: params), type: TokenResponseDTO.self)
-          userDefault.accessToken = dto.accessToken
-          userDefault.refreshToken = dto.refreshToken
           
-          debugPrint(dto.accessToken, dto.refreshToken)
+          try await authRepository.logIn(providerID: id)
           
           await send(.moveToMainScreen)
         } catch: { error, send in

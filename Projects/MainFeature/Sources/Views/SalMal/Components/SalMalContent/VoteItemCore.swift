@@ -3,14 +3,16 @@ import Core
 
 public struct VoteItemCore: Reducer {
   public struct State: Equatable, Identifiable {
-    var vote: Vote
-    let originalVote: Vote
+    let vote: Vote
     
     public var id: Int { return vote.id }
     
+    var isMine: Bool {
+      return UserDefaultsService.shared.memberID == vote.memberID
+    }
+    
     init(vote: Vote) {
       self.vote = vote
-      self.originalVote = vote
     }
     
     @PresentationState var reportState: ReportCore.State?
@@ -24,12 +26,15 @@ public struct VoteItemCore: Reducer {
     case bookmarkTapped
     case commentTapped
     case moreTapped
-    case setBookmark(Bool)
-    case onAppear
-    case onDisappear
+    case requestVote
+    case delegate(Delegate)
+    
+    public enum Delegate: Equatable {
+      case updateVote(Vote)
+    }
   }
   
-  @Dependency(\.network) var networkManager
+  @Dependency(\.voteRepository) var voteRepository
   
   enum CancelID {
     case bookmark
@@ -38,14 +43,7 @@ public struct VoteItemCore: Reducer {
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
-      case .onAppear:
-        if state.vote != state.originalVote {
-          // TODO: 유저가 조작해서 뭔가 다르다면, 투표 api 재요청
-        }
-
-        return .none
-        
-      case .onDisappear:
+      case .delegate:
         return .none
         
       case .report:
@@ -60,21 +58,19 @@ public struct VoteItemCore: Reducer {
         
       case .bookmarkTapped:
         return .run { [state] send in
-          let api = state.vote.isBookmarked
-          ? VoteAPI.unBookmark(id: state.vote.id)
-          : VoteAPI.bookmark(id: state.vote.id)
+          if state.vote.isBookmarked {
+            try await voteRepository.unBookmark(voteID: state.vote.id)
+          } else {
+            try await voteRepository.bookmark(voteID: state.vote.id)
+          }
           
-          try await networkManager.request(api)
-          await send(.setBookmark(!state.vote.isBookmarked))
+          await send(.requestVote)
+          
         } catch: { error, send in
           // TODO: ToastMessage 띄우기
           debugPrint(error.localizedDescription)
         }
         .cancellable(id: CancelID.bookmark, cancelInFlight: true)
-      
-      case let .setBookmark(value):
-        state.vote.isBookmarked = value
-        return .none
         
       case .commentTapped:
         state.commentListState = .init(voteID: state.vote.id, commentCount: state.vote.commentCnt)
@@ -83,6 +79,12 @@ public struct VoteItemCore: Reducer {
       case .moreTapped:
         state.reportState = .init(voteID: state.vote.id, memberID: state.vote.memberID)
         return .none
+        
+      case .requestVote:
+        return .run { [id = state.vote.id] send in
+          let vote = try await voteRepository.getVote(id: id)
+          await send(.delegate(.updateVote(vote)))
+        }
       }
     }
     .ifLet(\.$commentListState, action: /Action.commentList) {
