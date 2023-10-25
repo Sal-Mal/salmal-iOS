@@ -1,15 +1,13 @@
 import SwiftUI
 
-import UI
-
-struct NumberOfVotesView: View {
+public struct NumberOfVotesView: View {
   let number: Int
   
-  init(number: Int) {
+  public init(number: Int) {
     self.number = number
   }
   
-  var body: some View {
+  public var body: some View {
     Text("🔥 현재 \(number)명 참여중!")
       .font(.ds(.title4(.medium)))
       .foregroundColor(.ds(.white))
@@ -35,4 +33,3 @@ struct NumberOfVotesView_Previews: PreviewProvider {
     .previewLayout(.sizeThatFits)
   }
 }
-

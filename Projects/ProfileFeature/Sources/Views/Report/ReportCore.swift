@@ -10,10 +10,19 @@ public struct ReportCore: Reducer {
       .init(icon: .init(icon: .ic_warning), title: "해당 게시물 신고하기"),
       .init(icon: .init(icon: .ic_cancel), title: "이 사용자 차단하기")
     ]
+    
+    public init(voteID: Int, memberID: Int) {
+      self.voteID = voteID
+      self.memberID = memberID
+    }
   }
   
   public enum Action: Equatable {
     case tap(index: Int)
+  }
+  
+  public init() {
+    
   }
   
   @Dependency(\.dismiss) var dismiss

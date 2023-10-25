@@ -21,7 +21,7 @@ struct CommentRow: View {
         switch phase {
         case let .success(image):
           image
-            .fill(size: 32)
+            .fit(size: 32)
             .clipShape(Circle())
           
         default:

@@ -11,6 +11,11 @@ public struct CommentListCore: Reducer {
     
     var editingCommentID: Int?
     var profileImageURL: String?
+    
+    public init(voteID: Int, commentCount: Int) {
+      self.voteID = voteID
+      self.commentCount = commentCount
+    }
   }
   
   public enum Action: Equatable, BindableAction {
@@ -23,6 +28,8 @@ public struct CommentListCore: Reducer {
     case tapConfirmButton
     case reset
   }
+  
+  public init() { }
   
   @Dependency(\.commentRepository) var commentRepo
   @Dependency(\.memberRepository) var memberRepo

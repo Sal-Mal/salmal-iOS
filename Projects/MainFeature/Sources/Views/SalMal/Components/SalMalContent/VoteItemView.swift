@@ -1,5 +1,7 @@
 import SwiftUI
 
+import ProfileFeature
+
 import Core
 import UI
 import ComposableArchitecture
