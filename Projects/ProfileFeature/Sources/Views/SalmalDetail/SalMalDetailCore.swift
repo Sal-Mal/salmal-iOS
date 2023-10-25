@@ -9,6 +9,10 @@ struct SalMalDetailCore: Reducer {
   struct State: Equatable {
     let vote: Vote
     
+    var isMine: Bool {
+      return UserDefaultsService.shared.memberID == vote.memberID
+    }
+    
     var buyPercentage: Double {
       if vote.totalVoteCount == 0 { return 0 }
       
@@ -25,6 +29,7 @@ struct SalMalDetailCore: Reducer {
     @BindingState var malButtonState: ButtonState = .idle
     
     @PresentationState var commentListState: CommentListCore.State?
+    @PresentationState var reportState: ReportCore.State?
   }
   
   enum Action: Equatable, BindableAction {
@@ -34,6 +39,8 @@ struct SalMalDetailCore: Reducer {
     case commentTapped
     case backButtonTapped
     case deleteVoteTapped
+    case moreTapped
+    case profileTapped
   }
   
   @Dependency(\.dismiss) var dismiss
@@ -57,6 +64,11 @@ struct SalMalDetailCore: Reducer {
       case .deleteVoteTapped:
         return .none
         
+      case .moreTapped:
+        return .none
+      
+      case .profileTapped:
+        return .none
       }
     }
   }

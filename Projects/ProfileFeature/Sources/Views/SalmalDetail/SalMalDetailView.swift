@@ -14,52 +14,82 @@ struct SalMalDetailView: View {
   }
   
   var body: some View {
-    VStack {
-      RoundedRectangle(cornerRadius: 24).fill(Color.indigo)
+    VStack(spacing: 25) {
+      VoteImage
         .overlay(alignment: .topLeading) {
           ProfileImage
-            .padding([.top, .leading], 18)
+            .padding([.horizontal, .top], 18)
         }
         .overlay(alignment: .bottomTrailing) {
-          Buttons
+          FloatingButtons
             .padding(.trailing, 16)
             .padding(.bottom, 22)
         }
+        .overlay(alignment: .bottom) {
+          NumberOfVotesView(number: viewStore.vote.totalVoteCount)
+            .offset(y: 12)
+        }
+        .padding(.horizontal, 16)
       
       VoteButtons
-      
+        .padding(.horizontal, 18)
     }
-      .smNavigationBar(
-        title: "",
-        leftItems: {
-          Button {
-            // 백버튼
-          } label: {
-            Image(icon: .chevron_left)
-          }
-        },
-        rightItems: {
-          Button {
-            // 삭제
-          } label: {
-            Image(icon: .trash)
-          }
+    .smNavigationBar(
+      title: "",
+      leftItems: {
+        Button {
+          // 백버튼
+        } label: {
+          Image(icon: .chevron_left)
         }
-      )
+      },
+      rightItems: {
+        Button {
+          // 삭제
+        } label: {
+          Image(icon: .trash)
+        }
+      }
+    )
   }
 }
 
 extension SalMalDetailView {
-  var ProfileImage: some View {
-    SMCapsuleButton(
-      title: viewStore.vote.nickName,
-      iconURL: URL(string: viewStore.vote.memberImageURL)!,
-      foregroundColor: .ds(.white),
-      backgroundColor: .ds(.black)
-    ) {
-      
+  var VoteImage: some View {
+    CacheAsyncImage(url: URL(string: viewStore.vote.imageURL)!) { phase in
+      switch phase {
+      case .success(let image):
+        image
+          .resizable()
+      default:
+        Rectangle()
+      }
     }
-    .disabled(false)
+    .cornerRadius(24)
+  }
+  
+  var ProfileImage: some View {
+    
+    HStack(alignment: .top) {
+      SMCapsuleButton(
+        title: viewStore.vote.nickName,
+        iconURL: URL(string: viewStore.vote.memberImageURL)!,
+        foregroundColor: .ds(.white),
+        backgroundColor: .ds(.black)
+      ) {
+        
+      }
+      
+      Spacer()
+      
+      Button {
+        store.send(.moreTapped)
+      } label: {
+        Image(icon: .ic_more)
+          .fit(size: 24)
+      }
+      .opacity(viewStore.isMine ? 0 : 1)
+    }
   }
   
   var VoteButtons: some View {
@@ -69,18 +99,22 @@ extension SalMalDetailView {
         progress: viewStore.buyPercentage,
         buttonState: viewStore.$salButtonState
       ) {
-
+        //empty
       }
+      .disabled(true)
+      
       SMVoteButton(
         title: "👎🏻 말", progress:
           viewStore.notBuyPercentage,
-        buttonState: viewStore.$malButtonState) {
-
-        }
+        buttonState: viewStore.$malButtonState
+      ) {
+        // empty
+      }
+      .disabled(true)
     }
   }
   
-  var Buttons: some View {
+  var FloatingButtons: some View {
     HStack(spacing: 12) {
       SMFloatingActionButton(
         iconImage: viewStore.vote.isBookmarked ? .init(icon: .bookmark_fill) : .init(icon: .bookmark),
@@ -88,8 +122,7 @@ extension SalMalDetailView {
         backgroundColor: .ds(.white36)) {
           store.send(.bookmarkTapped)
         }
-        .debug()
-
+      
       SMFloatingActionButton(
         iconImage: .init(icon: .messsage),
         buttonSize: .medium,
@@ -97,7 +130,6 @@ extension SalMalDetailView {
         backgroundColor: .ds(.white36)) {
           store.send(.commentTapped)
         }
-        .debug()
     }
   }
 }
