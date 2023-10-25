@@ -2,9 +2,9 @@ import Foundation
 
 public enum AuthAPI {
   case logIn(params: LoginRequestDTO)
-  case logOut
+  case logOut(params: LogoutRequestDTO)
   case signUp(id: String, params: SignUpRequestDTO)
-  case reIssueToken(params: AccessTokenRequestDTO)
+  case reissueToken(params: AccessTokenRequestDTO)
   case checkToken
 }
 
@@ -21,7 +21,7 @@ extension AuthAPI: TargetType {
       return "auth/logout"
     case let .signUp(id, _):
       return "auth/signup/\(id)"
-    case .reIssueToken:
+    case .reissueToken:
       return "auth/reissue"
     case .checkToken:
       return "auth/tokens"
@@ -32,7 +32,7 @@ extension AuthAPI: TargetType {
     switch self {
     case .logIn, .logOut, .signUp:
       return .post
-    case .reIssueToken:
+    case .reissueToken:
       return .post
     case .checkToken:
       return .get
@@ -43,12 +43,16 @@ extension AuthAPI: TargetType {
     switch self {
     case let .logIn(params):
       return params
-    case .logOut:
-      return nil
+      
+    case let .logOut(params):
+      return params
+      
     case let .signUp(_, params):
       return params
-    case let .reIssueToken(params):
+      
+    case let .reissueToken(params):
       return params
+      
     case .checkToken:
       return nil
     }
@@ -57,19 +61,25 @@ extension AuthAPI: TargetType {
   public var headers: [String: String]? {
     switch self {
     case .logIn:
-      return nil
+      return ["Content-Type": "application/json; charset=UTF-8"]
       
     case .logOut:
-      return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
+      return [
+        "Content-Type": "application/json; charset=UTF-8",
+        "Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"
+      ]
       
     case .signUp:
-      return nil
+      return ["Content-Type": "application/json; charset=UTF-8"]
       
-    case .reIssueToken:
-      return nil
+    case .reissueToken:
+      return ["Content-Type": "application/json; charset=UTF-8"]
       
     case .checkToken:
-      return ["Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"]
+      return [
+        "Content-Type": "application/json; charset=UTF-8",
+        "Authorization": "Bearer \(UserDefaultsService.shared.accessToken ?? "")"
+      ]
     }
   }
 

@@ -11,7 +11,7 @@ public struct SalMalView: View {
     self.viewStore = ViewStore(self.store, observe: { $0 })
   }
   
-  public var body: some View {
+  public var body: some View {    
     NavigationStackStore(store.scope(state: \.path, action: SalMalCore.Action.path)) {
       VStack(spacing: 13) {
         ZStack(alignment: .bottom) {
@@ -56,9 +56,10 @@ public struct SalMalView: View {
       case .alarmScreen:
         CaseLet(
           /SalMalCore.Path.State.alarmScreen,
-           action: SalMalCore.Path.Action.alarmScreen,
-           then: AlarmView.init(store:)
-        )
+           action: SalMalCore.Path.Action.alarmScreen) { store in
+             AlarmView(store: store)
+               .toolbar(.hidden, for: .tabBar)
+           }
       }
     }
   }

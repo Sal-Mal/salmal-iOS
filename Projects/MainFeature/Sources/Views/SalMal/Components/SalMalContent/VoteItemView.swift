@@ -103,6 +103,7 @@ extension VoteItemView {
         Image(icon: .ic_more)
           .fit(size: 24)
       }
+      .opacity(viewStore.isMine ? 0 : 1)
     }
   }
   

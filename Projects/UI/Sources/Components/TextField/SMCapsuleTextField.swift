@@ -43,7 +43,7 @@ public extension SMCapsuleTextField {
    왼쪽에 image 삽입
    */
   
-  func leftImage(_ urlString: String) -> Self {
+  func leftImage(_ urlString: String?) -> Self {
     var new = self
     new.imageURL = urlString
     return new
@@ -172,9 +172,7 @@ public struct SMCapsuleTextField: View {
         switch phase {
         case let .success(image):
           image
-            .resizable()
-            .aspectRatio(1, contentMode: .fit)
-            .frame(width: 54)
+            .fill(size: 54)
             .clipShape(Circle())
         default:
           Circle()

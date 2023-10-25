@@ -57,20 +57,16 @@ public struct SMCapsuleButton: View {
       HStack(spacing: 8) {
         if let iconImage {
           iconImage
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 32, height: 32)
+            .fill(size: 32)
             .clipShape(Circle())
 
         }
         
         if let iconURL {
-          
-          // TODO: 
           CacheAsyncImage(url: iconURL) { phase in
             if case let .success(image) = phase {
               image
-                .fit(size: 32)
+                .fill(size: 32)
                 .clipShape(Circle())
             }
           }
