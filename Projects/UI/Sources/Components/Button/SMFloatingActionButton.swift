@@ -91,7 +91,7 @@ struct SMFloatingActionButton_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       SMFloatingActionButton(
-        iconImage: .init(icon: .messsage),
+        iconImage: .init(icon: .ic_message),
         buttonSize: .medium,
         backgroundColor: .gray
       ) {
@@ -99,7 +99,7 @@ struct SMFloatingActionButton_Previews: PreviewProvider {
       }
 
       SMFloatingActionButton(
-        iconImage: .init(icon: .messsage),
+        iconImage: .init(icon: .ic_message),
         buttonSize: .medium,
         badgeCount: 9999,
         backgroundColor: .black

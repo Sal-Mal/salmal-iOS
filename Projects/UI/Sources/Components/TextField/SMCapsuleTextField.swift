@@ -149,7 +149,7 @@ public struct SMCapsuleTextField: View {
         .background(RoundedRectangle(cornerRadius: 24).fill(bgColor))
         .overlay(
           RoundedRectangle(cornerRadius: 24)
-            .strokeBorder(focus ? tintColor : bgColor, lineWidth: 2)
+            .strokeBorder(focus ? tintColor : placeholderColor, lineWidth: 2)
             .animation(.default, value: focus)
         )
       }

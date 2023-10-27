@@ -156,7 +156,7 @@ public struct ProfileEditView: View {
             viewStore.send(.takePhotoButtonTapped)
           }
 
-          MenuButton(icon: Image(icon: .trash), title: "현재 사진 삭제") {
+          MenuButton(icon: Image(icon: .ic_trash), title: "현재 사진 삭제") {
             viewStore.send(.removeCurrentPhotoButtonTapped)
           }
         }

@@ -17,32 +17,65 @@ public struct CommentListView: View {
   
   public var body: some View {
     VStack(spacing: 0) {
-      HStack(spacing: 8) {
-        Text("댓글")
-          .font(.ds(.title2(.semibold)))
-          .foregroundColor(.ds(.white))
-          .padding(.leading, 20)
-        
-        Text("\(viewStore.commentCount)")
-          .font(.ds(.title5))
-          .foregroundColor(.ds(.gray2))
-        
-        Spacer()
-        
-        Button {
-          dismiss()
-        } label: {
-          Image(icon: .xmark)
-            .fit(size: 32)
-        }
-        .padding(.trailing, 16)
-      }
-      .padding(.top, 30)
+      CommentHeader
+        .padding(.top, 30)
       
       Divider()
         .foregroundColor(.ds(.white20))
         .padding(.top, 13)
       
+      CommentList
+        .onTapGesture {
+          UIApplication.shared.endEditing()
+        }
+      
+      Divider()
+        .frame(height: 2)
+        .foregroundColor(.ds(.white20))
+      
+      CommentTextField
+        .padding(18)
+    }
+    .onAppear {
+      store.send(.requestComments)
+      store.send(.requestMyPage)
+    }
+  }
+}
+
+private extension CommentListView {
+  var CommentHeader: some View {
+    HStack(spacing: 8) {
+      Text("댓글")
+        .font(.ds(.title2(.semibold)))
+        .foregroundColor(.ds(.white))
+        .padding(.leading, 20)
+      
+      Text("\(viewStore.commentCount)")
+        .font(.ds(.title5))
+        .foregroundColor(.ds(.gray2))
+      
+      Spacer()
+      
+      Button {
+        dismiss()
+      } label: {
+        Image(icon: .xmark)
+          .fit(size: 32)
+      }
+      .padding(.trailing, 16)
+    }
+  }
+  
+  @ViewBuilder
+  var CommentList: some View {
+    if viewStore.commentCount == 0 {
+      Text("아직 댓글이 없네요\n첫 댓글을 작성해보세요 :)")
+        .multilineTextAlignment(.center)
+        .font(.ds(.title4(.medium)))
+        .foregroundColor(.ds(.gray2))
+        .frame(maxHeight: .infinity)
+    } else {
       List {
         ForEachStore(store.scope(
           state: \.comments,
@@ -55,26 +88,16 @@ public struct CommentListView: View {
       }
       .listStyle(.plain)
       .buttonStyle(.plain)
-      .onTapGesture {
-        UIApplication.shared.endEditing()
+    }
+  }
+  
+  var CommentTextField: some View {
+    SMCapsuleTextField(text: viewStore.$text, placeholder: "눌러서 댓글 입력")
+      .leftImage(viewStore.profileImageURL)
+      .rightButton("확인") {
+        store.send(.tapConfirmButton)
       }
-      
-      Divider()
-        .frame(height: 2)
-        .foregroundColor(.ds(.white20))
-      
-      SMCapsuleTextField(text: viewStore.$text, placeholder: "눌러서 댓글 입력")
-        .leftImage(viewStore.profileImageURL)
-        .rightButton("확인") {
-          store.send(.tapConfirmButton)
-        }
-        .lineLimit(3)
-        .padding(18)
-    }
-    .onAppear {
-      store.send(.requestComments)
-      store.send(.requestMyPage)
-    }
+      .lineLimit(3)
   }
 }
 

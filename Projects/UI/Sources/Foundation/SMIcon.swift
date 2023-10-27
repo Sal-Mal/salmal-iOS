@@ -14,8 +14,11 @@ extension SM {
     case ic_component
     case ic_cancel
     case ic_warning
-    case ic_upload_circle = "ic_upload.circle"
-    case ic_profile = "ic_profile"
+    case ic_upload_circle
+    case ic_profile
+    case ic_pencil
+    case ic_trash
+    case ic_message
 
     /// 레거시
     case chevron_left = "chevron.left"
@@ -33,7 +36,6 @@ extension SM {
     case heart_fill = "heart.fill"
     case heart = "heart"
     case list = "list"
-    case messsage = "message"
     case person_fill = "person.fill"
     case person = "person"
     case plus_circle = "plus.circle"
@@ -42,7 +44,6 @@ extension SM {
     case setting = "setting"
     case xmark_circle = "xmark.circle"
     case xmark = "xmark"
-    case trash = "trash"
     case gallery = "gallery"
   }
 }

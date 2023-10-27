@@ -119,7 +119,7 @@ extension VoteItemView {
         }
 
       SMFloatingActionButton(
-        iconImage: .init(icon: .messsage),
+        iconImage: .init(icon: .ic_message),
         buttonSize: .medium,
         badgeCount: viewStore.vote.commentCnt,
         backgroundColor: .ds(.white36)) {

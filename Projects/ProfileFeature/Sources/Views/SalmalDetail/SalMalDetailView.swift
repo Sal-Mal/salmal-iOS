@@ -55,7 +55,7 @@ struct SalMalDetailView: View {
             Button {
               store.send(.deleteVoteTapped)
             } label: {
-              Image(icon: .trash)
+              Image(icon: .ic_trash)
             }
           }
         )
@@ -130,7 +130,7 @@ extension SalMalDetailView {
         }
       
       SMFloatingActionButton(
-        iconImage: .init(icon: .messsage),
+        iconImage: .init(icon: .ic_message),
         buttonSize: .medium,
         badgeCount: viewStore.vote.commentCnt,
         backgroundColor: .ds(.white36)) {

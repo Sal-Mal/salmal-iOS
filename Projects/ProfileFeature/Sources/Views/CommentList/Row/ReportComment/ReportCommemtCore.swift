@@ -14,8 +14,8 @@ public struct ReportCommentCore: Reducer {
     var items: [MenuItem] {
       if isMyComment {
         return [
-          .init(icon: .init(icon: .ic_warning), title: "수정"),
-          .init(icon: .init(icon: .ic_warning), title: "삭제"),
+          .init(icon: .init(icon: .ic_pencil), title: "수정"),
+          .init(icon: .init(icon: .ic_trash), title: "삭제"),
         ]
       } else {
         return [.init(icon: .init(icon: .ic_warning), title: "신고")]
