@@ -8,5 +8,11 @@ public enum SMError: LocalizedError {
     case `default`
   }
   
+  public enum LoginReason {
+    case unknown(Error)
+    case noUserID
+  }
+  
   case network(NetworkReason)
+  case login(LoginReason)
 }

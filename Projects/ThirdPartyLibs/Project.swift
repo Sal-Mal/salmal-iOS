@@ -15,7 +15,10 @@ let project = Project(
       sources: ["Sources/**"],
       dependencies: [
         .external(name: "Alamofire"),
-        .external(name: "ComposableArchitecture")
+        .external(name: "ComposableArchitecture"),
+        .external(name: "KakaoSDKCommon"),
+        .external(name: "KakaoSDKUser"),
+        .external(name: "KakaoSDKAuth")
       ]
     )
   ]

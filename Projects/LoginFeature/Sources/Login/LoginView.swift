@@ -4,6 +4,8 @@ import AuthenticationServices
 import ComposableArchitecture
 import UI
 
+import KakaoSDKUser
+
 public struct LoginView: View {
   let store: StoreOf<LoginCore>
   @ObservedObject var viewStore: ViewStoreOf<LoginCore>
@@ -30,8 +32,7 @@ public struct LoginView: View {
 private extension LoginView {
   var KakaoButton: some View {
     Button {
-      // TODO: kakao login
-      store.send(.saveSocialData(id: "Sample-Kakao-Id", provider: "kakao"))
+      store.send(.tapKakaoLogin)
     } label: {
       Text("카카오톡 으로 시작하기")
         .foregroundColor(.ds(.black))
