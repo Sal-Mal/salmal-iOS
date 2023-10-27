@@ -10,8 +10,7 @@ public struct MockNetworkService: NetworkService {
     return type.mock
   }
   
-  public func request(_ target: TargetType) async throws -> Data {
+  public func request(_ target: TargetType) async throws {
     try await Task.sleep(for: .seconds(2))
-    return Data()
   }
 }

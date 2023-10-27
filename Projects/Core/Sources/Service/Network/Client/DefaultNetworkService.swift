@@ -19,65 +19,66 @@ public struct DefaultNetworkService: NetworkService {
   }
   
   public func request<T: Responsable>(_ target: TargetType, type: T.Type) async throws -> T {
-    let result: DataTask<T>
-
-    switch target.task {
-    case .requestPlain:
-      result = session.request(target)
-        .serializingDecodable(T.self, emptyResponseCodes: Set(200..<300))
-
-    case .uploadMultipartFormData(let multipartFormData):
-      result = session.upload(multipartFormData: multipartFormData, with: target)
-        .serializingDecodable(T.self, emptyResponseCodes: Set(200..<300))
-    }
+    let result = try await self.requestData(target)
     
-    let httpResponse = await result.response.response
-    
-    debugPrint("StatusCode: \(httpResponse?.statusCode)")
-    
-    guard httpResponse?.statusCode != nil,
-          (200...300) ~= httpResponse!.statusCode
-    else {
-      print("Invalid StatusCode")
-      throw SMError.network(.invalidURLHTTPResponse)
-    }
-    
-    do {
-      let value = try await result.value
-      debugPrint("Success!")
+    // 성공
+    switch result {
+    case let .success(data):
+      return try JSONDecoder().decode(T.self, from: data)
       
-      return value
-    } catch {
-      debugPrint("ERROR!", error.localizedDescription)
-      
+    // 실패!
+    case let .failure(error):
+      debugPrint("실패: \(error.localizedDescription)")
       throw error
     }
   }
   
-  public func request(_ target: TargetType) async throws -> Data {
+  public func request(_ target: TargetType) async throws {
+    let result = try await self.requestData(target)
+    
+    // 실패!
+    if case let .failure(error) = result {
+      debugPrint("실패: \(error.localizedDescription)")
+      throw error
+    }
+    
+    // 성공!
+    debugPrint("성공!")
+  }
+  
+  private func requestData(_ target: TargetType) async throws -> Result<Data, AFError> {
     let result: DataTask<Data>
-
+    
     switch target.task {
     case .requestPlain:
       result = session.request(target)
-        .serializingData()
-
+        .serializingData(emptyResponseCodes: Set(200..<300))
+      
     case .uploadMultipartFormData(let multipartFormData):
       result = session.upload(multipartFormData: multipartFormData, with: target)
-        .serializingData()
+        .serializingData(emptyResponseCodes: Set(200..<300))
     }
     
-    let httpResponse = await result.response.response
-    debugPrint("StatusCode: \(httpResponse?.statusCode)")
+    let dataResponse = await result.response
     
-    do {
-      let value = try await result.value
-      debugPrint("Success!")
-      
-      return value
-    } catch {
-      debugPrint("ERROR!", error.localizedDescription)
-      throw error
+    debugPrint("StatusCode: \(dataResponse.response?.statusCode)")
+    
+    guard let statusCode = dataResponse.response?.statusCode,
+          (200..<300) ~= statusCode
+    else {
+      debugPrint("실패: InvalidStatusCode")
+      try self.printErrorMessage(dataResponse.data)
+      throw SMError.network(.invalidURLHTTPResponse)
     }
+    
+    return dataResponse.result
+  }
+  
+  /// 에러 메시지를 디코딩후 출력
+  private func printErrorMessage(_ data: Data?) throws {
+    guard let data else { return }
+    
+    let errorModel = try JSONDecoder().decode(DefaultErrorResponseDTO.self, from: data)
+    debugPrint("ErrorMessage: \(errorModel.message)")
   }
 }

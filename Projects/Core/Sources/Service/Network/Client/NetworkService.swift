@@ -1,13 +1,16 @@
 import Foundation
+
 import ComposableArchitecture
 
 /// Live & Mock Manager를 추상화한 Manager
 public protocol NetworkService {
+  
+  // NonEmptyResponse
   @discardableResult
   func request<T: Responsable>(_ target: TargetType, type: T.Type) async throws -> T
-  
-  @discardableResult
-  func request(_ target: TargetType) async throws -> Data
+
+  // EmptyResponse
+  func request(_ target: TargetType) async throws
 }
 
 /// Response 결과로 내려오는 객체들엔 필히 채택해야함
