@@ -1,8 +1,8 @@
 import SwiftUI
 
-struct SMToastModifier: ViewModifier {
+struct SMToastSwiftUIModifier: ViewModifier {
 
-  @Binding var toast: SMToast?
+  @Binding var toast: SMSwiftUIToast?
   @State private var workItem: DispatchWorkItem?
   @State private var showToast: Bool = false
 
@@ -14,7 +14,7 @@ struct SMToastModifier: ViewModifier {
           if let toast {
             VStack {
               Spacer()
-              SMToastView(for: toast.type)
+              SMToastSwiftUIView(for: toast.type)
                 .offset(y: showToast ? -18 : 0)
             }
           }

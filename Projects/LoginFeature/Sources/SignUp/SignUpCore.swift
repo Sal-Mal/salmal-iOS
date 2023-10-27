@@ -35,7 +35,7 @@ public struct SignUpCore: Reducer {
   public init() {}
   
   @Dependency(\.userDefault) var userDefault
-  @Dependency(\.network) var network
+  @Dependency(\.authRepository) var authRepository
   
   public var body: some ReducerOf<Self> {
     BindingReducer()
@@ -70,19 +70,15 @@ public struct SignUpCore: Reducer {
           return .none
         }
         
-        let model = SignUpRequestDTO(
-          providerId: id,
-          nickName: state.text,
-          marketingInformationConsent: state.marketingAgreement
-        )
-        let api = AuthAPI.signUp(id: provider, params: model)
-        
-        return .run { send in
-          let dto = try await network.request(api, type: TokenResponseDTO.self)
+        return .run { [state] send in
           
-          debugPrint(dto)
-          userDefault.accessToken = dto.accessToken
-          userDefault.refreshToken = dto.refreshToken
+          try await authRepository.signUp(
+            socialProvider: provider,
+            providerID: id,
+            nickName: state.text,
+            marketingInformationConsent: state.marketingAgreement
+          )
+
           NotificationService.post(.login)
         } catch: { error, send in
           // TODO: 에러처리 (중복 id, 통신 실패)

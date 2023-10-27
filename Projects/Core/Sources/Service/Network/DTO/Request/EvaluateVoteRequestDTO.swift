@@ -3,10 +3,14 @@ import Foundation
 /// 투표 평가
 public struct EvaluateVoteRequestDTO: Encodable {
   public enum `Type`: String, Encodable {
-    case like = "like"
-    case dislike = "dislike"
-    case none = "none"
+    case like = "LIKE"
+    case dislike = "DISLIKE"
+    case none = "NONE"
   }
   
-  let evaluationType: `Type`
+  let voteEvaluationType: `Type`
+  
+  public init(voteEvaluationType: Type) {
+    self.voteEvaluationType = voteEvaluationType
+  }
 }

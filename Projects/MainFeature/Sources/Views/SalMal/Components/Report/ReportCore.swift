@@ -16,8 +16,9 @@ public struct ReportCore: Reducer {
     case tap(index: Int)
   }
   
-  @Dependency(\.network) var network
   @Dependency(\.dismiss) var dismiss
+  @Dependency(\.voteRepository) var voteRepository
+  @Dependency(\.memberRepository) var memberRepository
   
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
@@ -27,7 +28,7 @@ public struct ReportCore: Reducer {
         switch index {
         case 0:
           return .run { [id = state.voteID] send in
-            try await network.request(VoteAPI.report(id: id))
+            try await voteRepository.report(voteID: id)
             NotificationService.post(.reportVote, userInfo: ["id": id])
             // TODO:  토스트 메시지 띄우기
             await dismiss()
@@ -37,7 +38,7 @@ public struct ReportCore: Reducer {
           }
         case 1:
           return .run { [id = state.memberID] send in
-            try await network.request(MemberAPI.block(id: id))
+            try await memberRepository.block(id: id)
             NotificationService.post(.banUser, userInfo: ["id": id])
             // TODO:  토스트 메시지 띄우기
             await dismiss()
