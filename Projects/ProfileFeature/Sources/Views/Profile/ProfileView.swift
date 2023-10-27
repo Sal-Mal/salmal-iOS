@@ -5,9 +5,9 @@ import Core
 import UI
 
 public struct ProfileView: View {
-
+  
   @State private var scrollOffsetY: CGFloat = 0
-
+  
   private let store: StoreOf<ProfileCore>
   
   public init(store: StoreOf<ProfileCore>) {
@@ -24,7 +24,7 @@ public struct ProfileView: View {
             } else {
               FoldedHeaderView(member: viewStore.member)
             }
-
+            
             VStack {
               if scrollOffsetY >= 0 {
                 HStack {
@@ -36,7 +36,7 @@ public struct ProfileView: View {
                         .foregroundColor(viewStore.tab == .uploads ? .ds(.white) : .ds(.white36))
                         .font(.ds(.title2(.semibold)))
                     }
-
+                    
                     Button {
                       viewStore.send(.setTab(.votes))
                     } label: {
@@ -45,9 +45,9 @@ public struct ProfileView: View {
                         .font(.ds(.title2(.semibold)))
                     }
                   }
-
+                  
                   Spacer()
-
+                  
                   NavigationLink(
                     state: ProfileCore.Path.State.uploadList()
                   ) {
@@ -57,7 +57,7 @@ public struct ProfileView: View {
                   }
                 }
               }
-
+              
               SMScrollView { offset in
                 scrollOffsetY = offset.y
               } content: {
@@ -71,14 +71,14 @@ public struct ProfileView: View {
                             .resizable()
                             .aspectRatio(1, contentMode: .fill)
                             .cornerRadius(24)
-
+                          
                         default:
                           RoundedRectangle(cornerRadius: 24)
                             .fill(Color.ds(.gray2))
                             .aspectRatio(1, contentMode: .fill)
                         }
                       }
-
+                      
                     } else {
                       RoundedRectangle(cornerRadius: 24)
                         .fill(Color.ds(.gray2))
@@ -112,34 +112,41 @@ public struct ProfileView: View {
           /ProfileCore.Path.State.profileEdit,
            action: ProfileCore.Path.Action.profileEdit,
            then: ProfileEditView.init(store:))
-
+        
       case .blockedMemberList:
         CaseLet(
           /ProfileCore.Path.State.blockedMemberList,
            action: ProfileCore.Path.Action.blockedMemberList,
            then: BlockedMemberListView.init(store:))
-
+        
       case .setting:
         CaseLet(
           /ProfileCore.Path.State.setting,
            action: ProfileCore.Path.Action.setting,
            then: SettingView.init(store:))
-
+        
       case .bookmarkList:
         CaseLet(
           /ProfileCore.Path.State.bookmarkList,
            action: ProfileCore.Path.Action.bookmarkList,
            then: BookmarkListView.init(store:))
-
+        
       case .uploadList:
         CaseLet(
           /ProfileCore.Path.State.uploadList,
            action: ProfileCore.Path.Action.uploadList,
            then: UploadListView.init(store:))
+        
+      case .salmalDetail:
+        CaseLet(
+          /ProfileCore.Path.State.salmalDetail,
+           action: ProfileCore.Path.Action.salmalDetail,
+           then: SalMalDetailView.init(store:)
+        )
       }
     }
   }
-
+  
   func FoldedHeaderView(member: Member?) -> some View {
     HStack(spacing: 16) {
       if let imageURL = URL(string: member?.imageURL ?? "") {
@@ -156,21 +163,21 @@ public struct ProfileView: View {
                   .stroke(lineWidth: 1)
                   .foregroundColor(.ds(.white))
               }
-
+            
           default:
             DefaultImage()
           }
         }
-
+        
       } else {
         DefaultImage()
       }
-
+      
       VStack(alignment: .leading, spacing: 8) {
         Text(member?.nickName ?? "닉네임")
           .font(.ds(.title3(.semibold)))
           .foregroundColor(.ds(.black))
-
+        
         HStack(spacing: 16) {
           HStack(spacing: 6) {
             Text("👍🏻")
@@ -178,19 +185,19 @@ public struct ProfileView: View {
               .padding(6)
               .background(Color.ds(.black))
               .clipShape(Circle())
-
+            
             Text("\(member?.likeCount ?? 0)")
               .font(.ds(.title2(.semibold)))
               .foregroundColor(.ds(.black))
           }
-
+          
           HStack(spacing: 6) {
             Text("👎🏻")
               .font(.pretendard(.semiBold, size: 12))
               .padding(6)
               .background(Color.ds(.black))
               .clipShape(Circle())
-
+            
             Text("\(member?.disLikeCount ?? 0)")
               .font(.ds(.title2(.semibold)))
               .foregroundColor(.ds(.black))
@@ -205,7 +212,7 @@ public struct ProfileView: View {
     .background(Color.ds(.green1))
     .cornerRadius(30)
   }
-
+  
   func UnFoldedHeaderView(member: Member?) -> some View {
     VStack(spacing: 30) {
       VStack(spacing: 16) {
@@ -223,27 +230,27 @@ public struct ProfileView: View {
                     .stroke(lineWidth: 1)
                     .foregroundColor(.ds(.white))
                 }
-
+              
             default:
               DefaultImage()
             }
           }
-
+          
         } else {
           DefaultImage()
         }
-
+        
         VStack(spacing: 6) {
           Text(member?.nickName ?? "닉네임")
             .font(.ds(.title3(.semibold)))
             .foregroundColor(.ds(.black))
-
+          
           Text(member?.introduction ?? "자기 소개")
             .font(.ds(.title4(.medium)))
             .foregroundColor(.ds(.black))
         }
       }
-
+      
       HStack(spacing: 62) {
         HStack(spacing: 6) {
           Text("👍🏻살")
@@ -253,7 +260,7 @@ public struct ProfileView: View {
             .padding(.horizontal, 6)
             .background(Color.ds(.black))
             .clipShape(Capsule())
-
+          
           Text("\(member?.likeCount ?? 0)")
             .font(.ds(.title2(.semibold)))
             .foregroundColor(.ds(.black))
@@ -266,7 +273,7 @@ public struct ProfileView: View {
             .padding(.horizontal, 6)
             .background(Color.ds(.black))
             .clipShape(Capsule())
-
+          
           Text("\(member?.likeCount ?? 0)")
             .font(.ds(.title2(.semibold)))
             .foregroundColor(.ds(.black))
@@ -278,7 +285,7 @@ public struct ProfileView: View {
     .background(Color.ds(.green1))
     .cornerRadius(30)
   }
-
+  
   func DefaultImage() -> some View {
     Image(icon: .person_fill)
       .resizable()
@@ -293,7 +300,7 @@ public struct ProfileView: View {
           .foregroundColor(.white)
       }
   }
-
+  
 }
 
 struct ProfileView_Previews: PreviewProvider {

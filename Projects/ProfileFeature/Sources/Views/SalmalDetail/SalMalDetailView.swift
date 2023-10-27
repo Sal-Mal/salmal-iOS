@@ -34,23 +34,31 @@ struct SalMalDetailView: View {
       VoteButtons
         .padding(.horizontal, 18)
     }
-    .smNavigationBar(
-      title: "",
-      leftItems: {
-        Button {
-          // 백버튼
-        } label: {
-          Image(icon: .chevron_left)
-        }
-      },
-      rightItems: {
-        Button {
-          // 삭제
-        } label: {
-          Image(icon: .trash)
-        }
+    .sheet(
+      store: store.scope(state: \.$commentListState, action: SalMalDetailCore.Action.commentList)) { subStore in
+        CommentListView(store: subStore)
       }
-    )
+      .sheet(
+        store: store.scope(state: \.$reportState, action: SalMalDetailCore.Action.report)) { subStore in
+          ReportView(store: subStore)
+        }
+        .smNavigationBar(
+          title: "",
+          leftItems: {
+            Button {
+              store.send(.backButtonTapped)
+            } label: {
+              Image(icon: .chevron_left)
+            }
+          },
+          rightItems: {
+            Button {
+              store.send(.deleteVoteTapped)
+            } label: {
+              Image(icon: .trash)
+            }
+          }
+        )
   }
 }
 
@@ -77,7 +85,7 @@ extension SalMalDetailView {
         foregroundColor: .ds(.white),
         backgroundColor: .ds(.black)
       ) {
-        
+        // TODO: 프로필 화면으로 이동
       }
       
       Spacer()
@@ -101,7 +109,6 @@ extension SalMalDetailView {
       ) {
         //empty
       }
-      .disabled(true)
       
       SMVoteButton(
         title: "👎🏻 말", progress:
@@ -110,7 +117,6 @@ extension SalMalDetailView {
       ) {
         // empty
       }
-      .disabled(true)
     }
   }
   
@@ -139,6 +145,7 @@ struct SalMalDetailView_Previews: PreviewProvider {
     NavigationView {
       SalMalDetailView(store: .init(initialState: .init(vote: VoteResponseDTO.mock.toDomain)) {
         SalMalDetailCore()
+          ._printChanges()
       })
     }
     .preferredColorScheme(.dark)

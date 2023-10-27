@@ -15,6 +15,7 @@ struct ProfileFeatureApp: App {
       ProfileView(store: .init(initialState: .init(), reducer: {
         ProfileCore()
       }))
+      .preferredColorScheme(.dark)
     }
   }
 }

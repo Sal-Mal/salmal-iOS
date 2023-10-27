@@ -1,5 +1,3 @@
-import SwiftUI
-import PhotosUI
 import Alamofire
 
 import Core
@@ -9,12 +7,9 @@ public struct SignUpCore: Reducer {
   public struct State: Equatable {
     var text: String = ""
     var errorMessage: String?
-    var imageData: Data?
-    
-    @BindingState var selectedItem: PhotosPickerItem?
     
     var isConfirmButtonEnabled: Bool {
-      imageData != nil && (1...20).contains(text.count)
+      (1...20).contains(text.count)
     }
     
     let marketingAgreement: Bool
@@ -24,11 +19,9 @@ public struct SignUpCore: Reducer {
     }
   }
   
-  public enum Action: Equatable, BindableAction {
-    case binding(BindingAction<State>)
+  public enum Action: Equatable {
     case textChanged(text: String)
     case tapConfirmButton
-    case setImage(Data?)
     case setErrorMessage(String)
   }
   
@@ -38,18 +31,8 @@ public struct SignUpCore: Reducer {
   @Dependency(\.authRepository) var authRepository
   
   public var body: some ReducerOf<Self> {
-    BindingReducer()
     Reduce { state, action in
       switch action {
-      case .binding:
-        if let item = state.selectedItem {
-          return .run { send in
-            let data = try await item.loadTransferable(type: Data.self)
-            await send(.setImage(data))
-          }
-        }
-        
-        return .none
         
       case let .textChanged(text):
         state.text = text
@@ -64,8 +47,7 @@ public struct SignUpCore: Reducer {
         
       case .tapConfirmButton:
         guard let id = userDefault.socialID,
-              let provider = userDefault.socialProvider,
-              let imageData = state.imageData
+              let provider = userDefault.socialProvider
         else {
           return .none
         }
@@ -84,10 +66,6 @@ public struct SignUpCore: Reducer {
           // TODO: 에러처리 (중복 id, 통신 실패)
           print(error)
         }
-        
-      case let .setImage(data):
-        state.imageData = data
-        return .none
         
       case let .setErrorMessage(text):
         state.errorMessage = text

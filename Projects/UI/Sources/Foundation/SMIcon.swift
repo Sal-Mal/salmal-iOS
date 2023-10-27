@@ -15,6 +15,7 @@ extension SM {
     case ic_cancel
     case ic_warning
     case ic_upload_circle = "ic_upload.circle"
+    case ic_profile = "ic_profile"
 
     /// 레거시
     case chevron_left = "chevron.left"

@@ -32,7 +32,15 @@ public struct DefaultNetworkService: NetworkService {
     }
     
     let httpResponse = await result.response.response
+    
     debugPrint("StatusCode: \(httpResponse?.statusCode)")
+    
+    guard httpResponse?.statusCode != nil,
+          (200...300) ~= httpResponse!.statusCode
+    else {
+      print("Invalid StatusCode")
+      throw SMError.network(.invalidURLHTTPResponse)
+    }
     
     do {
       let value = try await result.value

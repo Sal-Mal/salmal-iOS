@@ -28,6 +28,7 @@ public struct ProfileCore: Reducer {
     case setMember(Member?)
     case setVotes([Vote])
     case setEvaluations([Vote])
+    case detailSalMal(Vote)
   }
 
   @Dependency(\.memberRepository) var memberRepository: MemberRepository
@@ -64,6 +65,10 @@ public struct ProfileCore: Reducer {
       case .setEvaluations(let evaluations):
         state.evaluations.append(contentsOf: evaluations)
         return .none
+        
+      case let .detailSalMal(vote):
+        state.path.append(.salmalDetail(.init(vote: vote)))
+        return .none
       }
     }
     .forEach(\.path, action: /Action.path) {
@@ -85,6 +90,7 @@ extension ProfileCore {
       case setting(SettingCore.State = .init())
       case bookmarkList(BookmarkListCore.State = .init())
       case uploadList(UploadListCore.State = .init())
+      case salmalDetail(SalMalDetailCore.State)
     }
 
     public enum Action {
@@ -93,6 +99,7 @@ extension ProfileCore {
       case setting(SettingCore.Action)
       case bookmarkList(BookmarkListCore.Action)
       case uploadList(UploadListCore.Action)
+      case salmalDetail(SalMalDetailCore.Action)
     }
 
     public var body: some ReducerOf<Self> {
@@ -110,6 +117,9 @@ extension ProfileCore {
       }
       Scope(state: /State.uploadList, action: /Action.uploadList) {
         UploadListCore()
+      }
+      Scope(state: /State.salmalDetail, action: /Action.salmalDetail) {
+        SalMalDetailCore()
       }
     }
   }
