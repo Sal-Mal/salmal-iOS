@@ -1,8 +1,8 @@
 import SwiftUI
 
+import ComposableArchitecture
 import UI
 import Core
-import ComposableArchitecture
 
 import LoginFeature
 import MainFeature
@@ -12,9 +12,11 @@ import ProfileFeature
 struct SalmalApp: App {
   @State private var isLogined = false
   @State private var tabIndex = 0
+  @Dependency(\.kakaoManager) var kakaoManager
   
   init() {
     SM.Font.initFonts()
+    kakaoManager.initSDK()
   }
   
   var body: some Scene {
@@ -28,6 +30,7 @@ struct SalmalApp: App {
           })
         }
       }
+      .onOpenURL(perform: kakaoManager.openURL)
       .preferredColorScheme(.dark)
       .onReceive(NotificationCenter.default.publisher(for: .init("login"))) { _ in
         isLogined = true
