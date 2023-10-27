@@ -113,11 +113,19 @@ public struct SMCapsuleTextField: View {
   var placeholderColor: Color = .ds(.gray2)
   let placeholder: String
   
+//  @FocusState var focus: Bool
+  
   @FocusState var focus: Bool
   
   public init(text: Binding<String>, placeholder: String = "") {
     self._text = text
     self.placeholder = placeholder
+  }
+  
+  public init(text: Binding<String>, placeholder: String = "", focus: FocusState<Bool>) {
+    self._text = text
+    self.placeholder = placeholder
+    self._focus = focus
   }
   
   public var body: some View {

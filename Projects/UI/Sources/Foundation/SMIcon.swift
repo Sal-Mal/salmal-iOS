@@ -14,7 +14,7 @@ extension SM {
     case ic_component
     case ic_cancel
     case ic_warning
-    case ic_upload_circle
+    case ic_upload_circle = "ic_upload.circle"
     case ic_profile
     case ic_pencil
     case ic_trash
