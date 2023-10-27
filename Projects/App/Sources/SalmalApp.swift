@@ -22,23 +22,16 @@ struct SalmalApp: App {
   
   var body: some Scene {
     WindowGroup {
-      Group {
-        if isLogined {
-          MainScene
-        } else {
-          SplashView(store: .init(initialState: .init()) {
-            SplashCore()
-          })
+      AppView
+        .onOpenURL(perform: kakaoManager.openURL)
+        .preferredColorScheme(.dark)
+        .onReceive(NotificationCenter.default.publisher(for: .init("login"))) { _ in
+          isLogined = true
+          tabIndex = 0
         }
-      }
-      .onOpenURL(perform: kakaoManager.openURL)
-      .preferredColorScheme(.dark)
-      .onReceive(NotificationCenter.default.publisher(for: .init("login"))) { _ in
-        isLogined = true
-      }
-      .onReceive(NotificationCenter.default.publisher(for: .init("logout"))) { _ in
-        isLogined = false
-      }
+        .onReceive(NotificationCenter.default.publisher(for: .init("logout"))) { _ in
+          isLogined = false
+        }
     }
   }
   
@@ -48,6 +41,15 @@ struct SalmalApp: App {
   
   private let profileStore: StoreOf<ProfileCore> = .init(initialState: .init()) {
     ProfileCore()
+  }
+  
+  @ViewBuilder
+  var AppView: some View {
+    if isLogined {
+      MainScene
+    } else {
+      SplashScene
+    }
   }
   
   var MainScene: some View {
@@ -76,5 +78,11 @@ struct SalmalApp: App {
         .toolbarBackground(.hidden, for: .tabBar)
         .tag(2)
     }
+  }
+  
+  var SplashScene: some View {
+    SplashView(store: .init(initialState: .init()) {
+      SplashCore()
+    })
   }
 }

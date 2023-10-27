@@ -16,10 +16,11 @@ public struct LoginView: View {
   }
   
   public var body: some View {
-    VStack {
-      Spacer()
+    ZStack {
       
       VStack(spacing: 12) {
+        Spacer()
+        
         KakaoButton
         AppleButton
       }

@@ -83,6 +83,11 @@ public final class MemberRepositoryImpl: MemberRepository {
 
     let target = MemberAPI.delete(id: id)
     try await networkManager.request(target)
+    
+    userDefault.accessToken = nil
+    userDefault.refreshToken = nil
+    userDefault.socialID = nil
+    userDefault.socialProvider = nil
   }
 
   public func block(id: Int) async throws {

@@ -43,6 +43,8 @@ public final class AuthRepositoryImpl: AuthRepository {
     
     userDefault.accessToken = nil
     userDefault.refreshToken = nil
+    userDefault.socialID = nil
+    userDefault.socialProvider = nil
   }
   
   public func signUp(
