@@ -8,6 +8,7 @@ public struct CommentListView: View {
   let store: StoreOf<CommentListCore>
   @ObservedObject var viewStore: ViewStoreOf<CommentListCore>
   
+  @FocusState var focus: Bool
   @Environment(\.dismiss) var dismiss
   
   public init(store: StoreOf<CommentListCore>) {
@@ -39,6 +40,9 @@ public struct CommentListView: View {
     .onAppear {
       store.send(.requestComments)
       store.send(.requestMyPage)
+    }
+    .onReceive(NotificationCenter.default.publisher(for: .init("tapAddComment"))) { _ in
+      focus = true
     }
   }
 }
@@ -92,7 +96,7 @@ private extension CommentListView {
   }
   
   var CommentTextField: some View {
-    SMCapsuleTextField(text: viewStore.$text, placeholder: "눌러서 댓글 입력")
+    SMCapsuleTextField(text: viewStore.$text, placeholder: "눌러서 댓글 입력", focus: _focus)
       .leftImage(viewStore.profileImageURL)
       .rightButton("확인") {
         store.send(.tapConfirmButton)
