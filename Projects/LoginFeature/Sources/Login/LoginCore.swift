@@ -8,6 +8,7 @@ public struct LoginCore: Reducer {
   
   public enum Action: Equatable {
     case tapAppleLogin
+    case tapKakaoLogin
     case saveSocialData(id: String, provider: String)
     case requestLogin(String)
     case moveToTermScreen

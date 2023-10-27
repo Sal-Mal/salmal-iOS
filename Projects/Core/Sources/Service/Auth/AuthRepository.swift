@@ -39,7 +39,7 @@ public final class AuthRepositoryImpl: AuthRepository {
     }
     
     let target = AuthAPI.logOut(params: .init(refreshToken: refreshToken))
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
     
     userDefault.accessToken = nil
     userDefault.refreshToken = nil
