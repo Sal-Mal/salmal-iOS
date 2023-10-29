@@ -7,7 +7,7 @@ import KakaoSDKAuth
 import KakaoSDKUser
 
 public final class KakaoManager {
-  let nativeKey = "5d5170916ea2715b891b88b5dc7cba0f"
+  private let nativeKey = "5d5170916ea2715b891b88b5dc7cba0f"
   
   public func initSDK() {
     KakaoSDK.initSDK(appKey: nativeKey)
