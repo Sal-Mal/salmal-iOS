@@ -55,7 +55,7 @@ private extension CommentListView {
         .foregroundColor(.ds(.white))
         .padding(.leading, 20)
       
-      Text("\(viewStore.commentCount)")
+      Text("\(viewStore.comments.count)")
         .font(.ds(.title5))
         .foregroundColor(.ds(.gray2))
       
@@ -73,7 +73,7 @@ private extension CommentListView {
   
   @ViewBuilder
   var CommentList: some View {
-    if viewStore.commentCount == 0 {
+    if viewStore.comments.isEmpty {
       Text("아직 댓글이 없네요\n첫 댓글을 작성해보세요 :)")
         .multilineTextAlignment(.center)
         .font(.ds(.title4(.medium)))

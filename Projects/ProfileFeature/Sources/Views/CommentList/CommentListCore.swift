@@ -5,7 +5,6 @@ import Foundation
 public struct CommentListCore: Reducer {
   public struct State: Equatable {
     let voteID: Int
-    let commentCount: Int
     var comments: IdentifiedArrayOf<CommentCore.State> = []
     @BindingState var text: String = ""
     
@@ -14,7 +13,6 @@ public struct CommentListCore: Reducer {
     
     public init(voteID: Int, commentCount: Int) {
       self.voteID = voteID
-      self.commentCount = commentCount
     }
   }
   
