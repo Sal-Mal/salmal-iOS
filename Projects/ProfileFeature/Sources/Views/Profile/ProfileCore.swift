@@ -32,6 +32,7 @@ public struct ProfileCore: Reducer {
   }
 
   @Dependency(\.memberRepository) var memberRepository: MemberRepository
+  @Dependency(\.userDefault) var userDefault
 
   public init() {}
 
@@ -41,7 +42,9 @@ public struct ProfileCore: Reducer {
       case .onAppear:
         return .run { send in
           let member = try await memberRepository.myPage()
+          let votes = try await memberRepository.votes(memberID: userDefault.memberID!, cursorId: nil, size: 100)
           await send(.setMember(member))
+          await send(.setVotes(votes))
 
         } catch: { error, send in
           print(error)
