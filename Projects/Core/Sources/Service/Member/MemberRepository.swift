@@ -35,11 +35,6 @@ public final class MemberRepositoryImpl: MemberRepository {
 
   public init(networkManager: NetworkService) {
     self.networkManager = networkManager
-
-//    #if DEBUG
-//    userDefault.memberID = 8
-//    userDefault.accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY5NzM3MjEyMywiZXhwIjoxNjk3MzgyOTIzLCJpZCI6OH0.nBCGt0l2oGBiHDCxXYzPYB_gnGba-6i-15D2LJv9bKo"
-//    #endif
   }
 
   public func member(id: Int) async throws -> Member {
@@ -64,7 +59,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.update(id: id, nickName: nickname, introduction: introduction)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
 
   public func updateImage(data: Data) async throws {
@@ -92,12 +87,12 @@ public final class MemberRepositoryImpl: MemberRepository {
 
   public func block(id: Int) async throws {
     let target = MemberAPI.block(id: id)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
 
   public func unBlock(id: Int) async throws {
     let target = MemberAPI.unBlock(id: id)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
 
   public func blocks(cursorId: Int, size: Int) async throws -> MemberPage {
