@@ -3,7 +3,6 @@ import SwiftUI
 import ComposableArchitecture
 import UI
 import Core
-import ComposableArchitecture
 
 import LoginFeature
 import MainFeature

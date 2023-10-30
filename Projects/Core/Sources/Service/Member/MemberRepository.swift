@@ -64,7 +64,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.update(id: id, nickName: nickname, introduction: introduction)
-    try await networkManager.request(target)
+    try await networkManager.request(target, type: EmptyResponseDTO.self)
   }
 
   public func updateImage(data: Data) async throws {
@@ -92,12 +92,12 @@ public final class MemberRepositoryImpl: MemberRepository {
 
   public func block(id: Int) async throws {
     let target = MemberAPI.block(id: id)
-    try await networkManager.request(target)
+    try await networkManager.request(target, type: EmptyResponseDTO.self)
   }
 
   public func unBlock(id: Int) async throws {
     let target = MemberAPI.unBlock(id: id)
-    try await networkManager.request(target)
+    try await networkManager.request(target, type: EmptyResponseDTO.self)
   }
 
   public func blocks(cursorId: Int, size: Int) async throws -> MemberPage {
