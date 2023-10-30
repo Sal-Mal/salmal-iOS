@@ -1,3 +1,5 @@
+
+import ProfileFeature
 import ComposableArchitecture
 import Core
 
@@ -31,10 +33,12 @@ public struct VoteItemCore: Reducer {
     
     public enum Delegate: Equatable {
       case updateVote(Vote)
+      case moveToProfile(id: Int)
     }
   }
   
   @Dependency(\.voteRepository) var voteRepository
+  @Dependency(\.userDefault) var userDefault
   
   enum CancelID {
     case bookmark
@@ -53,7 +57,10 @@ public struct VoteItemCore: Reducer {
         return .none
         
       case .profileTapped:
-        // TODO: Move To Profile
+        if state.vote.memberID != userDefault.memberID {
+          return .send(.delegate(.moveToProfile(id: state.vote.memberID)))
+        }
+        
         return .none
         
       case .bookmarkTapped:

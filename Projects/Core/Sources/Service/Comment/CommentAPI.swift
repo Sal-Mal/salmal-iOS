@@ -51,7 +51,7 @@ extension CommentAPI: TargetType {
     case .disLike:
       return .delete
     case .report:
-      return .delete
+      return .post
     }
   }
   

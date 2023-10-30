@@ -17,23 +17,30 @@ struct SignUpView: View {
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      ProfileArea
-      TextArea
-      
-      Spacer()
-      
-      if let errorMessage = viewStore.errorMessage {
-        Text(errorMessage)
-          .foregroundColor(.ds(.white))
-          .font(.ds(.title4(.medium)))
-          .padding(.bottom, 18)
+    ZStack {
+      VStack(spacing: 0) {
+        Image(icon: .ic_profile)
+          .fit(size: 89)
+          .padding(.bottom, 48)
+        
+        TextArea
       }
+      
+      VStack(spacing: 0) {
+        Spacer()
+        
+        if let errorMessage = viewStore.errorMessage {
+          Text(errorMessage)
+            .foregroundColor(.ds(.white))
+            .font(.ds(.title4(.medium)))
+            .padding(.bottom, 18)
+        }
 
-      SMBoxButton(title: "확인") {
-        store.send(.tapConfirmButton)
+        SMBoxButton(title: "확인") {
+          store.send(.tapConfirmButton)
+        }
+        .disabled(!viewStore.isConfirmButtonEnabled)
       }
-      .disabled(!viewStore.isConfirmButtonEnabled)
     }
     .padding(.horizontal, 18)
     .navigationBarBackButtonHidden()
@@ -45,23 +52,6 @@ struct SignUpView: View {
 }
 
 private extension SignUpView {
-  var ProfileArea: some View {
-    PhotosPicker(selection: viewStore.$selectedItem, matching: .images) {
-      Circle()
-        .fill(Color.ds(.gray1))
-        .frame(width: 89)
-        .overlay {
-          if let data = viewStore.imageData,
-             let uiImage = UIImage(data: data) {
-            Image(uiImage: uiImage)
-              .fit(size: 89)
-              .clipShape(Circle())
-          }
-        }
-    }
-    .padding(.top, UIScreen.main.bounds.height * 0.26)
-    .padding(.bottom, 48)
-  }
   
   @ViewBuilder
   var TextArea: some View {

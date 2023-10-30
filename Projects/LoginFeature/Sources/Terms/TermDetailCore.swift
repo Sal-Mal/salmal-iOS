@@ -2,6 +2,7 @@ import ComposableArchitecture
 
 public struct TermDetailCore: Reducer {
   public struct State: Equatable {
+    let title: String
     let url: String
   }
   

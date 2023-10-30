@@ -19,7 +19,7 @@ let project = Project(
       sources: ["Sources/**"],
       resources: ["Resources/**"],
       dependencies: [
-        
+        .project(target: "ThirdPartyLibs", path: "../ThirdPartyLibs")
       ]
     ),
     

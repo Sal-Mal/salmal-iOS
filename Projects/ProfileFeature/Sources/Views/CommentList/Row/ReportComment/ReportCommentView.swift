@@ -34,6 +34,12 @@ public struct ReportCommentView: View {
           }
       }
     }
+    .onAppear {
+      BlurManager.shared.blurBackground()
+    }
+    .onDisappear {
+      BlurManager.shared.clearBackground()
+    }
   }
 }
 

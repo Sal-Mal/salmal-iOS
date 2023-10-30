@@ -7,6 +7,7 @@ public enum NotificationService {
     case banUser
     case login
     case logout
+    case tapAddComment
     
     var name: Notification.Name {
       return .init(self.rawValue)

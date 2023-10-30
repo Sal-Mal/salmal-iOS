@@ -38,7 +38,9 @@ public struct ProfileEditCore: Reducer {
   }
 
   @Dependency(\.dismiss) var dismiss
-  @Dependency(\.memberRepository) var memberRepository: MemberRepository
+  @Dependency(\.memberRepository) var memberRepository
+  @Dependency(\.authRepository) var authRepository
+  @Dependency(\.toastManager) var toastManager
 
   public init() {}
 
@@ -103,15 +105,20 @@ public struct ProfileEditCore: Reducer {
 
       case .logoutButtonTapped:
         return .run { send in
-          // TODO: 로그아웃 처리
+          try await authRepository.logOut()
+          NotificationService.post(.logout)
+          await dismiss()
+        } catch: { error, send in
+          await toastManager.showToast(.error("로그아웃 실패!"))
         }
 
       case .withdrawalButtonTapped:
         return .run { send in
           try await memberRepository.delete()
-
+          NotificationService.post(.logout)
+          await dismiss()
         } catch: { error, send in
-          print(error)
+          await toastManager.showToast(.error("회원탈퇴 실패!"))
         }
 
       case .setMember(let member):

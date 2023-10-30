@@ -5,6 +5,7 @@ public enum SMError: LocalizedError {
     case invalidURL
     case invalidResponse
     case invalidURLHTTPResponse
+    case emptyRefreshToken
     case `default`
   }
   

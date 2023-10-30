@@ -39,10 +39,12 @@ public final class AuthRepositoryImpl: AuthRepository {
     }
     
     let target = AuthAPI.logOut(params: .init(refreshToken: refreshToken))
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
     
     userDefault.accessToken = nil
     userDefault.refreshToken = nil
+    userDefault.socialID = nil
+    userDefault.socialProvider = nil
   }
   
   public func signUp(
@@ -64,7 +66,8 @@ public final class AuthRepositoryImpl: AuthRepository {
   
   public func reissueToken() async throws {
     guard let refreshToken = userDefault.refreshToken else {
-      return debugPrint("Refresh Token이 없습니다")
+      debugPrint("Refresh Token이 없습니다")
+      throw SMError.network(.emptyRefreshToken)
     }
     
     let target = AuthAPI.reissueToken(params: .init(refreshToken: refreshToken))

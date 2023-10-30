@@ -16,7 +16,7 @@ struct TermDetailView: View {
   
   var body: some View {
     WebView(urlString: viewStore.url)
-      .smNavigationBar(title: "이용약관", leftItems: {
+      .smNavigationBar(title: viewStore.title, leftItems: {
         Image(icon: .chevron_left)
           .fit(size: 32)
           .onTapGesture {
@@ -29,7 +29,10 @@ struct TermDetailView: View {
 struct TermWebView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
-      TermDetailView(store: .init(initialState: .init(url: "https://www.naver.com")) {
+      TermDetailView(store: .init(initialState: .init(
+        title: "이용약관",
+        url: "https://www.naver.com")
+      ) {
         TermDetailCore()
       })
         .preferredColorScheme(.dark)

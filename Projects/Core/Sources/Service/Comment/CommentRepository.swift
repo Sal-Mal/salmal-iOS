@@ -25,32 +25,32 @@ public final class CommentRepositoryImpl: CommentRepository {
   
   public func write(voteID: Int, text: String) async throws {
     let target = CommentAPI.write(id: voteID, text: text)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
   
   public func edit(commentID: Int, text: String) async throws {
     let target = CommentAPI.edit(id: commentID, text: text)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
   
   public func delete(commentID: Int) async throws {
     let target = CommentAPI.delete(id: commentID)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
   
   public func like(commentID: Int) async throws {
     let target = CommentAPI.like(id: commentID)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
   
   public func disLike(commentID: Int) async throws {
     let target = CommentAPI.disLike(id: commentID)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
   
   public func report(commentID: Int) async throws {
     let target = CommentAPI.report(id: commentID)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
 }
 

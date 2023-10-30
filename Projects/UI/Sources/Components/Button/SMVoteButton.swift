@@ -10,27 +10,20 @@ public struct SMVoteButton: View {
 
   @State private var animationProgress: Double = 0
   @Binding private var buttonState: ButtonState
+  @Binding private var progress: Double
 
   private let title: String
-  private let progress: Double
+//  private let progress: Double
   private let action: () -> Void
 
   public init(
     title: String,
-    progress: Double,
+    progress: Binding<Double>,
     buttonState: Binding<ButtonState>,
     action: @escaping () -> Void
   ) {
     self.title = title
-
-    if progress < 0 {
-      self.progress = 0
-    } else if progress > 1 {
-      self.progress = 1
-    } else {
-      self.progress = progress
-    }
-
+    self._progress = progress
     self._buttonState = buttonState
     self.action = action
   }
@@ -128,7 +121,7 @@ public struct SMVoteButton: View {
 
 struct SMVoteButton_Previews: PreviewProvider {
   static var previews: some View {
-    SMVoteButton(title: "👍🏻 살", progress: 0.5, buttonState: .constant(.selected)) {
+    SMVoteButton(title: "👍🏻 살", progress: .constant(0.5), buttonState: .constant(.selected)) {
       print("클릭")
     }
     .padding()

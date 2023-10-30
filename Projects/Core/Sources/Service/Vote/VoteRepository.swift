@@ -31,27 +31,27 @@ public final class VoteRepositoryImpl: VoteRepository {
   
   public func evaluate(voteID: Int, param: EvaluateVoteRequestDTO) async throws {
     let target = VoteAPI.vote(id: voteID, param)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
   
   public func unEvaluate(voteID: Int) async throws {
     let target = VoteAPI.unVote(id: voteID)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
   
   public func bookmark(voteID: Int) async throws {
     let target = VoteAPI.bookmark(id: voteID)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
   
   public func unBookmark(voteID: Int) async throws {
     let target = VoteAPI.unBookmark(id: voteID)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
   
   public func report(voteID: Int) async throws {
     let target = VoteAPI.report(id: voteID)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
   
   public func getVote(id: Int) async throws -> Vote {
@@ -62,7 +62,7 @@ public final class VoteRepositoryImpl: VoteRepository {
   
   public func delete(voteID: Int) async throws {
     let target = VoteAPI.delete(id: voteID)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
 
   public func homeList(size: Int, cursor: Int? = nil, cursorLikes: Int? = nil) async throws -> VoteList {

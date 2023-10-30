@@ -14,8 +14,8 @@ public struct ReportCommentCore: Reducer {
     var items: [MenuItem] {
       if isMyComment {
         return [
-          .init(icon: .init(icon: .ic_warning), title: "수정"),
-          .init(icon: .init(icon: .ic_warning), title: "삭제"),
+          .init(icon: .init(icon: .ic_pencil), title: "수정"),
+          .init(icon: .init(icon: .ic_trash), title: "삭제"),
         ]
       } else {
         return [.init(icon: .init(icon: .ic_warning), title: "신고")]
@@ -65,7 +65,10 @@ public struct ReportCommentCore: Reducer {
         
       case let .response(.success(message)):
         // TODO: Show Toast Message
-        return .send(.delegate(.refreshList))
+        return .run { send in
+          await dismiss()
+          await send(.delegate(.refreshList))
+        }
         
       case let .response(.failure(error)):
         print(error.localizedDescription)

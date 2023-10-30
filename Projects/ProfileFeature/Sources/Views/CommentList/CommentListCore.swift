@@ -5,12 +5,15 @@ import Foundation
 public struct CommentListCore: Reducer {
   public struct State: Equatable {
     let voteID: Int
-    let commentCount: Int
     var comments: IdentifiedArrayOf<CommentCore.State> = []
     @BindingState var text: String = ""
     
     var editingCommentID: Int?
     var profileImageURL: String?
+    
+    public init(voteID: Int, commentCount: Int) {
+      self.voteID = voteID
+    }
   }
   
   public enum Action: Equatable, BindableAction {
@@ -23,6 +26,8 @@ public struct CommentListCore: Reducer {
     case tapConfirmButton
     case reset
   }
+  
+  public init() { }
   
   @Dependency(\.commentRepository) var commentRepo
   @Dependency(\.memberRepository) var memberRepo
@@ -41,6 +46,7 @@ public struct CommentListCore: Reducer {
         
         state.text = comment.content
         state.editingCommentID = comment.id
+        NotificationService.post(.tapAddComment)
         
         return .none
         

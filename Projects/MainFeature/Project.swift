@@ -15,7 +15,8 @@ let project = Project(
       sources: ["Sources/**"],
       dependencies: [
         .project(target: "UI", path: "../UI"),
-        .project(target: "Core", path: "../Core")
+        .project(target: "Core", path: "../Core"),
+        .project(target: "ProfileFeature", path: "../ProfileFeature")
       ]
     ),
     

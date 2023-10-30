@@ -57,13 +57,19 @@ private extension TermsView {
         .listRowInsets(.init())
         .listRowSeparator(.hidden)
       
-      NavigationLink(state: SplashCore.Path.State.termsDetailScreen(.init(url: "https://www.naver.com"))) {
+      NavigationLink(state: SplashCore.Path.State.termsDetailScreen(.init(
+        title: "이용약관동의",
+        url: "https://www.naver.com"))
+      ) {
         TermRow(title: "이용약관동의(필수)", isChecked: viewStore.$termsOfUse)
       }
       .listRowInsets(.init())
       .listRowSeparator(.hidden)
       
-      NavigationLink(state: SplashCore.Path.State.termsDetailScreen(.init(url: "https://www.naver.com"))) {
+      NavigationLink(state: SplashCore.Path.State.termsDetailScreen(.init(
+        title: "개인정보 수집 및 이용동의",
+        url: "https://www.naver.com")
+      )) {
         TermRow(title: "개인정보 수집 및 이용동의(필수)", isChecked: viewStore.$personalInformation)
       }
       .listRowInsets(.init())

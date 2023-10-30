@@ -83,6 +83,7 @@ public struct CommentCore: Reducer {
         return .none
         
       case .writeCommentToggle:
+        NotificationService.post(.tapAddComment)
         return .none
         
       case .likeTapped:

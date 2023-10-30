@@ -6,7 +6,7 @@ import ComposableArchitecture
 import Alamofire
 
 fileprivate enum Const {
-  static let size = 5
+  static let size = 2
 }
 
 public struct CarouselCore: Reducer {
@@ -33,6 +33,7 @@ public struct CarouselCore: Reducer {
     
     public enum Delegate: Equatable {
       case updateVote(vote: Vote)
+      case moveToprofile(id: Int)
     }
   }
   
@@ -46,6 +47,9 @@ public struct CarouselCore: Reducer {
       case let .vote(id, .delegate(.updateVote(vote))):
         state.votes[id: id] = .init(vote: vote)
         return .none
+        
+      case let .vote(_, .delegate(.moveToProfile(id))):
+        return .send(.delegate(.moveToprofile(id: id)))
         
       case .vote:
         return .none

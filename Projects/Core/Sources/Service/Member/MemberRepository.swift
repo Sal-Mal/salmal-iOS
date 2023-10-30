@@ -73,7 +73,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.updateImage(id: id, data: data)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
 
   public func delete() async throws {
@@ -82,7 +82,12 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.delete(id: id)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
+    
+    userDefault.accessToken = nil
+    userDefault.refreshToken = nil
+    userDefault.socialID = nil
+    userDefault.socialProvider = nil
   }
 
   public func block(id: Int) async throws {

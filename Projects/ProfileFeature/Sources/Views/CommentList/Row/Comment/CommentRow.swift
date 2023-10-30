@@ -45,8 +45,8 @@ struct CommentRow: View {
           Button {
             store.send(.optionsTapped)
           } label: {
-            Image(systemName: "command")
-              .fit(size: 16)
+            Image(icon: .ic_more)
+              .fit(size: 24)
           }
           .padding(.trailing, 10)
         }

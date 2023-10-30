@@ -26,6 +26,12 @@ public struct ReportView: View {
           }
       }
     }
+    .onAppear {
+      BlurManager.shared.blurBackground()
+    }
+    .onDisappear {
+      BlurManager.shared.clearBackground()
+    }
   }
 }
 

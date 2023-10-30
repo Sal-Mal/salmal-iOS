@@ -1,5 +1,7 @@
 import SwiftUI
 
+import ProfileFeature
+
 import Core
 import UI
 import ComposableArchitecture
@@ -117,7 +119,7 @@ extension VoteItemView {
         }
 
       SMFloatingActionButton(
-        iconImage: .init(icon: .messsage),
+        iconImage: .init(icon: .ic_message),
         buttonSize: .medium,
         badgeCount: viewStore.vote.commentCnt,
         backgroundColor: .ds(.white36)) {
