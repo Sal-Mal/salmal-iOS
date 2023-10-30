@@ -2,15 +2,14 @@ import Foundation
 import ComposableArchitecture
 import PhotosUI
 
-final class PhotoService: NSObject {
+public final class PhotoService: NSObject {
 
   static let shared = PhotoService()
+  private let imageManager = PHCachingImageManager()
 
   private override init() {}
 
-  let imageManager = PHCachingImageManager()
-
-  func albums(
+  public func albums(
     size: CGSize,
     contentMode: PHImageContentMode = .aspectFit
   ) async -> [UIImage] {
@@ -63,13 +62,13 @@ final class PhotoService: NSObject {
 }
 
 
-enum PhotoServiceKey: DependencyKey {
-  static var liveValue: PhotoService {
+public enum PhotoServiceKey: DependencyKey {
+  public static var liveValue: PhotoService {
     return .shared
   }
 }
 
-extension DependencyValues {
+public extension DependencyValues {
 
   var photoService: PhotoService {
     get { self[PhotoServiceKey.self] }

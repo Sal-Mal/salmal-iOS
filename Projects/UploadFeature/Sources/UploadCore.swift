@@ -46,12 +46,12 @@ public struct UploadCore: Reducer {
   public init() {}
 
   public var body: some ReducerOf<Self> {
-    BindingReducer()
+    //BindingReducer()
     Reduce { state, action in
       switch action {
       case .onAppear:
         return .run { send in
-          let images = await PhotoService.shared.albums(size: .init(width: 200, height: 200))
+          let images = await photoService.albums(size: .init(width: 200, height: 200))
           await send(.setImageMenus(images))
         }
 

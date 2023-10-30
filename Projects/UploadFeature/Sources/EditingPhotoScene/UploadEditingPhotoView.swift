@@ -8,6 +8,11 @@ public struct UploadEditingPhotoView: View {
   private let store: StoreOf<UploadEditingPhotoCore>
   @ObservedObject private var viewStore: ViewStoreOf<UploadEditingPhotoCore>
 
+  @State private var draggedOffset: CGSize = .zero
+  @State private var accumulatedOffset: CGSize = .zero
+  @State private var isChanging: Bool = false
+  @State private var isHovering: Bool = false
+
   public init(store: StoreOf<UploadEditingPhotoCore>) {
     self.store = store
     self.viewStore = ViewStore(store, observe: { $0 })
@@ -18,62 +23,70 @@ public struct UploadEditingPhotoView: View {
       // 이미지 필터링
       VStack(spacing: 0) {
         // 메인 사진
-        if let uiImage = viewStore.image {
-          Image(uiImage: uiImage)
-            .resizable()
-            .clipShape(
-              RoundedRectangle(cornerRadius: 24)
-            )
-            .padding(.horizontal, 16)
-
-        } else {
-          Rectangle()
-            .frame(maxHeight: .infinity)
-            .foregroundColor(Color.ds(.gray1))
-            .cornerRadius(24)
-            .padding(.horizontal, 16)
-        }
+        zzzzzzzzzzz
 
         Spacer().frame(height: 12)
 
-        // 필터 처리된 사진
-        ScrollView(.horizontal, showsIndicators: false) {
-          HStack {
-            Spacer()
-            ForEach(viewStore.filteredImage) { filteredImage in
-              Button {
-                viewStore.send(.filteredImageSelected(filteredImage))
-              } label: {
-                Image(uiImage: filteredImage.image)
-                  .resizable()
-                  .aspectRatio(1, contentMode: .fit)
-                  .frame(width: 86, height: 86)
-                  .cornerRadius(12)
-              }
-              .buttonStyle(.plain)
+        ZStack {
+          if isChanging {
+            VStack {
+              Circle()
+                .stroke(style: .init(lineWidth: 1))
+                .frame(width: 42, height: 42)
+                .scaleEffect(isHovering ? 1.2 : 1)
+                .animation(.spring(), value: isHovering)
+                .overlay {
+                  Image(icon: .xmark_circle)
+                    .renderingMode(.template)
+                    .foregroundColor(.ds(.white))
+                }
             }
-          }
-        }
+            .frame(height: 160)
 
-        Spacer().frame(height: 24)
-
-        // 텍스트 추가 버튼
-        Button {
-          viewStore.send(.uploadEditingTextButtonTapped, animation: .linear(duration: 0.2))
-        } label: {
-          HStack(spacing: 8) {
-            Circle()
-              .stroke(style: .init(lineWidth: 1, dash: [2]))
-              .frame(width: 32, height: 32)
-              .overlay {
-                Image(icon: .plus)
-                  .renderingMode(.template)
-                  .foregroundColor(.ds(.white))
+          } else {
+            VStack {
+              // 필터 처리된 사진
+              ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                  Spacer()
+                  ForEach(viewStore.filteredImage) { filteredImage in
+                    Button {
+                      viewStore.send(.filteredImageSelected(filteredImage))
+                    } label: {
+                      Image(uiImage: filteredImage.image)
+                        .resizable()
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 86, height: 86)
+                        .cornerRadius(12)
+                    }
+                    .buttonStyle(.plain)
+                  }
+                }
               }
-            Text("텍스트 추가")
-              .font(.ds(.title2(.medium)))
+
+              Spacer().frame(height: 24)
+
+              // 텍스트 추가 버튼
+              Button {
+                viewStore.send(.uploadEditingTextButtonTapped, animation: .linear(duration: 0.2))
+              } label: {
+                HStack(spacing: 8) {
+                  Circle()
+                    .stroke(style: .init(lineWidth: 1, dash: [2]))
+                    .frame(width: 32, height: 32)
+                    .overlay {
+                      Image(icon: .plus)
+                        .renderingMode(.template)
+                        .foregroundColor(.ds(.white))
+                    }
+                  Text("텍스트 추가")
+                    .font(.ds(.title2(.medium)))
+                }
+                .tint(.ds(.white))
+              }
+            }
+            .frame(height: 160)
           }
-          .tint(.ds(.white))
         }
       }
       .ignoresSafeArea(.keyboard, edges: .bottom)
@@ -100,7 +113,7 @@ public struct UploadEditingPhotoView: View {
       },
       rightItems: {
         Button {
-          viewStore.send(.confirmButtonTapped)
+          viewStore.send(.confirmButtonTapped(zzzzzzzzzzz))
         } label: {
           Text("확인")
             .foregroundColor(.ds(.green1))
@@ -108,6 +121,68 @@ public struct UploadEditingPhotoView: View {
         }
       }
     )
+  }
+}
+
+extension UploadEditingPhotoView {
+
+  @ViewBuilder
+  var zzzzzzzzzzz: some View {
+    if let uiImage = viewStore.image {
+      ZStack {
+        Image(uiImage: uiImage)
+          .resizable()
+          .clipShape(
+            RoundedRectangle(cornerRadius: 24)
+          )
+          .padding(.horizontal, 16)
+
+        if let textInformation = viewStore.textInformation {
+          Text(textInformation.text)
+            .font(textInformation.font)
+            .foregroundColor(textInformation.foregroundColor)
+            .padding(.vertical, 2)
+            .padding(.horizontal, 4)
+            .background {
+              RoundedRectangle(cornerRadius: 4)
+                .foregroundColor(textInformation.backgroundColor)
+            }
+            .offset(draggedOffset)
+            .gesture(
+              DragGesture(coordinateSpace: .global)
+                .onChanged { gesture in
+                  isChanging = true
+                  draggedOffset = accumulatedOffset + gesture.translation
+
+                  if gesture.location.y >= UIScreen.main.bounds.height - 160 {
+                    isHovering = true
+                  } else {
+                    isHovering = false
+                  }
+                }
+                .onEnded { gesture in
+                  isChanging = false
+
+                  if gesture.location.y >= UIScreen.main.bounds.height - 160 {
+                    viewStore.send(.cancelArea)
+                    accumulatedOffset = .zero
+                    draggedOffset = .zero
+
+                  } else {
+                    accumulatedOffset = accumulatedOffset + gesture.translation
+                  }
+                }
+            )
+        }
+      }
+
+    } else {
+      Rectangle()
+        .frame(maxHeight: .infinity)
+        .foregroundColor(Color.ds(.gray1))
+        .cornerRadius(24)
+        .padding(.horizontal, 16)
+    }
   }
 }
 
@@ -122,6 +197,32 @@ struct UploadEditPhotoView_Previews: PreviewProvider {
     .preferredColorScheme(.dark)
     .onAppear {
       SM.Font.initFonts()
+    }
+  }
+}
+
+
+extension CGSize {
+  static func + (lhs: Self, rhs: Self) -> Self {
+    CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height)
+  }
+}
+
+
+extension View {
+
+  func snapshot() -> UIImage {
+    let controller = UIHostingController(rootView: self.edgesIgnoringSafeArea(.all))
+    let view = controller.view
+
+    let targetSize = controller.view.intrinsicContentSize
+    view?.bounds = CGRect(origin: .zero, size: .init(width: UIScreen.main.bounds.width, height: 600))
+    view?.backgroundColor = .red
+
+    let renderer = UIGraphicsImageRenderer(size: .init(width: UIScreen.main.bounds.width, height: 600))
+
+    return renderer.image { _ in
+      view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
     }
   }
 }

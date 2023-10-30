@@ -32,7 +32,6 @@ public struct SelectImageView: View {
       ScrollView {
         LazyVGrid(columns: [.init(), .init(), .init()]) {
           ForEach(Array(images.enumerated()), id: \.offset) { index, image in
-
             if index == 0 {
               Button {
 
@@ -63,8 +62,8 @@ public struct SelectImageView: View {
       }
     }
     .task {
-      let images = await PhotoService.shared.albums(size: .init(width: 100, height: 100))
-      self.images = images
+//      let images = await PhotoService.shared.albums(size: .init(width: 100, height: 100))
+//      self.images = images
     }
     .smNavigationBar(title: "사진 추가", rightItems: {
       Image(systemName: "xmark")

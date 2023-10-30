@@ -73,7 +73,38 @@ public struct PaletteView: View {
     case background
   }
 
-  private let colors: [Color] = [.ds(.white), .ds(.black), .ds(.red), .ds(.orange), .ds(.yellow), .ds(.green), .ds(.blue), .ds(.purple), .ds(.apricot)]
+
+  struct ColorModel: Identifiable {
+    let id: UUID = .init()
+    let color: Color
+  }
+
+
+  private let foregroundColors: [ColorModel] = [
+    .init(color: .ds(.white)),
+    .init(color: .ds(.black)),
+    .init(color: .ds(.red)),
+    .init(color: .ds(.orange)),
+    .init(color: .ds(.yellow)),
+    .init(color: .ds(.green)),
+    .init(color: .ds(.blue)),
+    .init(color: .ds(.purple)),
+    .init(color: .ds(.apricot))
+  ]
+
+  private let backgroundColors: [ColorModel] = [
+    .init(color: .clear),
+    .init(color: .ds(.white)),
+    .init(color: .ds(.black)),
+    .init(color: .ds(.red)),
+    .init(color: .ds(.orange)),
+    .init(color: .ds(.yellow)),
+    .init(color: .ds(.green)),
+    .init(color: .ds(.blue)),
+    .init(color: .ds(.purple)),
+    .init(color: .ds(.apricot))
+  ]
+
   private let fonts: [Font] = [
     .pretendard(.semiBold, size: 16),
     .maruBuri(size: 16),
@@ -84,6 +115,10 @@ public struct PaletteView: View {
   ]
 
   @State private var paletteType: PaletteType = .font
+
+  @Binding var selectedFont: Font?
+  @Binding var selectedForegroundColor: Color?
+  @Binding var selectedBackgroundColor: Color?
 
   public var body: some View {
     HStack(spacing: 20) {
@@ -104,7 +139,7 @@ public struct PaletteView: View {
           HStack(spacing: 6) {
             ForEach(fonts, id: \.self) { font in
               Button {
-
+                selectedFont = font
               } label: {
                 Circle()
                   .fill(Color.ds(.white))
@@ -122,14 +157,40 @@ public struct PaletteView: View {
         }
         .scrollIndicators(.hidden)
 
-      case .color, .background:
+      case .color:
         ScrollView(.horizontal) {
           HStack(spacing: 6) {
-            ForEach(colors, id: \.self) { color in
+            ForEach(foregroundColors) { colorModel in
               Button {
+                selectedForegroundColor = colorModel.color
               } label: {
-                CircleView(color: color)
+                CircleView(color: colorModel.color)
                   .frame(width: 50, height: 50)
+              }
+              .buttonStyle(.plain)
+            }
+          }
+        }
+        .scrollIndicators(.hidden)
+
+      case .background:
+        ScrollView(.horizontal) {
+          HStack(spacing: 6) {
+            ForEach(backgroundColors) { colorModel in
+              Button {
+                selectedBackgroundColor = colorModel.color
+              } label: {
+                if colorModel.color == .clear {
+                  Image(icon: .ic_cancel)
+                    .frame(width: 32, height: 32)
+                    .background(Color.ds(.white))
+                    .clipShape(Circle())
+                    .frame(width: 50, height: 50)
+
+                } else {
+                  CircleView(color: colorModel.color)
+                    .frame(width: 50, height: 50)
+                }
               }
               .buttonStyle(.plain)
             }
@@ -157,7 +218,7 @@ public struct PaletteView: View {
 
 struct PaletteView_Previews: PreviewProvider {
   static var previews: some View {
-    PaletteView()
+    PaletteView(selectedFont: .constant(.ds(.title2(.medium))), selectedForegroundColor: .constant(.ds(.white)), selectedBackgroundColor: .constant(.clear))
     .preferredColorScheme(.dark)
     .onAppear {
       SM.Font.initFonts()
