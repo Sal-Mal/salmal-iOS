@@ -1,5 +1,6 @@
 import Foundation
 import Alamofire
+import ComposableArchitecture
 
 public typealias HTTPMethod = Alamofire.HTTPMethod
 public typealias Parameters = Alamofire.Parameters
@@ -12,6 +13,9 @@ public struct DefaultNetworkService: NetworkService {
   
   private let session: Session
   private let retryLimit: Int
+  private let interceptor = Interceptor()
+  
+  @Dependency(\.userDefault) var userDefault
   
   public init(retryLimit: Int = 3) {
     self.session = .default
@@ -55,11 +59,20 @@ public struct DefaultNetworkService: NetworkService {
         .serializingData(emptyResponseCodes: Set(200..<300))
       
     case .uploadMultipartFormData(let multipartFormData):
-      result = session.upload(multipartFormData: multipartFormData, with: target)
+      result = session.upload(
+        multipartFormData: multipartFormData,
+        with: target
+      )
         .serializingData(emptyResponseCodes: Set(200..<300))
     }
     
     let dataResponse = await result.response
+    
+    /// access Token 만료시(401 error) 갱신
+    if dataResponse.response?.statusCode == 401 {
+      try await self.reissueToken()
+      return try await self.requestData(target)
+    }
     
     debugPrint("StatusCode: \(dataResponse.response?.statusCode)")
     
@@ -80,5 +93,17 @@ public struct DefaultNetworkService: NetworkService {
     
     let errorModel = try JSONDecoder().decode(DefaultErrorResponseDTO.self, from: data)
     debugPrint("ErrorMessage: \(errorModel.message)")
+  }
+  
+  /// accessToken 갱신
+  private func reissueToken() async throws {
+    guard let refreshToken = userDefault.refreshToken else {
+      debugPrint("Refresh Token이 없습니다")
+      throw SMError.network(.emptyRefreshToken)
+    }
+    
+    let target = AuthAPI.reissueToken(params: .init(refreshToken: refreshToken))
+    let dto = try await self.request(target, type: AccessTokenResponseDTO.self)
+    userDefault.accessToken = dto.accessToken
   }
 }
