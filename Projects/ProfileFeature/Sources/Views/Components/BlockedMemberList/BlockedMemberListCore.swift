@@ -41,7 +41,7 @@ public struct BlockedMemberListCore: Reducer {
 
       case .fetchBlockedMembers:
         return .run { send in
-          let memberPage = try await memberRepository.blocks(cursorId: 1, size: 10)
+          let memberPage = try await memberRepository.blocks(cursorId: nil, size: 100)
           await send(.setBlockedMembers(memberPage.members))
         } catch: { error, send in
           print(error)

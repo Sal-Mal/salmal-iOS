@@ -5,10 +5,6 @@ public extension View {
     modifier(FrameDebugModifier(color: color))
   }
 
-  func toast(on toast: Binding<SMToast?>) -> some View {
-    modifier(SMToastModifier(toast: toast))
-  }
-
   func synchronize<Value>(
     _ first: Binding<Value>,
     _ second: FocusState<Value>.Binding

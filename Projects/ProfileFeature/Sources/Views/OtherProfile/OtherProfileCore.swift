@@ -10,7 +10,7 @@ public struct OtherProfileCore: Reducer {
     let memberID: Int
 
     var member: Member? = MemberResponseDTO.mock.toDomain
-    var votes: [Vote] = VoteListResponseDTO.mock.votes.map(\.toDomain) + VoteListResponseDTO.mock.votes.map(\.toDomain)
+    var votes = [Vote]()
 
     public init(memberID: Int) {
       self.memberID = memberID
@@ -21,6 +21,7 @@ public struct OtherProfileCore: Reducer {
     case binding(BindingAction<State>)
     case onAppear
     case setMember(Member?)
+    case setVote([Vote])
     case dismissButtonTapped
     case blockButtonTapped
   }
@@ -40,13 +41,20 @@ public struct OtherProfileCore: Reducer {
       case .onAppear:
         return .run { [state] send in
           let member = try await memberRepository.member(id: state.memberID)
+          let votes = try await memberRepository.votes(memberID: state.memberID, cursorId: nil, size: 20)
+          print(votes)
           await send(.setMember(member))
+          await send(.setVote(votes))
         } catch: { error, send in
           print(error)
         }
         
       case let .setMember(member):
         state.member = member
+        return .none
+        
+      case let .setVote(vote):
+        state.votes = vote
         return .none
 
       case .dismissButtonTapped:
@@ -55,7 +63,12 @@ public struct OtherProfileCore: Reducer {
         }
 
       case .blockButtonTapped:
-        return .none
+        return .run { [state] send in
+          try await memberRepository.block(id: state.memberID)
+          await dismiss()
+        } catch: { error, send in
+          print(error.localizedDescription)
+        }
       }
     }
   }

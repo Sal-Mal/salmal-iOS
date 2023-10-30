@@ -17,9 +17,9 @@ public protocol MemberRepository {
   /// 회원 차단해제
   func unBlock(id: Int) async throws
   /// 회원이 차단한 회원 목록 조회
-  func blocks(cursorId: Int, size: Int) async throws -> MemberPage
+  func blocks(cursorId: Int?, size: Int) async throws -> MemberPage
   /// 회원이 작성한 투표 목록 조회
-  func votes(cursorId: Int, size: Int) async throws -> [Vote]
+  func votes(memberID: Int, cursorId: Int?, size: Int) async throws -> [Vote]
   /// 회원이 투표한 목록 조회
   func evaluations(cursorId: Int, size: Int) async throws -> [Vote]
   /// 회원이 북마크한 목록 조회
@@ -35,11 +35,6 @@ public final class MemberRepositoryImpl: MemberRepository {
 
   public init(networkManager: NetworkService) {
     self.networkManager = networkManager
-
-//    #if DEBUG
-//    userDefault.memberID = 8
-//    userDefault.accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJBY2Nlc3NUb2tlbiIsImlhdCI6MTY5NzM3MjEyMywiZXhwIjoxNjk3MzgyOTIzLCJpZCI6OH0.nBCGt0l2oGBiHDCxXYzPYB_gnGba-6i-15D2LJv9bKo"
-//    #endif
   }
 
   public func member(id: Int) async throws -> Member {
@@ -64,7 +59,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.update(id: id, nickName: nickname, introduction: introduction)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
 
   public func updateImage(data: Data) async throws {
@@ -92,15 +87,15 @@ public final class MemberRepositoryImpl: MemberRepository {
 
   public func block(id: Int) async throws {
     let target = MemberAPI.block(id: id)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
 
   public func unBlock(id: Int) async throws {
     let target = MemberAPI.unBlock(id: id)
-    try await networkManager.request(target, type: EmptyResponseDTO.self)
+    try await networkManager.request(target)
   }
 
-  public func blocks(cursorId: Int, size: Int) async throws -> MemberPage {
+  public func blocks(cursorId: Int?, size: Int) async throws -> MemberPage {
     guard let id = userDefault.memberID else {
       throw SMError.network(.default)
     }
@@ -110,12 +105,8 @@ public final class MemberRepositoryImpl: MemberRepository {
     return MemberPage(hasNext: response.hasNext, members: response.members.map { $0.toDomain })
   }
 
-  public func votes(cursorId: Int, size: Int) async throws -> [Vote] {
-    guard let id = userDefault.memberID else {
-      throw SMError.network(.default)
-    }
-
-    let target = MemberAPI.fetchVotes(id: id, cursorId: cursorId, size: size)
+  public func votes(memberID: Int, cursorId: Int?, size: Int) async throws -> [Vote] {
+    let target = MemberAPI.fetchVotes(id: memberID, cursorId: cursorId, size: size)
     let response = try await networkManager.request(target, type: VoteListResponseDTO.self)
     return response.votes.map { $0.toDomain }
   }
