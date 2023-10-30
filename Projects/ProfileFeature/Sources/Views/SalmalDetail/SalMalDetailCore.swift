@@ -12,6 +12,9 @@ public struct SalMalDetailCore: Reducer {
     @BindingState var salButtonState: ButtonState = .idle
     @BindingState var malButtonState: ButtonState = .idle
     
+    @BindingState var buyPercentage: Double
+    @BindingState var notBuyPercentage: Double
+    
     @PresentationState var commentListState: CommentListCore.State?
     @PresentationState var reportState: ReportCore.State?
     
@@ -19,20 +22,16 @@ public struct SalMalDetailCore: Reducer {
       return UserDefaultsService.shared.memberID == vote.memberID
     }
     
-    var buyPercentage: Double {
-      if vote.totalVoteCount == 0 { return 0 }
-      
-      return Double(vote.likeCount) / Double(vote.totalVoteCount)
-    }
-    
-    var notBuyPercentage: Double {
-      if vote.totalVoteCount == 0 { return 0 }
-      
-      return Double(vote.disLikeCount) / Double(vote.totalVoteCount)
-    }
-    
     public init(vote: Vote) {
       self.vote = vote
+      
+      if vote.totalVoteCount == 0 {
+        buyPercentage = 0
+        notBuyPercentage = 0
+      } else {
+        buyPercentage = Double(vote.likeCount) / Double(vote.totalVoteCount)
+        notBuyPercentage = Double(vote.disLikeCount) / Double(vote.totalVoteCount)
+      }
     }
   }
   

@@ -6,7 +6,7 @@ import ComposableArchitecture
 import Alamofire
 
 fileprivate enum Const {
-  static let size = 5
+  static let size = 2
 }
 
 public struct CarouselCore: Reducer {

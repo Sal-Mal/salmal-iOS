@@ -10,8 +10,8 @@ public struct SalMalCore: Reducer {
   public struct State: Equatable {
     @BindingState var tab: Tab = .home
     
-    var buyPercentage: Double = 0
-    var notBuyPercentage: Double = 0
+    @BindingState var buyPercentage: Double = 0
+    @BindingState var notBuyPercentage: Double = 0
     var totalCount = 0
     
     var currentIndex: Int {
@@ -59,6 +59,8 @@ public struct SalMalCore: Reducer {
   public init() { }
   
   @Dependency(\.voteRepository) var voteRepository
+  @Dependency(\.toastManager) var toastManager
+  
   
   public var body: some ReducerOf<Self> {
     BindingReducer()
@@ -72,20 +74,21 @@ public struct SalMalCore: Reducer {
         switch action {
           
         case let .element(_, .alarmScreen(.listTapped)):
+          // TODO: List Tapped
           return .none
           
         default:
           return .none
         }
         
-      // homeTab의 index가 바뀔때마다 실행
+        // homeTab의 index가 바뀔때마다 실행
       case let .homeAction(.delegate(.updateVote(vote))):
         return .send(.updateVote(vote))
         
       case .homeAction:
         return .none
         
-      // bestTab의 index가 바뀔때마다 실행
+        // bestTab의 index가 바뀔때마다 실행
       case let .bestAction(.delegate(.updateVote(vote))):
         return .send(.updateVote(vote))
         
@@ -97,20 +100,21 @@ public struct SalMalCore: Reducer {
         return .none
         
       case .buyTapped:
-        
+
         return .run { [state] send in
           switch state.salButtonState {
-          // 투표
+            // 투표
           case .idle:
             try await voteRepository.evaluate(voteID: state.currentVote.id, param: .init(voteEvaluationType: .like))
             await send(.requestVote(id: state.currentVote.id))
-          // 투표 취소
+            
+            // 투표 취소
           case .selected:
             try await voteRepository.unEvaluate(voteID: state.currentVote.id)
             await send(.requestVote(id: state.currentVote.id))
-          // 투표 불가
+            // 투표 불가
           case .unSelected:
-            break
+            await toastManager.showToast(.error("이미 반대편에 투표했어요"))
           }
         } catch: { error, send in
           print(error.localizedDescription)
@@ -120,17 +124,17 @@ public struct SalMalCore: Reducer {
         
         return .run { [state] send in
           switch state.malButtonState {
-          // 투표
+            // 투표
           case .idle:
             try await voteRepository.evaluate(voteID: state.currentVote.id, param: .init(voteEvaluationType: .dislike))
             await send(.requestVote(id: state.currentVote.id))
-          // 투표 취소
+            // 투표 취소
           case .selected:
             try await voteRepository.unEvaluate(voteID: state.currentVote.id)
             await send(.requestVote(id: state.currentVote.id))
-          // 투표 불가
+            // 투표 불가
           case .unSelected:
-            break
+            await toastManager.showToast(.error("이미 반대편에 투표했어요"))
           }
         } catch: { error, send in
           print(error.localizedDescription)

@@ -104,7 +104,7 @@ extension SalMalDetailView {
     VStack(spacing: 9) {
       SMVoteButton(
         title: "👍🏻 살",
-        progress: viewStore.buyPercentage,
+        progress: viewStore.$buyPercentage,
         buttonState: viewStore.$salButtonState
       ) {
         //empty
@@ -112,7 +112,7 @@ extension SalMalDetailView {
       
       SMVoteButton(
         title: "👎🏻 말", progress:
-          viewStore.notBuyPercentage,
+          viewStore.$notBuyPercentage,
         buttonState: viewStore.$malButtonState
       ) {
         // empty

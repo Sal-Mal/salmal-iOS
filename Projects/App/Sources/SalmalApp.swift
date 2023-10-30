@@ -37,6 +37,7 @@ struct SalmalApp: App {
   
   private let mainStore: StoreOf<SalMalCore> = .init(initialState: .init()) {
     SalMalCore()
+      ._printChanges()
   }
   
   private let profileStore: StoreOf<ProfileCore> = .init(initialState: .init()) {
