@@ -46,6 +46,7 @@ public struct CommentListCore: Reducer {
         
         state.text = comment.content
         state.editingCommentID = comment.id
+        NotificationService.post(.tapAddComment)
         
         return .none
         

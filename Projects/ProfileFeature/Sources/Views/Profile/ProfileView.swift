@@ -274,7 +274,7 @@ public struct ProfileView: View {
             .background(Color.ds(.black))
             .clipShape(Capsule())
           
-          Text("\(member?.likeCount ?? 0)")
+          Text("\(member?.disLikeCount ?? 0)")
             .font(.ds(.title2(.semibold)))
             .foregroundColor(.ds(.black))
         }
