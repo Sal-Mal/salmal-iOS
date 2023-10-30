@@ -18,7 +18,12 @@ let project = Project(
         .external(name: "ComposableArchitecture"),
         .external(name: "KakaoSDKCommon"),
         .external(name: "KakaoSDKUser"),
-        .external(name: "KakaoSDKAuth")
+        .external(name: "KakaoSDKAuth"),
+        
+        .external(name: "FirebaseAnalytics"),
+        .external(name: "FirebaseCrashlytics"),
+        .external(name: "FirebaseDynamicLinks"),
+        .external(name: "FirebaseMessaging")
       ]
     )
   ]

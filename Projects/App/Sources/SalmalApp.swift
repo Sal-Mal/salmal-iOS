@@ -11,6 +11,8 @@ import ProfileFeature
 
 @main
 struct SalmalApp: App {
+  @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+  
   @State private var isLogined = false
   @State private var tabIndex = 0
   @Dependency(\.kakaoManager) var kakaoManager
