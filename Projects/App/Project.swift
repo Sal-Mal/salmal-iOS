@@ -27,7 +27,10 @@ let project = Project(
             "CFBundleURLSchemes": ["kakao\(nativeAppKey)"],
             "CFBundleURLName": "com.salmal.app"
           ]
-        ]
+        ],
+        
+        "NSPhotoLibraryUsageDescription": "살말 업로드를 위해 앨범 접근권한이 필요해요",
+        "NSCameraUsageDescription": "살말 업로드를 위해 카메라 접근권한이 필요해요"
       ]),
       sources: ["Sources/**"],
       resources: ["Resources/**"],
