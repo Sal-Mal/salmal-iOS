@@ -225,6 +225,8 @@ public struct OtherProfileView: View {
           viewStore.send(.set(\.$isBlockSheetPresented, true))
         } label: {
           Image(icon: .ic_cancel)
+            .renderingMode(.template)
+            .foregroundColor(.ds(.white))
         }
       }
       .onAppear {
@@ -243,6 +245,9 @@ public struct OtherProfileView: View {
       .alert(isPresented: viewStore.$isBlockSheetPresented, alert: .blocking) {
         viewStore.send(.blockButtonTapped)
       }
+      .onAppear {
+        viewStore.send(.onAppear)
+      }
     }
   }
 }
@@ -251,7 +256,7 @@ public struct OtherProfileView: View {
 struct OtherProfileView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
-      OtherProfileView(store: .init(initialState: .init(), reducer: {
+      OtherProfileView(store: .init(initialState: .init(memberID: 2), reducer: {
         OtherProfileCore()
       }))
     }

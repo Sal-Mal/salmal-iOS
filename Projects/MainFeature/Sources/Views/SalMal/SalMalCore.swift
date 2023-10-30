@@ -1,6 +1,8 @@
 import UI
 import Core
 
+import ProfileFeature
+
 import ComposableArchitecture
 
 public struct SalMalCore: Reducer {
@@ -85,12 +87,20 @@ public struct SalMalCore: Reducer {
       case let .homeAction(.delegate(.updateVote(vote))):
         return .send(.updateVote(vote))
         
+      case let .homeAction(.delegate(.moveToprofile(id))):
+        state.path.append(.otherProfileScreen(.init(memberID: id)))
+        return .none
+        
       case .homeAction:
         return .none
         
         // bestTab의 index가 바뀔때마다 실행
       case let .bestAction(.delegate(.updateVote(vote))):
         return .send(.updateVote(vote))
+        
+      case let .bestAction(.delegate(.moveToprofile(id))):
+        state.path.append(.otherProfileScreen(.init(memberID: id)))
+        return .none
         
       case .bestAction:
         return .none
@@ -203,15 +213,21 @@ public extension SalMalCore {
   struct Path: Reducer {
     public enum State: Equatable {
       case alarmScreen(AlarmCore.State = .init())
+      case otherProfileScreen(OtherProfileCore.State)
     }
     
     public enum Action: Equatable {
       case alarmScreen(AlarmCore.Action)
+      case otherProfileScreen(OtherProfileCore.Action)
     }
     
     public var body: some ReducerOf<Self> {
       Scope(state: /State.alarmScreen, action: /Action.alarmScreen) {
         AlarmCore()
+      }
+      
+      Scope(state: /State.otherProfileScreen, action: /Action.otherProfileScreen) {
+        OtherProfileCore()
       }
     }
   }

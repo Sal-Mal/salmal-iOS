@@ -1,6 +1,7 @@
 import SwiftUI
 import UI
 import ComposableArchitecture
+import ProfileFeature
 
 public struct SalMalView: View {
   let store: StoreOf<SalMalCore>
@@ -59,6 +60,14 @@ public struct SalMalView: View {
           /SalMalCore.Path.State.alarmScreen,
            action: SalMalCore.Path.Action.alarmScreen) { store in
              AlarmView(store: store)
+               .toolbar(.hidden, for: .tabBar)
+           }
+        
+      case .otherProfileScreen:
+        CaseLet(
+          /SalMalCore.Path.State.otherProfileScreen,
+           action: SalMalCore.Path.Action.otherProfileScreen) { store in
+             OtherProfileView(store: store)
                .toolbar(.hidden, for: .tabBar)
            }
       }
