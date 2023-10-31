@@ -37,7 +37,8 @@ let project = Project(
       dependencies: [
         .project(target: "MainFeature", path: "../MainFeature"),
         .project(target: "LoginFeature", path: "../LoginFeature"),
-        .project(target: "ProfileFeature", path: "../ProfileFeature")
+        .project(target: "ProfileFeature", path: "../ProfileFeature"),
+        .project(target: "UploadFeature", path: "../UploadFeature")
       ]
     )
   ]

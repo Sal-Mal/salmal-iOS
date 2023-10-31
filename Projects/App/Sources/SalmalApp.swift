@@ -7,6 +7,7 @@ import Core
 import LoginFeature
 import MainFeature
 import ProfileFeature
+import UploadFeature
 
 @main
 struct SalmalApp: App {
@@ -43,6 +44,10 @@ struct SalmalApp: App {
   private let profileStore: StoreOf<ProfileCore> = .init(initialState: .init()) {
     ProfileCore()
   }
+
+  private let uploadStore: StoreOf<UploadCore> = .init(initialState: .init()) {
+    UploadCore()
+  }
   
   @ViewBuilder
   var AppView: some View {
@@ -63,7 +68,7 @@ struct SalmalApp: App {
         .toolbarBackground(.hidden, for: .tabBar)
         .tag(0)
       
-      Rectangle()
+      UploadView(store: uploadStore)
         .tabItem {
           Image(icon: .ic_upload_circle)
             .fit(size: 32)

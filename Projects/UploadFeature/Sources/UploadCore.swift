@@ -46,7 +46,7 @@ public struct UploadCore: Reducer {
   public init() {}
 
   public var body: some ReducerOf<Self> {
-    //BindingReducer()
+    BindingReducer()
     Reduce { state, action in
       switch action {
       case .onAppear:

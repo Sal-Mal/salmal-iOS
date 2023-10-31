@@ -49,6 +49,7 @@ public struct UploadEditingPhotoCore: Reducer {
   ]
 
   @Dependency(\.dismiss) private var dismiss
+  @Dependency(\.voteRepository) private var voteRepository
 
   public init() {}
 
@@ -100,9 +101,15 @@ public struct UploadEditingPhotoCore: Reducer {
 
         let uiImage = view.snapshot()
         UIImageWriteToSavedPhotosAlbum(uiImage, self, nil, nil)
+        guard let data = uiImage.jpegData(compressionQuality: 1) else {
+          return .none
+        }
 
-        return .run { send in
-
+        return .run { [data] send in
+          try await voteRepository.register(data: data)
+          await dismiss()
+        } catch: { error, send in
+          print(error)
         }
 
       case .filteredImageSelected(let filteredImage):

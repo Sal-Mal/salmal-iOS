@@ -60,17 +60,7 @@ public struct UploadView: View {
       .onAppear {
         viewStore.send(.onAppear)
       }
-      .smNavigationBar(title: "사진 추가", rightItems: {
-        Button {
-          viewStore.send(.backButtonTapped)
-        } label: {
-          Image(icon: .xmark)
-            .frame(width: 32, height: 32)
-            .foregroundColor(.ds(.white))
-        }
-        .buttonStyle(.plain)
-      })
-
+      .smNavigationBar(title: "사진 추가")
     } destination: { state in
       switch state {
       case .uploadEditingPhoto:

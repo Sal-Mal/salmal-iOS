@@ -3,7 +3,7 @@ import Foundation
 import ComposableArchitecture
 
 public protocol VoteRepository {
-  func register() async throws
+  func register(data: Data) async throws
   func evaluate(voteID: Int, param: EvaluateVoteRequestDTO) async throws
   func unEvaluate(voteID: Int) async throws
   func bookmark(voteID: Int) async throws
@@ -25,8 +25,9 @@ public final class VoteRepositoryImpl: VoteRepository {
     self.networkManager = networkManager
   }
   
-  public func register() async throws {
-    // TODO: 투표 등록 API
+  public func register(data: Data) async throws {
+    let target = VoteAPI.create(data: data)
+    try await networkManager.request(target)
   }
   
   public func evaluate(voteID: Int, param: EvaluateVoteRequestDTO) async throws {

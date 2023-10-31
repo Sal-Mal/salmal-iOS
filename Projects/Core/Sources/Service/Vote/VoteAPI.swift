@@ -1,7 +1,7 @@
 import Foundation
 
 public enum VoteAPI {
-  // TODO: 투표 등록 api
+  case create(data: Data, boundary: String = UUID().uuidString) // 투표 등록
   case vote(id: Int, EvaluateVoteRequestDTO) // 투표(살, 밀)
   case unVote(id: Int)
   case bookmark(id: Int) // 북마크
@@ -20,6 +20,9 @@ extension VoteAPI: TargetType {
   
   public var path: String {
     switch self {
+    case .create:
+      return "votes"
+
     case let .vote(id, _):
       return "votes/\(id)/evaluations"
       
@@ -58,6 +61,9 @@ extension VoteAPI: TargetType {
   
   public var method: HTTPMethod {
     switch self {
+    case .create:
+      return .post
+
     case .vote:
       return .post
       
@@ -86,6 +92,9 @@ extension VoteAPI: TargetType {
   
   public var parameters: Encodable? {
     switch self {
+    case .create:
+      return nil
+
     case let .vote(_, params):
       return params
       
@@ -124,6 +133,11 @@ extension VoteAPI: TargetType {
 
   public var task: HTTPTask {
     switch self {
+    case .create(let data, let boundary):
+      let multipartFormData = MultipartFormData(boundary: boundary)
+      multipartFormData.append(data, withName: "imageFile", fileName: "TestImage.jpg", mimeType: "image/jpeg")
+      return .uploadMultipartFormData(multipartFormData)
+
     default:
       return .requestPlain
     }
