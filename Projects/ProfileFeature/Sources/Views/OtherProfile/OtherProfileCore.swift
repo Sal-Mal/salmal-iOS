@@ -19,15 +19,24 @@ public struct OtherProfileCore: Reducer {
 
   public enum Action: BindableAction, Equatable {
     case binding(BindingAction<State>)
+    case delegate(Delegate)
     case onAppear
     case setMember(Member?)
     case setVote([Vote])
     case dismissButtonTapped
     case blockButtonTapped
+    
+    case requestVote(Int)
+    
+    
+    public enum Delegate: Equatable {
+      case moveToSalMalDetail(Vote)
+    }
   }
 
   @Dependency(\.dismiss) var dismiss
   @Dependency(\.memberRepository) var memberRepository: MemberRepository
+  @Dependency(\.voteRepository) var voteRepository: VoteRepository
 
   public init() {}
 
@@ -36,6 +45,9 @@ public struct OtherProfileCore: Reducer {
     Reduce { state, action in
       switch action {
       case .binding:
+        return .none
+        
+      case .delegate:
         return .none
         
       case .onAppear:
@@ -66,6 +78,14 @@ public struct OtherProfileCore: Reducer {
         return .run { [state] send in
           try await memberRepository.block(id: state.memberID)
           await dismiss()
+        } catch: { error, send in
+          print(error.localizedDescription)
+        }
+        
+      case let .requestVote(id):
+        return .run { send in
+          let vote = try await voteRepository.getVote(id: id)
+          await send(.delegate(.moveToSalMalDetail(vote)))
         } catch: { error, send in
           print(error.localizedDescription)
         }

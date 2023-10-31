@@ -103,6 +103,7 @@ extension SalMalDetailView {
         backgroundColor: .ds(.black)
       ) {
         // TODO: 프로필 화면으로 이동
+        store.send(.profileTapped)
       }
       
       Spacer()
