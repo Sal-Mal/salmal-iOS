@@ -23,15 +23,15 @@ extension VoteListResponseDTO {
 public struct VoteResponseDTO: Responsable {
   public let id: Int
   public let imageUrl: String
-  public let nickName: String
-  public let memberImageUrl: String
-  public let memberId: Int
-  public let commentCount: Int
-  public let likeCount: Int
-  public let disLikeCount: Int
-  public let totalEvaluationCnt: Int
-  public let bookmarked: Bool
-  public let status: VoteStatus
+  public let nickName: String?
+  public let memberImageUrl: String?
+  public let memberId: Int?
+  public let commentCount: Int?
+  public let likeCount: Int?
+  public let disLikeCount: Int?
+  public let totalEvaluationCnt: Int?
+  public let bookmarked: Bool?
+  public let status: VoteStatus?
   
   public enum VoteStatus: String, Decodable {
     case like = "LIKE"
@@ -65,15 +65,15 @@ extension VoteResponseDTO {
     Vote(
       id: id,
       imageURL: imageUrl,
-      nickName: nickName,
-      memberImageURL: memberImageUrl,
-      memberID: memberId,
-      commentCnt: commentCount,
-      likeCount: likeCount,
-      disLikeCount: disLikeCount,
-      totalVoteCount: totalEvaluationCnt,
-      isBookmarked: bookmarked,
-      voteStatus: .init(rawValue: status.rawValue)!
+      nickName: nickName ?? "",
+      memberImageURL: memberImageUrl ?? "",
+      memberID: memberId ?? -1,
+      commentCnt: commentCount ?? -1,
+      likeCount: likeCount ?? -1,
+      disLikeCount: disLikeCount ?? -1,
+      totalVoteCount: totalEvaluationCnt ?? -1,
+      isBookmarked: bookmarked ?? true,
+      voteStatus: .init(rawValue: status?.rawValue ?? "NONE")!
     )
   }
 }

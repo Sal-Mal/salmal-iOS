@@ -23,35 +23,36 @@ struct SalmalApp: App {
   
   var body: some Scene {
     WindowGroup {
-      AppView
-        .onOpenURL(perform: kakaoManager.openURL)
-        .preferredColorScheme(.dark)
-        .onReceive(NotificationCenter.default.publisher(for: .init("login"))) { _ in
-          isLogined = true
-          tabIndex = 0
+      Group {
+        if isLogined {
+          MainScene
+        } else {
+          SplashScene
         }
-        .onReceive(NotificationCenter.default.publisher(for: .init("logout"))) { _ in
-          isLogined = false
-        }
+      }
+      .onOpenURL(perform: kakaoManager.openURL)
+      .preferredColorScheme(.dark)
+      .onReceive(NotificationService.publisher(.login)) { _ in
+        mainStore = .init(initialState: .init()) { SalMalCore() }
+        profileStore = .init(initialState: .init()) { ProfileCore() }
+        splashStore = nil
+        
+        isLogined = true
+        tabIndex = 0
+      }
+      .onReceive(NotificationService.publisher(.logout)) { _ in
+        mainStore = nil
+        profileStore = nil
+        splashStore = .init(initialState: .init()) { SplashCore() }
+        
+        isLogined = false
+      }
     }
   }
   
-  private let mainStore: StoreOf<SalMalCore> = .init(initialState: .init()) {
-    SalMalCore()
-  }
-  
-  private let profileStore: StoreOf<ProfileCore> = .init(initialState: .init()) {
-    ProfileCore()
-  }
-  
-  @ViewBuilder
-  var AppView: some View {
-    if isLogined {
-      MainScene
-    } else {
-      SplashScene
-    }
-  }
+  @State private var mainStore: StoreOf<SalMalCore>! = .init(initialState: .init()) { SalMalCore() }
+  @State private var profileStore: StoreOf<ProfileCore>! = .init(initialState: .init()) { ProfileCore() }
+  @State private var splashStore: StoreOf<SplashCore>! = .init(initialState: .init()) { SplashCore() }
   
   var MainScene: some View {
     TabView(selection: $tabIndex) {
@@ -82,8 +83,6 @@ struct SalmalApp: App {
   }
   
   var SplashScene: some View {
-    SplashView(store: .init(initialState: .init()) {
-      SplashCore()
-    })
+    SplashView(store: splashStore)
   }
 }

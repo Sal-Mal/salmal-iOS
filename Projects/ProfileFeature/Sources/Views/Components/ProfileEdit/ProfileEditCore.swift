@@ -107,7 +107,6 @@ public struct ProfileEditCore: Reducer {
         return .run { send in
           try await authRepository.logOut()
           NotificationService.post(.logout)
-          await dismiss()
         } catch: { error, send in
           await toastManager.showToast(.error("로그아웃 실패!"))
         }
@@ -116,7 +115,6 @@ public struct ProfileEditCore: Reducer {
         return .run { send in
           try await memberRepository.delete()
           NotificationService.post(.logout)
-          await dismiss()
         } catch: { error, send in
           await toastManager.showToast(.error("회원탈퇴 실패!"))
         }

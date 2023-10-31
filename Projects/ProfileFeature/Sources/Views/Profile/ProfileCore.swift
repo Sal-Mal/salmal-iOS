@@ -28,10 +28,14 @@ public struct ProfileCore: Reducer {
     case setMember(Member?)
     case setVotes([Vote])
     case setEvaluations([Vote])
-    case detailSalMal(Vote)
+    
+    case requestVote(Int)
+    case moveToSalMalDetail(Vote)
   }
 
+  @Dependency(\.voteRepository) var voteRepository: VoteRepository
   @Dependency(\.memberRepository) var memberRepository: MemberRepository
+  @Dependency(\.userDefault) var userDefault
 
   public init() {}
 
@@ -41,11 +45,17 @@ public struct ProfileCore: Reducer {
       case .onAppear:
         return .run { send in
           let member = try await memberRepository.myPage()
+          let votes = try await memberRepository.votes(memberID: userDefault.memberID!, cursorId: nil, size: 100)
           await send(.setMember(member))
+          await send(.setVotes(votes))
 
         } catch: { error, send in
           print(error)
         }
+        
+      case let .path(.element(_, action: .salmalDetail(.delegate(.moveToOtherProfile(id))))):
+        state.path.append(.otherProfile(.init(memberID: id)))
+        return .none
 
       case .path:
         return .none
@@ -66,7 +76,13 @@ public struct ProfileCore: Reducer {
         state.evaluations.append(contentsOf: evaluations)
         return .none
         
-      case let .detailSalMal(vote):
+      case let .requestVote(id):
+        return .run { send in
+          let vote = try await voteRepository.getVote(id: id)
+          await send(.moveToSalMalDetail(vote))
+        }
+        
+      case let .moveToSalMalDetail(vote):
         state.path.append(.salmalDetail(.init(vote: vote)))
         return .none
       }
@@ -85,6 +101,7 @@ extension ProfileCore {
   public struct Path: Reducer {
 
     public enum State: Equatable {
+      case otherProfile(OtherProfileCore.State)
       case profileEdit(ProfileEditCore.State = .init())
       case blockedMemberList(BlockedMemberListCore.State = .init())
       case setting(SettingCore.State = .init())
@@ -94,6 +111,7 @@ extension ProfileCore {
     }
 
     public enum Action {
+      case otherProfile(OtherProfileCore.Action)
       case profileEdit(ProfileEditCore.Action)
       case blockedMemberList(BlockedMemberListCore.Action)
       case setting(SettingCore.Action)
@@ -103,6 +121,9 @@ extension ProfileCore {
     }
 
     public var body: some ReducerOf<Self> {
+      Scope(state: /State.otherProfile, action: /Action.otherProfile) {
+        OtherProfileCore()
+      }
       Scope(state: /State.profileEdit, action: /Action.profileEdit) {
         ProfileEditCore()
       }

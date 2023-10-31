@@ -72,16 +72,16 @@ public struct SalMalCore: Reducer {
       case .binding:
         return .none
         
-      case let .path(action):
-        switch action {
-          
-        case let .element(_, .alarmScreen(.listTapped)):
-          // TODO: List Tapped
-          return .none
-          
-        default:
-          return .none
-        }
+      case let .path(.element(_, action: .otherProfileScreen(.delegate(.moveToSalMalDetail(vote))))):
+        state.path.append(.salmalDetailScreen(.init(vote: vote)))
+        return .none
+      
+      case let .path(.element(_, action: .salmalDetailScreen(.delegate(.moveToOtherProfile(id))))):
+        state.path.append(.otherProfileScreen(.init(memberID: id)))
+        return .none
+        
+      case .path:
+        return .none
         
         // homeTab의 index가 바뀔때마다 실행
       case let .homeAction(.delegate(.updateVote(vote))):
@@ -214,11 +214,13 @@ public extension SalMalCore {
     public enum State: Equatable {
       case alarmScreen(AlarmCore.State = .init())
       case otherProfileScreen(OtherProfileCore.State)
+      case salmalDetailScreen(SalMalDetailCore.State)
     }
     
     public enum Action: Equatable {
       case alarmScreen(AlarmCore.Action)
       case otherProfileScreen(OtherProfileCore.Action)
+      case salmalDetailScreen(SalMalDetailCore.Action)
     }
     
     public var body: some ReducerOf<Self> {
@@ -228,6 +230,10 @@ public extension SalMalCore {
       
       Scope(state: /State.otherProfileScreen, action: /Action.otherProfileScreen) {
         OtherProfileCore()
+      }
+      
+      Scope(state: /State.salmalDetailScreen, action: /Action.salmalDetailScreen) {
+        SalMalDetailCore()
       }
     }
   }

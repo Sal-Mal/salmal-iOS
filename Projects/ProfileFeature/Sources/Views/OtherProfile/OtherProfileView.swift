@@ -196,6 +196,9 @@ public struct OtherProfileView: View {
                       .resizable()
                       .aspectRatio(contentMode: .fill)
                       .cornerRadius(24.0)
+                      .onTapGesture {
+                        store.send(.requestVote(vote.id))
+                      }
 
                   default:
                     RoundedRectangle(cornerRadius: 24.0)

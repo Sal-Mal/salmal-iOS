@@ -14,10 +14,10 @@ public enum MemberAPI {
   /// 회원 차단해제
   case unBlock(id: Int)
   /// 회원이 차단한 회원 목록 조회
-  case fetchBlocks(id: Int, cursorId: Int, size: Int)
+  case fetchBlocks(id: Int, cursorId: Int?, size: Int)
   /// 회원이 작성한 투표 목록 조회
-  case fetchVotes(id: Int, cursorId: Int, size: Int)
-  /// 회원이 투표한 목록 조회
+  case fetchVotes(id: Int, cursorId: Int?, size: Int)
+  /// 회원이 평가한 투표 목록 조회
   case fetchEvaluations(id: Int, cursorId: Int?, size: Int)
   /// 회원이 북마크한 목록 조회
   case fetchBookmarks(id: Int, cursorId: Int?, size: Int)
@@ -43,9 +43,18 @@ extension MemberAPI: TargetType {
     case let .unBlock(id):
       return "members/\(id)/blocks"
     case let .fetchBlocks(id, cursorId, size):
-      return "members/\(id)/blocks?cursor-id=\(cursorId)&size=\(size)"
+      if let cursorId {
+        return "members/\(id)/blocks?cursor-id=\(cursorId)&size=\(size)"
+      } else {
+        return "members/\(id)/blocks?size=\(size)"
+      }
+      
     case let .fetchVotes(id, cursorId, size):
-      return "members/\(id)/votes?cursor-id=\(cursorId)&size=\(size)"
+      if let cursorId {
+        return "members/\(id)/votes?cursor-id=\(cursorId)&size=\(size)"
+      } else {
+        return "members/\(id)/votes?size=\(size)"
+      }
     case let .fetchEvaluations(id, cursorId, size):
       return "members/\(id)/evaluations?cursor-id=\(cursorId)&size=\(size)"
     case let .fetchBookmarks(id, cursorId, size):

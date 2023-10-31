@@ -70,6 +70,14 @@ public struct SalMalView: View {
              OtherProfileView(store: store)
                .toolbar(.hidden, for: .tabBar)
            }
+        
+      case .salmalDetailScreen:
+        CaseLet(
+          /SalMalCore.Path.State.salmalDetailScreen,
+           action: SalMalCore.Path.Action.salmalDetailScreen) { store in
+             SalMalDetailView(store: store)
+               .toolbar(.hidden, for: .tabBar)
+           }
       }
     }
   }
