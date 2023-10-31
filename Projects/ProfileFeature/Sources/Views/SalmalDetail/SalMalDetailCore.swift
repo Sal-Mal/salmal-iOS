@@ -35,6 +35,7 @@ public struct SalMalDetailCore: Reducer {
     case binding(BindingAction<State>)
     case report(PresentationAction<ReportCore.Action>)
     case commentList(PresentationAction<CommentListCore.Action>)
+    case delegate(Delegate)
     
     case bookmarkTapped
     case commentTapped
@@ -46,6 +47,11 @@ public struct SalMalDetailCore: Reducer {
     case malButtonTapped
     case requestVote(id: Int)
     case update(Vote)
+    
+    
+    public enum Delegate: Equatable {
+      case moveToOtherProfile(Int)
+    }
   }
   
   @Dependency(\.dismiss) var dismiss
@@ -61,6 +67,8 @@ public struct SalMalDetailCore: Reducer {
       case .report:
         return .none
       case .commentList:
+        return .none
+      case .delegate:
         return .none
         
       case .bookmarkTapped:
@@ -99,6 +107,10 @@ public struct SalMalDetailCore: Reducer {
         return .none
       
       case .profileTapped:
+        if state.vote.memberID != userDefault.memberID {
+          return .send(.delegate(.moveToOtherProfile(state.vote.memberID)))
+        }
+        
         return .none
         
       case .salButtonTapped:

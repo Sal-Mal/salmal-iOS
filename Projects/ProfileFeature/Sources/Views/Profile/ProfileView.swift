@@ -110,6 +110,8 @@ public struct ProfileView: View {
       }
     } destination: { state in
       switch state {
+      case .otherProfile:
+        CaseLet(/ProfileCore.Path.State.otherProfile, action: ProfileCore.Path.Action.otherProfile, then: OtherProfileView.init(store:))
       case .profileEdit:
         CaseLet(
           /ProfileCore.Path.State.profileEdit,

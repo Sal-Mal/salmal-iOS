@@ -75,6 +75,10 @@ public struct SalMalCore: Reducer {
       case let .path(.element(_, action: .otherProfileScreen(.delegate(.moveToSalMalDetail(vote))))):
         state.path.append(.salmalDetailScreen(.init(vote: vote)))
         return .none
+      
+      case let .path(.element(_, action: .salmalDetailScreen(.delegate(.moveToOtherProfile(id))))):
+        state.path.append(.otherProfileScreen(.init(memberID: id)))
+        return .none
         
       case .path:
         return .none

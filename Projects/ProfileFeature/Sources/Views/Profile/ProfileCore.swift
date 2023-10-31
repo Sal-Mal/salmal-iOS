@@ -52,6 +52,10 @@ public struct ProfileCore: Reducer {
         } catch: { error, send in
           print(error)
         }
+        
+      case let .path(.element(_, action: .salmalDetail(.delegate(.moveToOtherProfile(id))))):
+        state.path.append(.otherProfile(.init(memberID: id)))
+        return .none
 
       case .path:
         return .none
@@ -97,6 +101,7 @@ extension ProfileCore {
   public struct Path: Reducer {
 
     public enum State: Equatable {
+      case otherProfile(OtherProfileCore.State)
       case profileEdit(ProfileEditCore.State = .init())
       case blockedMemberList(BlockedMemberListCore.State = .init())
       case setting(SettingCore.State = .init())
@@ -106,6 +111,7 @@ extension ProfileCore {
     }
 
     public enum Action {
+      case otherProfile(OtherProfileCore.Action)
       case profileEdit(ProfileEditCore.Action)
       case blockedMemberList(BlockedMemberListCore.Action)
       case setting(SettingCore.Action)
@@ -115,6 +121,9 @@ extension ProfileCore {
     }
 
     public var body: some ReducerOf<Self> {
+      Scope(state: /State.otherProfile, action: /Action.otherProfile) {
+        OtherProfileCore()
+      }
       Scope(state: /State.profileEdit, action: /Action.profileEdit) {
         ProfileEditCore()
       }
