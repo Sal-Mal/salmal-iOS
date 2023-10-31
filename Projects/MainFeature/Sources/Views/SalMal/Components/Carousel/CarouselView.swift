@@ -45,11 +45,11 @@ public struct CarouselView: View {
       store.send(.requestVoteList)
     }
     .onReceive(NotificationService.publisher(.reportVote)) { userInfo in
-      guard let id = userInfo["id"] as? Int else { return }
+      guard let id = userInfo?["id"] as? Int else { return }
       store.send(.removeVote(id: id))
     }
     .onReceive(NotificationService.publisher(.banUser)) { userInfo in
-      guard let id = userInfo["id"] as? Int else { return }
+      guard let id = userInfo?["id"] as? Int else { return }
       store.send(.removeAllVote(userID: id))
     }
   }

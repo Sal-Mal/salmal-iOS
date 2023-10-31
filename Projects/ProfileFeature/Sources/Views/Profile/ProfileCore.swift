@@ -28,9 +28,12 @@ public struct ProfileCore: Reducer {
     case setMember(Member?)
     case setVotes([Vote])
     case setEvaluations([Vote])
-    case detailSalMal(Vote)
+    
+    case requestVote(Int)
+    case moveToSalMalDetail(Vote)
   }
 
+  @Dependency(\.voteRepository) var voteRepository: VoteRepository
   @Dependency(\.memberRepository) var memberRepository: MemberRepository
   @Dependency(\.userDefault) var userDefault
 
@@ -69,7 +72,13 @@ public struct ProfileCore: Reducer {
         state.evaluations.append(contentsOf: evaluations)
         return .none
         
-      case let .detailSalMal(vote):
+      case let .requestVote(id):
+        return .run { send in
+          let vote = try await voteRepository.getVote(id: id)
+          await send(.moveToSalMalDetail(vote))
+        }
+        
+      case let .moveToSalMalDetail(vote):
         state.path.append(.salmalDetail(.init(vote: vote)))
         return .none
       }

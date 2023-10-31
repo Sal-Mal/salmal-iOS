@@ -30,7 +30,10 @@ let project = Project(
         ],
         
         "NSPhotoLibraryUsageDescription": "살말 업로드를 위해 앨범 접근권한이 필요해요",
-        "NSCameraUsageDescription": "살말 업로드를 위해 카메라 접근권한이 필요해요"
+        "NSCameraUsageDescription": "살말 업로드를 위해 카메라 접근권한이 필요해요",
+        "NSAppTransportSecurity": .dictionary([
+          "NSAllowsArbitraryLoads": .boolean(true)
+        ])
       ]),
       sources: ["Sources/**"],
       resources: ["Resources/**"],

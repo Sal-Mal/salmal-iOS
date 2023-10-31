@@ -4,16 +4,16 @@ import Core
 import UI
 import ComposableArchitecture
 
-struct SalMalDetailView: View {
+public struct SalMalDetailView: View {
   let store: StoreOf<SalMalDetailCore>
   @ObservedObject var viewStore: ViewStoreOf<SalMalDetailCore>
   
-  init(store: StoreOf<SalMalDetailCore>) {
+  public init(store: StoreOf<SalMalDetailCore>) {
     self.store = store
     self.viewStore = ViewStore(store, observe: { $0 })
   }
   
-  var body: some View {
+  public var body: some View {
     VStack(spacing: 25) {
       VoteImage
         .overlay(alignment: .topLeading) {
@@ -34,9 +34,20 @@ struct SalMalDetailView: View {
       VoteButtons
         .padding(.horizontal, 18)
     }
+    .onAppear {
+      store.send(.requestVote(id: viewStore.vote.id))
+    }
+    .padding(.vertical, 18)
     .sheet(
       store: store.scope(state: \.$commentListState, action: SalMalDetailCore.Action.commentList)) { subStore in
-        CommentListView(store: subStore)
+        VStack(spacing: 0) {
+          DragIndicator()
+            .padding(.bottom, -20)
+          CommentListView(store: subStore)
+        }
+        .presentationDetents([.large, .medium])
+        .presentationDragIndicator(.hidden)
+        .background(Color.ds(.gray4))
       }
       .sheet(
         store: store.scope(state: \.$reportState, action: SalMalDetailCore.Action.report)) { subStore in
@@ -52,10 +63,14 @@ struct SalMalDetailView: View {
             }
           },
           rightItems: {
-            Button {
-              store.send(.deleteVoteTapped)
-            } label: {
-              Image(icon: .ic_trash)
+            if viewStore.isMine {
+              EmptyView()
+            } else {
+              Button {
+                store.send(.deleteVoteTapped)
+              } label: {
+                Image(icon: .ic_trash)
+              }
             }
           }
         )
@@ -68,12 +83,14 @@ extension SalMalDetailView {
       switch phase {
       case .success(let image):
         image
-          .resizable()
+          .fill()
+          .frame(width: UIScreen.main.bounds.width - 36)
+          .clipped()
+          .cornerRadius(24)
       default:
         Rectangle()
       }
     }
-    .cornerRadius(24)
   }
   
   var ProfileImage: some View {
@@ -107,7 +124,7 @@ extension SalMalDetailView {
         progress: viewStore.$buyPercentage,
         buttonState: viewStore.$salButtonState
       ) {
-        //empty
+        store.send(.salButtonTapped)
       }
       
       SMVoteButton(
@@ -115,7 +132,7 @@ extension SalMalDetailView {
           viewStore.$notBuyPercentage,
         buttonState: viewStore.$malButtonState
       ) {
-        // empty
+        store.send(.malButtonTapped)
       }
     }
   }

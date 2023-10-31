@@ -41,7 +41,7 @@ public struct CommentListView: View {
       store.send(.requestComments)
       store.send(.requestMyPage)
     }
-    .onReceive(NotificationCenter.default.publisher(for: .init("tapAddComment"))) { _ in
+    .onReceive(NotificationService.publisher(.tapAddComment)) { _ in
       focus = true
     }
   }

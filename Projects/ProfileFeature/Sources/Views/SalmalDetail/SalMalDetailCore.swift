@@ -12,8 +12,8 @@ public struct SalMalDetailCore: Reducer {
     @BindingState var salButtonState: ButtonState = .idle
     @BindingState var malButtonState: ButtonState = .idle
     
-    @BindingState var buyPercentage: Double
-    @BindingState var notBuyPercentage: Double
+    @BindingState var buyPercentage: Double = 0
+    @BindingState var notBuyPercentage: Double = 0
     
     @PresentationState var commentListState: CommentListCore.State?
     @PresentationState var reportState: ReportCore.State?
@@ -24,15 +24,11 @@ public struct SalMalDetailCore: Reducer {
     
     public init(vote: Vote) {
       self.vote = vote
-      
-      if vote.totalVoteCount == 0 {
-        buyPercentage = 0
-        notBuyPercentage = 0
-      } else {
-        buyPercentage = Double(vote.likeCount) / Double(vote.totalVoteCount)
-        notBuyPercentage = Double(vote.disLikeCount) / Double(vote.totalVoteCount)
-      }
     }
+  }
+  
+  public init() {
+    // empty
   }
   
   public enum Action: Equatable, BindableAction {
@@ -46,7 +42,6 @@ public struct SalMalDetailCore: Reducer {
     case deleteVoteTapped
     case moreTapped
     case profileTapped
-    case setVoteStatus(Vote.VoteStatus)
     case salButtonTapped
     case malButtonTapped
     case requestVote(id: Int)
@@ -56,16 +51,15 @@ public struct SalMalDetailCore: Reducer {
   @Dependency(\.dismiss) var dismiss
   @Dependency(\.voteRepository) var voteRepository
   @Dependency(\.toastManager) var toastManager
+  @Dependency(\.userDefault) var userDefault
   
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
       case .binding:
         return .none
-        
       case .report:
         return .none
-        
       case .commentList:
         return .none
         
@@ -105,11 +99,71 @@ public struct SalMalDetailCore: Reducer {
         return .none
       
       case .profileTapped:
-        // TODO: Move To Profile
         return .none
         
-      case let .setVoteStatus(value):
-        switch value {
+      case .salButtonTapped:
+        return .run { [id = state.vote.id, state] send in
+          switch state.salButtonState {
+          case .idle:
+            try await voteRepository.evaluate(
+              voteID: id,
+              param: .init(voteEvaluationType: .like)
+            )
+            await send(.requestVote(id: id))
+            
+          case .selected:
+            try await voteRepository.unEvaluate(voteID: id)
+            await send(.requestVote(id: id))
+            
+          case .unSelected:
+            await toastManager.showToast(.error("이미 반대편에 투표했어요"))
+          }
+        } catch: { error, send in
+          print(error.localizedDescription)
+        }
+        
+      case .malButtonTapped:
+        return .run { [id = state.vote.id, state] send in
+          switch state.malButtonState {
+          case .idle:
+            try await voteRepository.evaluate(
+              voteID: id,
+              param: .init(voteEvaluationType: .dislike)
+            )
+            await send(.requestVote(id: id))
+            
+          case .selected:
+            try await voteRepository.unEvaluate(voteID: id)
+            await send(.requestVote(id: id))
+            
+          case .unSelected:
+            await toastManager.showToast(.error("이미 반대편에 투표했어요"))
+          }
+        } catch: { error, send in
+          print(error.localizedDescription)
+        }
+        
+      case let .requestVote(id):
+        return .run { send in
+          let vote = try await voteRepository.getVote(id: id)
+          await send(.update(vote))
+        } catch: { error, send in
+          // TODO: Vote 업데이트 실패
+          print(error.localizedDescription)
+        }
+        
+      case let .update(vote):
+        state.vote = vote
+        
+        if vote.totalVoteCount == 0 {
+          state.buyPercentage = 0
+          state.notBuyPercentage = 0
+        } else {
+          state.buyPercentage = Double(vote.likeCount) / Double(vote.totalVoteCount)
+          state.notBuyPercentage = Double(vote.disLikeCount) / Double(vote.totalVoteCount)
+        }
+        
+        switch vote.voteStatus {
         case .like:
           state.salButtonState = .selected
           state.malButtonState = .unSelected
@@ -123,26 +177,6 @@ public struct SalMalDetailCore: Reducer {
           state.malButtonState = .idle
         }
         
-        return .none
-        
-      case .salButtonTapped:
-        
-        
-        return .none
-        
-      case .malButtonTapped:
-        return .none
-        
-      case let .requestVote(id):
-        return .run { send in
-          let vote = try await voteRepository.getVote(id: id)
-          await send(.update(vote))
-        } catch: { error, send in
-          // TODO: Vote 업데이트 실패
-        }
-        
-      case let .update(vote):
-        state.vote = vote
         return .none
       }
     }

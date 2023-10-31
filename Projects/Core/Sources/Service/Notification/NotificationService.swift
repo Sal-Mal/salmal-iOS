@@ -25,10 +25,10 @@ public enum NotificationService {
   public static func publisher(
     _ noti: Noti,
     scheduler: some Scheduler = DispatchQueue.main
-  ) -> AnyPublisher<[AnyHashable: Any], Never> {
-    return center.publisher(for: noti.name)
+  ) -> AnyPublisher<[AnyHashable: Any]?, Never> {
+    return center.publisher(for: .init(noti.rawValue))
       .receive(on: scheduler)
-      .compactMap(\.userInfo)
+      .map(\.userInfo)
       .eraseToAnyPublisher()
   }
 }

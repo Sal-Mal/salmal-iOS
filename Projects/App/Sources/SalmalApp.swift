@@ -32,7 +32,7 @@ struct SalmalApp: App {
       }
       .onOpenURL(perform: kakaoManager.openURL)
       .preferredColorScheme(.dark)
-      .onReceive(NotificationCenter.default.publisher(for: .init("login"))) { _ in
+      .onReceive(NotificationService.publisher(.login)) { _ in
         mainStore = .init(initialState: .init()) { SalMalCore() }
         profileStore = .init(initialState: .init()) { ProfileCore() }
         splashStore = nil
@@ -40,7 +40,7 @@ struct SalmalApp: App {
         isLogined = true
         tabIndex = 0
       }
-      .onReceive(NotificationCenter.default.publisher(for: .init("logout"))) { _ in
+      .onReceive(NotificationService.publisher(.logout)) { _ in
         mainStore = nil
         profileStore = nil
         splashStore = .init(initialState: .init()) { SplashCore() }
