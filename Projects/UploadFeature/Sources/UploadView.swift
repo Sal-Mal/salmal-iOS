@@ -60,6 +60,7 @@ public struct UploadView: View {
       .onAppear {
         viewStore.send(.onAppear)
       }
+      .toolbar(.hidden, for: .tabBar)
       .smNavigationBar(title: "사진 추가")
     } destination: { state in
       switch state {
