@@ -7,6 +7,7 @@ import Core
 import LoginFeature
 import MainFeature
 import ProfileFeature
+import UploadFeature
 
 @main
 struct SalmalApp: App {
@@ -35,6 +36,7 @@ struct SalmalApp: App {
       .onReceive(NotificationService.publisher(.login)) { _ in
         mainStore = .init(initialState: .init()) { SalMalCore() }
         profileStore = .init(initialState: .init()) { ProfileCore() }
+        uploadStore = .init(initialState: .init()) { UploadCore() }
         splashStore = nil
         
         isLogined = true
@@ -43,6 +45,7 @@ struct SalmalApp: App {
       .onReceive(NotificationService.publisher(.logout)) { _ in
         mainStore = nil
         profileStore = nil
+        uploadStore = nil
         splashStore = .init(initialState: .init()) { SplashCore() }
         
         isLogined = false
@@ -52,8 +55,9 @@ struct SalmalApp: App {
   
   @State private var mainStore: StoreOf<SalMalCore>! = .init(initialState: .init()) { SalMalCore() }
   @State private var profileStore: StoreOf<ProfileCore>! = .init(initialState: .init()) { ProfileCore() }
+  @State private var uploadStore: StoreOf<UploadCore>! = .init(initialState: .init()) { UploadCore() }
   @State private var splashStore: StoreOf<SplashCore>! = .init(initialState: .init()) { SplashCore() }
-  
+
   var MainScene: some View {
     TabView(selection: $tabIndex) {
       SalMalView(store: mainStore)
@@ -64,7 +68,7 @@ struct SalmalApp: App {
         .toolbarBackground(.hidden, for: .tabBar)
         .tag(0)
       
-      Rectangle()
+      UploadView(store: uploadStore)
         .tabItem {
           Image(icon: .ic_upload_circle)
             .fit(size: 32)
