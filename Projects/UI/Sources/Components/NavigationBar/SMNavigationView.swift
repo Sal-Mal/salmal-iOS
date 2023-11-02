@@ -65,6 +65,7 @@ public struct SMNavigationView: View {
         }
       }
     }
+    .padding(.horizontal, 16)
     .frame(height: 60, alignment: .center)
     .background(Color.ds(.black))
   }
