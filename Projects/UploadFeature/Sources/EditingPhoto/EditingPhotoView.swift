@@ -3,17 +3,17 @@ import ComposableArchitecture
 
 import UI
 
-public struct UploadEditingPhotoView: View {
+public struct EditingPhotoView: View {
 
-  private let store: StoreOf<UploadEditingPhotoCore>
-  @ObservedObject private var viewStore: ViewStoreOf<UploadEditingPhotoCore>
+  private let store: StoreOf<EditingPhotoCore>
+  @ObservedObject private var viewStore: ViewStoreOf<EditingPhotoCore>
 
   @State private var draggedOffset: CGSize = .zero
   @State private var accumulatedOffset: CGSize = .zero
   @State private var isChanging: Bool = false
   @State private var isHovering: Bool = false
 
-  public init(store: StoreOf<UploadEditingPhotoCore>) {
+  public init(store: StoreOf<EditingPhotoCore>) {
     self.store = store
     self.viewStore = ViewStore(store, observe: { $0 })
   }
@@ -96,7 +96,7 @@ public struct UploadEditingPhotoView: View {
 
       // 텍스트 설정 모달
       IfLetStore(store.scope(state: \.$uploadEditingTextState, action: { .uploadEditingText($0) })) { store in
-        UploadEditingTextView(store: store)
+        EditingTextView(store: store)
       }
     }
     .smNavigationBar(
@@ -124,7 +124,7 @@ public struct UploadEditingPhotoView: View {
   }
 }
 
-extension UploadEditingPhotoView {
+extension EditingPhotoView {
 
   @ViewBuilder
   var zzzzzzzzzzz: some View {
@@ -190,8 +190,8 @@ extension UploadEditingPhotoView {
 struct UploadEditPhotoView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
-      UploadEditingPhotoView(store: .init(initialState: .init(image: nil), reducer: {
-        UploadEditingPhotoCore()
+      EditingPhotoView(store: .init(initialState: .init(image: nil), reducer: {
+        EditingPhotoCore()
       }))
     }
     .preferredColorScheme(.dark)

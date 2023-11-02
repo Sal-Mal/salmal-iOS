@@ -3,14 +3,14 @@ import ComposableArchitecture
 
 import UI
 
-public struct UploadEditingTextView: View {
+public struct EditingTextView: View {
 
-  @FocusState var focusField: UploadEditingTextCore.State.Field?
+  @FocusState var focusField: EditingTextCore.State.Field?
 
-  private let store: StoreOf<UploadEditingTextCore>
-  @ObservedObject private var viewStore: ViewStoreOf<UploadEditingTextCore>
+  private let store: StoreOf<EditingTextCore>
+  @ObservedObject private var viewStore: ViewStoreOf<EditingTextCore>
 
-  public init(store: StoreOf<UploadEditingTextCore>) {
+  public init(store: StoreOf<EditingTextCore>) {
     self.store = store
     self.viewStore = ViewStore(store, observe: { $0 })
   }
@@ -51,7 +51,7 @@ public struct DynamicTextField: View {
   @Binding var font: Font?
   @Binding var foregroundColor: Color?
   @Binding var backgroundColor: Color?
-  var onFocused: FocusState<UploadEditingTextCore.State.Field?>.Binding
+  var onFocused: FocusState<EditingTextCore.State.Field?>.Binding
 
   private var placeholder: String = "텍스트 입력"
 
@@ -60,7 +60,7 @@ public struct DynamicTextField: View {
     font: Binding<Font?>,
     foregroundColor: Binding<Color?>,
     backgroundColor: Binding<Color?>,
-    onFocused: FocusState<UploadEditingTextCore.State.Field?>.Binding
+    onFocused: FocusState<EditingTextCore.State.Field?>.Binding
   ) {
     self._text = text
     self._font = font
@@ -108,8 +108,8 @@ public struct DynamicTextField: View {
 struct TextUploadView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
-      UploadEditingTextView(store: .init(initialState: .init(), reducer: {
-        UploadEditingTextCore()
+      EditingTextView(store: .init(initialState: .init(), reducer: {
+        EditingTextCore()
       }))
     }
     .preferredColorScheme(.dark)

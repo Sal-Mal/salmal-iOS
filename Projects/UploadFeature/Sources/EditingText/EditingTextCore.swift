@@ -5,7 +5,7 @@ import ComposableArchitecture
 import Core
 import UI
 
-public struct UploadEditingTextCore: Reducer {
+public struct EditingTextCore: Reducer {
 
   public struct State: Equatable {
     @BindingState var text: String = ""

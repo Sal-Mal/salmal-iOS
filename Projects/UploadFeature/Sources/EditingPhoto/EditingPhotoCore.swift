@@ -12,11 +12,11 @@ struct TextInformation: Equatable {
   let backgroundColor: Color?
 }
 
-public struct UploadEditingPhotoCore: Reducer {
+public struct EditingPhotoCore: Reducer {
 
   public struct State: Equatable {
 
-    @PresentationState var uploadEditingTextState: UploadEditingTextCore.State?
+    @PresentationState var uploadEditingTextState: EditingTextCore.State?
 
     var image: UIImage?
     var originalImage: UIImage?
@@ -35,7 +35,7 @@ public struct UploadEditingPhotoCore: Reducer {
     case confirmButtonTapped(any View)
     case uploadEditingTextButtonTapped
     case cancelArea
-    case uploadEditingText(PresentationAction<UploadEditingTextCore.Action>)
+    case uploadEditingText(PresentationAction<EditingTextCore.Action>)
     case filteredImageSelected(FilteredImage)
   }
 
@@ -118,7 +118,7 @@ public struct UploadEditingPhotoCore: Reducer {
       }
     }
     .ifLet(\.$uploadEditingTextState, action: /Action.uploadEditingText) {
-      UploadEditingTextCore()
+      EditingTextCore()
     }
   }
 
