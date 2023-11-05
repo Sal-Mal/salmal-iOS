@@ -11,6 +11,7 @@ enum Demo: String, CaseIterable {
   case textField = "텍스트필드"
   case navigation = "네비게이션"
   case button = "버튼"
+  case tap = "탭"
 
   @ViewBuilder var content: some View {
     switch self {
@@ -28,6 +29,8 @@ enum Demo: String, CaseIterable {
       NavigationView()
     case .button:
       ButtonView()
+    case .tap:
+      TabView()
     }
   }
 }

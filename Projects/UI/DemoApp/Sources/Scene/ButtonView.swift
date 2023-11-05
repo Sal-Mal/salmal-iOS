@@ -66,11 +66,11 @@ struct ButtonView: View {
       .cornerRadius(10)
 
       VStack {
-        SMVoteButton(title: "👍🏻 살", progress: progress, buttonState: $buttonState1) {
+        SMVoteButton(title: "👍🏻 살", progress: $progress, buttonState: $buttonState1) {
           buttonState1 = .selected
         }
 
-        SMVoteButton(title: "👎🏻 말", progress: (1 - progress), buttonState: $buttonState2) {
+        SMVoteButton(title: "👎🏻 말", progress: $progress, buttonState: $buttonState2) {
           buttonState2 = .unSelected
         }
       }

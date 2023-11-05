@@ -14,7 +14,15 @@ struct SalmalApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
   
   @State private var isLogined = false
-  @State private var tabIndex = 0
+  @State private var isUploadPresented = false
+  @State private var tabIndex: TabItem = .home
+  @State private var showTab = true
+  
+  @State private var mainStore: StoreOf<SalMalCore>! = .init(initialState: .init()) { SalMalCore() }
+  @State private var profileStore: StoreOf<ProfileCore>! = .init(initialState: .init()) { ProfileCore() }
+  @State private var uploadStore: StoreOf<UploadCore>! = .init(initialState: .init()) { UploadCore() }
+  @State private var splashStore: StoreOf<SplashCore>! = .init(initialState: .init()) { SplashCore() }
+  
   @Dependency(\.kakaoManager) var kakaoManager
   
   init() {
@@ -28,61 +36,53 @@ struct SalmalApp: App {
         if isLogined {
           MainScene
         } else {
-          SplashScene
+          MainScene
         }
       }
       .onOpenURL(perform: kakaoManager.openURL)
       .preferredColorScheme(.dark)
       .onReceive(NotificationService.publisher(.login)) { _ in
+        isLogined = true
+        
         mainStore = .init(initialState: .init()) { SalMalCore() }
         profileStore = .init(initialState: .init()) { ProfileCore() }
         uploadStore = .init(initialState: .init()) { UploadCore() }
         splashStore = nil
         
-        isLogined = true
-        tabIndex = 0
+        tabIndex = .home
       }
       .onReceive(NotificationService.publisher(.logout)) { _ in
+        isLogined = false
+        
         mainStore = nil
         profileStore = nil
         uploadStore = nil
         splashStore = .init(initialState: .init()) { SplashCore() }
-        
-        isLogined = false
       }
     }
   }
-  
-  @State private var mainStore: StoreOf<SalMalCore>! = .init(initialState: .init()) { SalMalCore() }
-  @State private var profileStore: StoreOf<ProfileCore>! = .init(initialState: .init()) { ProfileCore() }
-  @State private var uploadStore: StoreOf<UploadCore>! = .init(initialState: .init()) { UploadCore() }
-  @State private var splashStore: StoreOf<SplashCore>! = .init(initialState: .init()) { SplashCore() }
+}
 
+extension SalmalApp {
   var MainScene: some View {
-    TabView(selection: $tabIndex) {
-      SalMalView(store: mainStore)
-        .tabItem {
-          Image(icon: tabIndex == 0 ? .home_fill : .home)
-            .fit(size: 32)
-        }
-        .toolbarBackground(.hidden, for: .tabBar)
-        .tag(0)
+    VStack {
+      switch tabIndex {
+      case .home:
+        SalMalView(store: mainStore)
+      case .profile:
+        ProfileView(store: profileStore)
+      }
       
+      Spacer()
+      
+      if showTab {
+        SalMalTabBar(tabIndex: $tabIndex) {
+           isUploadPresented = true
+        }
+      }
+    }
+    .fullScreenCover(isPresented: $isUploadPresented) {
       UploadView(store: uploadStore)
-        .tabItem {
-          Image(icon: .ic_upload_circle)
-            .fit(size: 32)
-        }
-        .toolbarBackground(.hidden, for: .tabBar)
-        .tag(1)
-      
-      ProfileView(store: profileStore)
-        .tabItem {
-          Image(icon: tabIndex == 2 ? .person_fill : .person)
-            .fit(size: 32)
-        }
-        .toolbarBackground(.hidden, for: .tabBar)
-        .tag(2)
     }
   }
   

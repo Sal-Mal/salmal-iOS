@@ -16,7 +16,7 @@ struct UIApp: App {
     WindowGroup {
       ContentView()
         .environmentObject(toastManager)
-        .toast(on: $toastManager.toast)
+//        .toast(on: $toastManager.toast)
     }
   }
 }
