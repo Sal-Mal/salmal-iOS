@@ -1,13 +1,14 @@
+import UIKit
 import SwiftUI
 
 public struct SMImagePicker: UIViewControllerRepresentable {
 
   public typealias UIViewControllerType = UIImagePickerController
 
-  private let onCapture: (Data?) -> Void
+  private let onCapture: (UIImage) -> Void
   private let onDismiss: () -> Void
 
-  public init(onCapture: @escaping (Data?) -> Void, onDismiss: @escaping () -> Void) {
+  public init(onCapture: @escaping (UIImage) -> Void, onDismiss: @escaping () -> Void) {
     self.onCapture = onCapture
     self.onDismiss = onDismiss
   }
@@ -47,7 +48,7 @@ public struct SMImagePicker: UIViewControllerRepresentable {
         return
       }
 
-      delegate.onCapture(image.jpegData(compressionQuality: 0.1))
+      delegate.onCapture(image)
     }
 
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

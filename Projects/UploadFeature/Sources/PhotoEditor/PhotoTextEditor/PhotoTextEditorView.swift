@@ -3,14 +3,14 @@ import ComposableArchitecture
 
 import UI
 
-public struct EditingTextView: View {
+public struct PhotoTextEditorView: View {
 
-  @FocusState var focusField: EditingTextCore.State.Field?
+  @FocusState var focusField: PhotoTextEditorCore.State.Field?
 
-  private let store: StoreOf<EditingTextCore>
-  @ObservedObject private var viewStore: ViewStoreOf<EditingTextCore>
+  private let store: StoreOf<PhotoTextEditorCore>
+  @ObservedObject private var viewStore: ViewStoreOf<PhotoTextEditorCore>
 
-  public init(store: StoreOf<EditingTextCore>) {
+  public init(store: StoreOf<PhotoTextEditorCore>) {
     self.store = store
     self.viewStore = ViewStore(store, observe: { $0 })
   }
@@ -24,16 +24,16 @@ public struct EditingTextView: View {
         backgroundColor: viewStore.$backgroundColor,
         onFocused: $focusField
       )
-        .synchronize(viewStore.$focusField, $focusField)
-        .toolbar {
-          ToolbarItemGroup(placement: .keyboard) {
-            PaletteView(
-              selectedFont: viewStore.$font,
-              selectedForegroundColor: viewStore.$foregroundColor,
-              selectedBackgroundColor: viewStore.$backgroundColor
-            )
-          }
+      .synchronize(viewStore.$focusField, $focusField)
+      .toolbar {
+        ToolbarItemGroup(placement: .keyboard) {
+          PaletteView(
+            selectedFont: viewStore.$font,
+            selectedForegroundColor: viewStore.$foregroundColor,
+            selectedBackgroundColor: viewStore.$backgroundColor
+          )
         }
+      }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(Color.ds(.black50))
@@ -48,19 +48,19 @@ public struct DynamicTextField: View {
 
   @State private var textRect = CGRect()
   @Binding var text: String
-  @Binding var font: Font?
-  @Binding var foregroundColor: Color?
-  @Binding var backgroundColor: Color?
-  var onFocused: FocusState<EditingTextCore.State.Field?>.Binding
+  @Binding var font: Font
+  @Binding var foregroundColor: Color
+  @Binding var backgroundColor: Color
+  var onFocused: FocusState<PhotoTextEditorCore.State.Field?>.Binding
 
   private var placeholder: String = "텍스트 입력"
 
   public init(
     text: Binding<String>,
-    font: Binding<Font?>,
-    foregroundColor: Binding<Color?>,
-    backgroundColor: Binding<Color?>,
-    onFocused: FocusState<EditingTextCore.State.Field?>.Binding
+    font: Binding<Font>,
+    foregroundColor: Binding<Color>,
+    backgroundColor: Binding<Color>,
+    onFocused: FocusState<PhotoTextEditorCore.State.Field?>.Binding
   ) {
     self._text = text
     self._font = font
@@ -108,8 +108,8 @@ public struct DynamicTextField: View {
 struct TextUploadView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
-      EditingTextView(store: .init(initialState: .init(), reducer: {
-        EditingTextCore()
+      PhotoTextEditorView(store: .init(initialState: .init(), reducer: {
+        PhotoTextEditorCore()
       }))
     }
     .preferredColorScheme(.dark)

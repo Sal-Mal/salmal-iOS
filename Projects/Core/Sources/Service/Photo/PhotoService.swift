@@ -1,5 +1,6 @@
 import Foundation
 import ComposableArchitecture
+import SwiftUI
 import PhotosUI
 
 public final class PhotoService: NSObject {
@@ -9,6 +10,11 @@ public final class PhotoService: NSObject {
 
   private override init() {}
 
+  public func requestAuthorization() async -> PHAuthorizationStatus {
+    let status = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+    return status
+  }
+
   public func albums(
     size: CGSize,
     contentMode: PHImageContentMode = .aspectFit
@@ -16,6 +22,7 @@ public final class PhotoService: NSObject {
     return await withCheckedContinuation { continuation in
       let fetchOptions = PHFetchOptions()
       fetchOptions.predicate = .init(format: "mediaType == %d", PHAssetMediaType.image.rawValue)
+      fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
       let fetchResult = PHAsset.fetchAssets(with: fetchOptions)
 
       guard fetchResult.count > 0 else {
@@ -73,5 +80,26 @@ public extension DependencyValues {
   var photoService: PhotoService {
     get { self[PhotoServiceKey.self] }
     set { self[PhotoServiceKey.self] = newValue }
+  }
+}
+
+extension View {
+
+  public func snapshot() -> UIImage {
+    let controller = UIHostingController(rootView: self.edgesIgnoringSafeArea(.all))
+    let view = controller.view
+    let targetSize = controller.view.intrinsicContentSize
+    let aspectRatio = targetSize.height / targetSize.width
+    let imageSizeWidth = UIScreen.main.bounds.width - 32
+    let imageSizeHeight = floor(imageSizeWidth * aspectRatio)
+    let imageSize = CGSize(width: imageSizeWidth, height: imageSizeHeight)
+
+    view?.bounds = CGRect(origin: .zero, size: imageSize)
+    view?.backgroundColor = .clear
+
+    let renderer = UIGraphicsImageRenderer(size: imageSize)
+    return renderer.image { _ in
+      view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+    }
   }
 }
