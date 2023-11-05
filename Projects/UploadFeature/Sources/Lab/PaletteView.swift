@@ -201,7 +201,6 @@ public struct PaletteView: View {
     }
     .frame(height: 50)
     .frame(maxWidth: .infinity)
-    .debug()
   }
 
   func changePaletteType(_ type: PaletteType) {

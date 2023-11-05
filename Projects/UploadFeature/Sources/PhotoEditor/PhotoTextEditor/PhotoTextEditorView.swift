@@ -16,22 +16,24 @@ public struct PhotoTextEditorView: View {
   }
 
   public var body: some View {
-    VStack {
-      DynamicTextField(
-        text: viewStore.$text,
-        font: viewStore.$font,
-        foregroundColor: viewStore.$foregroundColor,
-        backgroundColor: viewStore.$backgroundColor,
-        onFocused: $focusField
-      )
-      .synchronize(viewStore.$focusField, $focusField)
-      .toolbar {
-        ToolbarItemGroup(placement: .keyboard) {
-          PaletteView(
-            selectedFont: viewStore.$font,
-            selectedForegroundColor: viewStore.$foregroundColor,
-            selectedBackgroundColor: viewStore.$backgroundColor
-          )
+    NavigationStack {
+      VStack {
+        DynamicTextField(
+          text: viewStore.$text,
+          font: viewStore.$font,
+          foregroundColor: viewStore.$foregroundColor,
+          backgroundColor: viewStore.$backgroundColor,
+          onFocused: $focusField
+        )
+        .synchronize(viewStore.$focusField, $focusField)
+        .toolbar {
+          ToolbarItemGroup(placement: .keyboard) {
+            PaletteView(
+              selectedFont: viewStore.$font,
+              selectedForegroundColor: viewStore.$foregroundColor,
+              selectedBackgroundColor: viewStore.$backgroundColor
+            )
+          }
         }
       }
     }
@@ -107,11 +109,9 @@ public struct DynamicTextField: View {
 
 struct TextUploadView_Previews: PreviewProvider {
   static var previews: some View {
-    NavigationStack {
-      PhotoTextEditorView(store: .init(initialState: .init(), reducer: {
-        PhotoTextEditorCore()
-      }))
-    }
+    PhotoTextEditorView(store: .init(initialState: .init(), reducer: {
+      PhotoTextEditorCore()
+    }))
     .preferredColorScheme(.dark)
   }
 }

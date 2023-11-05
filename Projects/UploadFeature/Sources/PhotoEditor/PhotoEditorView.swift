@@ -174,11 +174,9 @@ struct PhotoView: View {
 
 struct UploadEditPhotoView_Previews: PreviewProvider {
   static var previews: some View {
-    NavigationStack {
-      PhotoEditorView(store: .init(initialState: .init(uiImage: nil), reducer: {
-        PhotoEditorCore()
-      }))
-    }
+    PhotoEditorView(store: .init(initialState: .init(uiImage: nil), reducer: {
+      PhotoEditorCore()
+    }))
     .preferredColorScheme(.dark)
     .onAppear {
       SM.Font.initFonts()

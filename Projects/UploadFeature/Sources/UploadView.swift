@@ -74,7 +74,6 @@ public struct UploadView: View {
       )
       .onDisappear { viewStore.send(._onDisappear) }
     }
-    .toolbar(.hidden, for: .navigationBar, .tabBar)
   }
 
   private var sortTopNavigationBar: some View {
