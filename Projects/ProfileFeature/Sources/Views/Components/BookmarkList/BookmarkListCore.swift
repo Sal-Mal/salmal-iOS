@@ -14,6 +14,10 @@ public struct BookmarkListCore: Reducer {
   public enum Action {
     case bookmarkTapped(Vote)
     case dismissButtonTapped
+
+    case _onAppear
+
+    case _setBookmarkList([Vote])
   }
 
   @Dependency(\.dismiss) var dismiss
@@ -32,6 +36,19 @@ public struct BookmarkListCore: Reducer {
         return .run { send in
           await dismiss()
         }
+
+      case ._onAppear:
+        return .run { send in
+          let bookmarks = try await memberRepository.bookmarks(cursorId: nil, size: 100)
+          await send(._setBookmarkList(bookmarks))
+
+        } catch: { error, send in
+          print(error)
+        }
+
+      case ._setBookmarkList(let votes):
+        state.bookmarkedList.append(contentsOf: votes)
+        return .none
       }
     }
   }

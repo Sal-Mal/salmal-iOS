@@ -8,7 +8,7 @@ public struct UploadListCore: Reducer {
   public struct State: Equatable {
     @BindingState var isDeletionPresented: Bool = false
 
-    var votes: [Vote] = VoteListResponseDTO.mock.votes.map(\.toDomain)
+    var votes: IdentifiedArrayOf<Vote> = []
 
     public init() {}
   }
@@ -18,9 +18,15 @@ public struct UploadListCore: Reducer {
     case dismissButtonTapped
     case confirmButtonTapped
     case removeVoteTapped(Vote)
+
+    case _onAppear
+
+    case _setVotes([Vote])
   }
 
   @Dependency(\.dismiss) var dismiss
+  @Dependency(\.memberRepository) var memberRepository: MemberRepository
+  @Dependency(\.userDefault) var userDefault
 
   public init() {}
 
@@ -41,6 +47,16 @@ public struct UploadListCore: Reducer {
 
       case .removeVoteTapped(let vote):
         state.votes.removeAll(where: { $0.id == vote.id })
+        return .none
+
+      case ._onAppear:
+        return .run { send in
+          let votes = try await memberRepository.votes(memberID: userDefault.memberID!, cursorId: nil, size: 100)
+          await send(._setVotes(votes))
+        }
+
+      case ._setVotes(let votes):
+        state.votes.append(contentsOf: votes)
         return .none
       }
     }

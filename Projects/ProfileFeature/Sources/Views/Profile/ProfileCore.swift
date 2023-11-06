@@ -62,7 +62,20 @@ public struct ProfileCore: Reducer {
 
       case .setTab(let tab):
         state.tab = tab
-        return .none
+
+        switch tab {
+        case .uploads:
+          return .run { send in
+            let votes = try await memberRepository.votes(memberID: userDefault.memberID!, cursorId: nil, size: 100)
+            await send(.setVotes(votes))
+          }
+
+        case .votes:
+          return .run { send in
+            let evaluations = try await memberRepository.evaluations(cursorId: nil, size: 100)
+            await send(.setEvaluations(evaluations))
+          }
+        }
 
       case .setMember(let member):
         state.member = member

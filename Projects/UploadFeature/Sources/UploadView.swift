@@ -17,11 +17,14 @@ public struct UploadView: View {
     GridItem(.flexible())
   ]
 
+  @Environment(\.dismiss) var dismiss
+
   public var body: some View {
     WithViewStore(store, observe: { $0 }) { viewStore in
       VStack(spacing: 0) {
         SMNavigationView(title: "사진 추가", rightIcon: Image(icon: .xmark)) {
           viewStore.send(.backButtonTapped)
+          dismiss()
         }
 
         ZStack {

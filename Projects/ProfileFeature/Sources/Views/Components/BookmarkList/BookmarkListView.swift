@@ -34,6 +34,9 @@ struct BookmarkListView: View {
         }
       } rightItems: {
       }
+      .onAppear {
+        viewStore.send(._onAppear)
+      }
     }
   }
 

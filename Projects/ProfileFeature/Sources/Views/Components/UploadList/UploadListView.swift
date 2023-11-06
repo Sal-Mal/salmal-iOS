@@ -16,7 +16,7 @@ struct UploadListView: View {
       ScrollView {
         LazyVGrid(columns: [.init(), .init()], spacing: 8) {
           ForEach(viewStore.votes, id: \.id) { vote in
-            AsyncImage(url: URL(string: vote.imageURL)) { phase in
+            CacheAsyncImage(url: URL(string: vote.imageURL)!) { phase in
               switch phase {
               case .success(let image):
                 image
@@ -73,6 +73,9 @@ struct UploadListView: View {
             .foregroundColor(.ds(.green1))
             .font(.ds(.title2(.semibold)))
         }
+      }
+      .onAppear {
+        viewStore.send(._onAppear)
       }
     }
   }

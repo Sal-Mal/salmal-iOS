@@ -21,9 +21,9 @@ public protocol MemberRepository {
   /// 회원이 작성한 투표 목록 조회
   func votes(memberID: Int, cursorId: Int?, size: Int) async throws -> [Vote]
   /// 회원이 투표한 목록 조회
-  func evaluations(cursorId: Int, size: Int) async throws -> [Vote]
+  func evaluations(cursorId: Int?, size: Int) async throws -> [Vote]
   /// 회원이 북마크한 목록 조회
-  func bookmarks(cursorId: Int, size: Int) async throws -> [Vote]
+  func bookmarks(cursorId: Int?, size: Int) async throws -> [Vote]
 }
 
 
@@ -111,7 +111,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     return response.votes.map { $0.toDomain }
   }
 
-  public func evaluations(cursorId: Int, size: Int) async throws -> [Vote] {
+  public func evaluations(cursorId: Int?, size: Int) async throws -> [Vote] {
     guard let id = userDefault.memberID else {
       throw SMError.network(.default)
     }
@@ -121,7 +121,7 @@ public final class MemberRepositoryImpl: MemberRepository {
     return response.votes.map { $0.toDomain }
   }
 
-  public func bookmarks(cursorId: Int, size: Int) async throws -> [Vote] {
+  public func bookmarks(cursorId: Int?, size: Int) async throws -> [Vote] {
     guard let id = userDefault.memberID else {
       throw SMError.network(.default)
     }

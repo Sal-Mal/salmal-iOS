@@ -11,7 +11,7 @@ public enum MemberAPI {
   case delete(id: Int)
   /// 회원 차단
   case block(id: Int)
-  /// 회원 차단해제
+  /// 회원 차단 취소
   case unBlock(id: Int)
   /// 회원이 차단한 회원 목록 조회
   case fetchBlocks(id: Int, cursorId: Int?, size: Int)
@@ -56,9 +56,17 @@ extension MemberAPI: TargetType {
         return "members/\(id)/votes?size=\(size)"
       }
     case let .fetchEvaluations(id, cursorId, size):
-      return "members/\(id)/evaluations?cursor-id=\(cursorId)&size=\(size)"
+      if let cursorId {
+        return "members/\(id)/evaluations?cursor-id=\(cursorId)&size=\(size)"
+      } else {
+        return "members/\(id)/evaluations?size=\(size)"
+      }
     case let .fetchBookmarks(id, cursorId, size):
-      return "members/\(id)/bookmarks?cursor-id=\(cursorId)&size=\(size)"
+      if let cursorId {
+        return "members/\(id)/bookmarks?cursor-id=\(cursorId)&size=\(size)"
+      } else {
+        return "members/\(id)/bookmarks?size=\(size)"
+      }
     }
   }
   

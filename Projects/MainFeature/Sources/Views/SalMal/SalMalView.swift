@@ -60,7 +60,6 @@ public struct SalMalView: View {
           /SalMalCore.Path.State.alarmScreen,
            action: SalMalCore.Path.Action.alarmScreen) { store in
              AlarmView(store: store)
-               .toolbar(.hidden, for: .tabBar)
            }
         
       case .otherProfileScreen:
@@ -68,7 +67,6 @@ public struct SalMalView: View {
           /SalMalCore.Path.State.otherProfileScreen,
            action: SalMalCore.Path.Action.otherProfileScreen) { store in
              OtherProfileView(store: store)
-               .toolbar(.hidden, for: .tabBar)
            }
         
       case .salmalDetailScreen:
@@ -76,7 +74,6 @@ public struct SalMalView: View {
           /SalMalCore.Path.State.salmalDetailScreen,
            action: SalMalCore.Path.Action.salmalDetailScreen) { store in
              SalMalDetailView(store: store)
-               .toolbar(.hidden, for: .tabBar)
            }
       }
     }
