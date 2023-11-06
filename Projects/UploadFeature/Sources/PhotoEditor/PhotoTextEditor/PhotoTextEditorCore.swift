@@ -5,15 +5,14 @@ import ComposableArchitecture
 import Core
 import UI
 
-public struct UploadEditingTextCore: Reducer {
+public struct PhotoTextEditorCore: Reducer {
 
   public struct State: Equatable {
-    @BindingState var text: String = ""
     @BindingState var focusField: Field?
-
-    @BindingState var font: Font? = .ds(.title2(.medium))
-    @BindingState var foregroundColor: Color? = .ds(.white)
-    @BindingState var backgroundColor: Color? = .clear
+    @BindingState var text: String = ""
+    @BindingState var font: Font = .ds(.title2(.medium))
+    @BindingState var foregroundColor: Color = .ds(.white)
+    @BindingState var backgroundColor: Color = .clear
 
     public init() {}
 

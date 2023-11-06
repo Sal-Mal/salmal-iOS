@@ -172,8 +172,8 @@ public struct ProfileEditView: View {
         viewStore.send(.onAppear)
       }
       .sheet(isPresented: viewStore.$isTakePhotoPresented) {
-        SMImagePicker { data in
-          viewStore.send(.setImage(data))
+        SMImagePicker { uiImage in
+          viewStore.send(.setImage(uiImage.jpegData(compressionQuality: 1)!))
         } onDismiss: {
           viewStore.send(.cancelTakePhotoButtonTapped)
         }

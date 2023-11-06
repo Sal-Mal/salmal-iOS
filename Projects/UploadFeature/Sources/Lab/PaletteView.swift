@@ -116,9 +116,9 @@ public struct PaletteView: View {
 
   @State private var paletteType: PaletteType = .font
 
-  @Binding var selectedFont: Font?
-  @Binding var selectedForegroundColor: Color?
-  @Binding var selectedBackgroundColor: Color?
+  @Binding var selectedFont: Font
+  @Binding var selectedForegroundColor: Color
+  @Binding var selectedBackgroundColor: Color
 
   public var body: some View {
     HStack(spacing: 20) {
@@ -201,7 +201,6 @@ public struct PaletteView: View {
     }
     .frame(height: 50)
     .frame(maxWidth: .infinity)
-    .debug()
   }
 
   func changePaletteType(_ type: PaletteType) {

@@ -1,47 +1,45 @@
 import UIKit
 import ComposableArchitecture
+import Photos
+
+import Core
 
 public struct UploadCore: Reducer {
 
   public struct State: Equatable {
+    @PresentationState var destination: Destination.State?
+    @BindingState var isCameraSheetPresented: Bool = false
+    @BindingState var isPhotoLibraryAuthorized: Bool = false
 
-    struct UploadImageMenu: Equatable, Identifiable {
-      enum UploadType {
-        case takePhoto
-        case library
-      }
-
-      let id: UUID = .init()
-      let type: UploadType
-      var uiImage: UIImage?
-    }
-
-    public enum UploadImageSortingType: String, CaseIterable {
-      case recent = "최근"
-      case like = "좋아요 수"
-    }
-
-    @BindingState var isSortingPresented: Bool = false
-    @BindingState var sortingType: UploadImageSortingType = .recent
-    var path = StackState<Path.State>()
-    var imageMenus: [UploadImageMenu] = [.init(type: .takePhoto)]
+    var menus: [UploadMenu] = [UploadMenu(type: .camera)]
 
     public init() {}
   }
 
   public enum Action: BindableAction {
-    case onAppear
-    case binding(BindingAction<State>)
-    case path(StackAction<Path.State, Path.Action>)
+    // MARK: - 외부 Action
     case backButtonTapped
-    case sortingButtonTapped
-    case takePhotoButtonTapped
-    case libraryPhotoSelected(UIImage?)
-    case setImageMenus([UIImage])
+    case selectPhotoAlbumButtonTapped
+    case menuTapped(UploadMenu)
+    case cameraTakeButtonTapped(UIImage)
+    case cameraCancelButtonTapped
+
+    // MARK: - 내부 Action
+    case _onAppear
+    case _requestPhotoLibraryAuthorization
+    case _requestPhotoLibraryAuthorizationResponse(PHAuthorizationStatus)
+    case _fetchPhotoLibrary
+    case _fetchPhotoLibraryResponse([UIImage])
+    case _onDisappear
+
+    // MARK: - 기타 Action
+    case destination(PresentationAction<Destination.Action>)
+    case binding(BindingAction<State>)
   }
 
   @Dependency(\.dismiss) var dismiss
   @Dependency(\.photoService) var photoService
+  @Dependency(\.toastManager) var toastManager
 
   public init() {}
 
@@ -49,60 +47,95 @@ public struct UploadCore: Reducer {
     BindingReducer()
     Reduce { state, action in
       switch action {
-      case .onAppear:
+      case .backButtonTapped:
         return .run { send in
-          let images = await photoService.albums(size: .init(width: 200, height: 200))
-          await send(.setImageMenus(images))
+          await dismiss()
         }
+
+      case .selectPhotoAlbumButtonTapped:
+        state.destination = .photoAlbum(.init())
+        return .none
+
+      case .menuTapped(let menu):
+        if menu.type == .camera {
+          state.isCameraSheetPresented = true
+          return .none
+
+        } else {
+          guard let uiImage = menu.uiImage else { return .none }
+          state.destination = .photoEditor(.init(uiImage: uiImage))
+          return .none
+        }
+
+      case .cameraTakeButtonTapped(let uiImage):
+        return .send(.menuTapped(.init(type: .library, uiImage: uiImage)))
+
+      case .cameraCancelButtonTapped:
+        state.isCameraSheetPresented = false
+        return .none
+
+      case ._onAppear:
+        return .send(._requestPhotoLibraryAuthorization)
+
+      case ._requestPhotoLibraryAuthorization:
+        return .run { send in
+          let status = await photoService.requestAuthorization()
+          await send(._requestPhotoLibraryAuthorizationResponse(status))
+        }
+
+      case ._requestPhotoLibraryAuthorizationResponse(let status):
+        switch status {
+        case .authorized:
+          state.isPhotoLibraryAuthorized = true
+          return .send(._fetchPhotoLibrary)
+
+        default:
+          state.isPhotoLibraryAuthorized = false
+          return .none
+        }
+
+      case ._fetchPhotoLibrary:
+        return .run { send in
+          let uiImages = await photoService.albums(size: .init(width: 1024, height: 1024)) // 앨범 이미지 사이즈? 화질 저하의 원인
+          await send(._fetchPhotoLibraryResponse(uiImages))
+        }
+
+      case ._fetchPhotoLibraryResponse(let uiImages):
+        var menus = [UploadMenu(type: .camera)]
+        menus += uiImages.map { UploadMenu(type: .library, uiImage: $0) }
+        state.menus = menus
+        return .none
+
+      case ._onDisappear:
+        return .none
+
+      case .destination(.presented(.photoEditor(.delegate(.savePhoto)))):
+        return .send(._fetchPhotoLibrary)
+
+      case .destination:
+        return .none
 
       case .binding:
         return .none
-
-      case .path:
-        return .none
-
-      case .backButtonTapped:
-        return .run { send in
-          await dismiss(animation: .default)
-        }
-
-      case .sortingButtonTapped:
-        state.isSortingPresented = true
-        return .none
-
-      case .takePhotoButtonTapped:
-        print("촬영 버튼 클릭")
-        return .none
-
-      case .libraryPhotoSelected(let image):
-        state.path.append(.uploadEditingPhoto(.init(image: image)))
-        return .none
-
-      case .setImageMenus(let images):
-        let imageMenus = [.init(type: .takePhoto)] + images.map { State.UploadImageMenu(type: .library, uiImage: $0) }
-        state.imageMenus = imageMenus
-        return .none
       }
     }
-    .forEach(\.path, action: /Action.path) {
-      Path()
-    }
+    .ifLet(\.$destination, action: /Action.destination) { Destination() }
   }
 
-
-  public struct Path: Reducer, Equatable {
+  public struct Destination: Reducer {
     public enum State: Equatable {
-      case uploadEditingPhoto(UploadEditingPhotoCore.State?)
-    }
-    public enum Action {
-      case uploadEditingPhoto(UploadEditingPhotoCore.Action)
+      case photoAlbum(PhotoAlbumCore.State)
+      case photoEditor(PhotoEditorCore.State)
     }
 
-    public var body: some ReducerOf<Self> {
-      Scope(state: /State.uploadEditingPhoto, action: /Action.uploadEditingPhoto) {
-        UploadEditingPhotoCore()
-      }
+    public enum Action {
+      case photoAlbum(PhotoAlbumCore.Action)
+      case photoEditor(PhotoEditorCore.Action)
+    }
+
+    public var body: some ReducerOf<Destination> {
+      Scope(state: /State.photoAlbum, action: /Action.photoAlbum) { PhotoAlbumCore() }
+      Scope(state: /State.photoEditor, action: /Action.photoEditor) { PhotoEditorCore() }
     }
   }
-
 }

@@ -1,152 +1,147 @@
 import SwiftUI
 import ComposableArchitecture
 
+import UI
+
 public struct UploadView: View {
 
   private let store: StoreOf<UploadCore>
-  @ObservedObject private var viewStore: ViewStoreOf<UploadCore>
 
   public init(store: StoreOf<UploadCore>) {
     self.store = store
-    self.viewStore = ViewStore(store, observe: { $0 })
   }
 
+  private let columns = [
+    GridItem(.flexible()),
+    GridItem(.flexible()),
+    GridItem(.flexible())
+  ]
 
   public var body: some View {
-    NavigationStackStore(store.scope(state: \.path, action: { .path($0) })) {
-      VStack {
-        // 상단바
-        HStack {
-          Button {
-            viewStore.send(.sortingButtonTapped)
-          } label: {
-            HStack {
-              Text(viewStore.sortingType.rawValue)
-                .font(.ds(.title4(.medium)))
-
-              Image(systemName: "chevron.down")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 10, height: 10)
-            }
-            .foregroundColor(.ds(.white))
-          }
-
-          Spacer()
-        }
-        .padding(.horizontal, 18)
-        .frame(height: 24)
-        .sheet(isPresented: viewStore.$isSortingPresented) {
-          UploadImageSortingBottomSheet(sortingType: viewStore.$sortingType)
-            .presentationDetents([.fraction(0.3)])
-            .presentationDragIndicator(.visible)
+    WithViewStore(store, observe: { $0 }) { viewStore in
+      VStack(spacing: 0) {
+        SMNavigationView(title: "사진 추가", rightIcon: Image(icon: .xmark)) {
+          viewStore.send(.backButtonTapped)
         }
 
-        // 하단 이미지
-        ScrollView(showsIndicators: false) {
-          LazyVGrid(columns: [.init(), .init(), .init()]) {
-            ForEach(viewStore.imageMenus) { imageMenu in
-              UploadImageMenuView(imageMenu: imageMenu) {
-                viewStore.send(.takePhotoButtonTapped)
+        ZStack {
+          if viewStore.isPhotoLibraryAuthorized {
+            VStack(spacing: 0) {
+              sortTopNavigationBar
 
-              } onSelected: { uiImage in
-                viewStore.send(.libraryPhotoSelected(uiImage))
+              ScrollView(showsIndicators: false) {
+                LazyVGrid(columns: columns) {
+                  ForEach(viewStore.menus) { menu in
+                    UploadMenuView(menu: menu)
+                      .onTapGesture { viewStore.send(.menuTapped(menu)) }
+                  }
+                }
+                .padding(.horizontal, 5)
               }
             }
+          } else {
+            VStack(spacing: 16) {
+              Text("사진 접근 권한을 허용해주세요")
+                .font(.ds(.title2(.semibold)))
+                .foregroundColor(.ds(.white))
+
+              Text("더 쉽게 편하게 사진을 올릴 수 있어요.")
+                .font(.ds(.title4(.medium)))
+                .foregroundColor(.ds(.gray3))
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.ds(.black))
           }
-          .padding(.horizontal, 5)
         }
       }
-      .onAppear {
-        viewStore.send(.onAppear)
+      .onAppear { viewStore.send(._onAppear) }
+      .fullScreenCover(isPresented: viewStore.$isCameraSheetPresented) {
+        SMImagePicker {
+          viewStore.send(.cameraTakeButtonTapped($0))
+        } onDismiss: { viewStore.send(.cameraCancelButtonTapped) }
       }
-      .toolbar(.hidden, for: .tabBar)
-      .smNavigationBar(title: "사진 추가")
-    } destination: { state in
-      switch state {
-      case .uploadEditingPhoto:
-        CaseLet(
-          /UploadCore.Path.State.uploadEditingPhoto,
-           action: UploadCore.Path.Action.uploadEditingPhoto,
-           then: UploadEditingPhotoView.init(store:)
-        )
+      .sheet(
+        store: store.scope(state: \.$destination, action: { .destination($0) }),
+        state: /UploadCore.Destination.State.photoAlbum,
+        action: UploadCore.Destination.Action.photoAlbum,
+        content: PhotoAlbumView.init(store:)
+      )
+      .fullScreenCover(
+        store: store.scope(state: \.$destination, action: { .destination($0) }),
+        state: /UploadCore.Destination.State.photoEditor,
+        action: UploadCore.Destination.Action.photoEditor,
+        content: PhotoEditorView.init(store:)
+      )
+      .onDisappear { viewStore.send(._onDisappear) }
+    }
+  }
+
+  private var sortTopNavigationBar: some View {
+    WithViewStore(store, observe: { $0 }) { viewStore in
+      HStack {
+        Button {
+          viewStore.send(.selectPhotoAlbumButtonTapped)
+        } label: {
+          HStack {
+            Text("최근")
+              .font(.ds(.title4(.medium)))
+
+            Image(systemName: "chevron.down")
+              .resizable()
+              .scaledToFit()
+              .frame(width: 10, height: 10)
+          }
+          .foregroundColor(.ds(.white))
+        }
+
+        Spacer()
       }
+      .padding(.horizontal, 18)
+      .frame(height: 24)
     }
   }
 }
 
-
-struct UploadImageMenuView: View {
-
-  let imageMenu: UploadCore.State.UploadImageMenu
-  let takePhotoAction: () -> Void
-  let onSelected: (UIImage?) -> Void
+private struct UploadMenuView: View {
+  let menu: UploadMenu
 
   var body: some View {
-    if imageMenu.type == .takePhoto {
-      Button {
-        takePhotoAction()
-      } label: {
-        Rectangle()
-          .fill(Color.ds(.black))
-          .aspectRatio(0.64, contentMode: .fit)
-          .cornerRadius(6)
-          .overlay {
-            VStack(spacing: 5) {
-              Image(icon: .camera)
-              Text("촬영")
-                .font(.ds(.title4(.medium)))
-                .foregroundColor(.ds(.white))
-            }
+    if menu.type == .camera {
+      Rectangle()
+        .fill(Color.ds(.black))
+        .aspectRatio(0.64, contentMode: .fit)
+        .cornerRadius(6)
+        .overlay {
+          VStack(spacing: 5) {
+            Image(icon: .camera)
+            Text("촬영")
+              .font(.ds(.title4(.medium)))
+              .foregroundColor(.ds(.white))
           }
-      }
+        }
 
     } else {
-      Button {
-        onSelected(imageMenu.uiImage)
-      } label: {
-        if let uiImage = imageMenu.uiImage {
-          Image(uiImage: uiImage)
-            .resizable()
-            .aspectRatio(0.64, contentMode: .fit)
-            .cornerRadius(6)
+      if let uiImage = menu.uiImage {
+        Image(uiImage: uiImage)
+          .resizable()
+          .aspectRatio(0.64, contentMode: .fit)
+          .cornerRadius(6)
 
-        } else {
-          Rectangle()
-            .fill(Color.ds(.gray1))
-            .aspectRatio(0.64, contentMode: .fit)
-            .cornerRadius(6)
-        }
+      } else {
+        Rectangle()
+          .fill(Color.ds(.gray1))
+          .aspectRatio(0.64, contentMode: .fit)
+          .cornerRadius(6)
       }
     }
   }
 }
-
-struct UploadImageSortingBottomSheet: View {
-
-  @Binding var sortingType: UploadCore.State.UploadImageSortingType
-
-  var body: some View {
-    Picker("", selection: $sortingType) {
-      ForEach(UploadCore.State.UploadImageSortingType.allCases, id: \.self) { type in
-        Text(type.rawValue)
-          .foregroundColor(.ds(.white))
-          .font(.ds(.title2(.semibold)))
-      }
-    }
-    .pickerStyle(.inline)
-  }
-
-}
-
 
 struct UploadView_Previews: PreviewProvider {
   static var previews: some View {
-    NavigationStack {
-      UploadView(store: .init(initialState: .init(), reducer: {
-        UploadCore()._printChanges()
-      }))
-    }
+    UploadView(store: .init(initialState: .init(), reducer: {
+      UploadCore()._printChanges()
+    }))
     .preferredColorScheme(.dark)
   }
 }

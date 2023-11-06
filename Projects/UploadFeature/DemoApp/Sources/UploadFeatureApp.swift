@@ -12,12 +12,10 @@ struct UploadFeatureApp: App {
 
   var body: some Scene {
     WindowGroup {
-      NavigationStack {
-        UploadView(store: .init(initialState: .init(), reducer: {
-          UploadCore()
-            ._printChanges()
-        }))
-      }
+      UploadView(store: .init(initialState: .init(), reducer: {
+        UploadCore()
+          ._printChanges()
+      }))
     }
   }
 }
