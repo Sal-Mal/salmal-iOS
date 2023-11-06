@@ -36,7 +36,7 @@ struct SalmalApp: App {
         if isLogined {
           MainScene
         } else {
-          MainScene
+          SplashScene
         }
       }
       .onOpenURL(perform: kakaoManager.openURL)

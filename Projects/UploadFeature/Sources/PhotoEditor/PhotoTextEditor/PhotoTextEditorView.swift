@@ -16,24 +16,22 @@ public struct PhotoTextEditorView: View {
   }
 
   public var body: some View {
-    NavigationStack {
-      VStack {
-        DynamicTextField(
-          text: viewStore.$text,
-          font: viewStore.$font,
-          foregroundColor: viewStore.$foregroundColor,
-          backgroundColor: viewStore.$backgroundColor,
-          onFocused: $focusField
-        )
-        .synchronize(viewStore.$focusField, $focusField)
-        .toolbar {
-          ToolbarItemGroup(placement: .keyboard) {
-            PaletteView(
-              selectedFont: viewStore.$font,
-              selectedForegroundColor: viewStore.$foregroundColor,
-              selectedBackgroundColor: viewStore.$backgroundColor
-            )
-          }
+    VStack {
+      DynamicTextField(
+        text: viewStore.$text,
+        font: viewStore.$font,
+        foregroundColor: viewStore.$foregroundColor,
+        backgroundColor: viewStore.$backgroundColor,
+        onFocused: $focusField
+      )
+      .synchronize(viewStore.$focusField, $focusField)
+      .toolbar {
+        ToolbarItemGroup(placement: .keyboard) {
+          PaletteView(
+            selectedFont: viewStore.$font,
+            selectedForegroundColor: viewStore.$foregroundColor,
+            selectedBackgroundColor: viewStore.$backgroundColor
+          )
         }
       }
     }

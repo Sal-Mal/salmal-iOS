@@ -110,7 +110,9 @@ public struct UploadCore: Reducer {
         return .none
 
       case .destination(.presented(.photoEditor(.delegate(.savePhoto)))):
-        return .send(._fetchPhotoLibrary)
+        return .run { send in
+          await dismiss()
+        }
 
       case .destination:
         return .none

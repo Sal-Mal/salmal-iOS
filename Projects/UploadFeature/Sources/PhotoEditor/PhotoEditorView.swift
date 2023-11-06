@@ -14,71 +14,73 @@ public struct PhotoEditorView: View {
 
   public var body: some View {
     WithViewStore(store, observe: { $0 }) { viewStore in
-      VStack(spacing: 0) {
-        SMNavigationView(
-          leftText: "취소",
-          leftAction: {
-            viewStore.send(.backButtonTapped)
-          },
-          rightText: "확인",
-          rightAction: {
-            viewStore.send(.confirmButtonTapped(photoView))
-          }
-        )
-
-        ZStack {
-          // 이미지 필터링
-          VStack(spacing: 0) {
-            // 메인 사진
-            photoView
-              .padding(.horizontal, 16)
-
-            Spacer().frame(height: 12)
-
-            if viewStore.isChanging {
-              VStack {
-                Circle()
-                  .stroke(style: .init(lineWidth: 1))
-                  .frame(width: 42, height: 42)
-                  .scaleEffect(viewStore.isHovering ? 1.2 : 1)
-                  .animation(.spring(response: 0.2, dampingFraction: 0.9), value: viewStore.isHovering)
-                  .overlay {
-                    Image(icon: .xmark_circle)
-                      .renderingMode(.template)
-                      .foregroundColor(.ds(.white))
-                  }
-              }
-              .frame(height: 200)
-              .frame(maxWidth: .infinity)
-              .background(Color.clear)
-
-            } else {
-              VStack {
-                filteredPhotoScrollView
-
-                Spacer().frame(height: 24)
-
-                PhotoEditorTextAddButton {
-                  viewStore.send(.addTextButtonTapped, animation: .linear(duration: 0.2))
-                }
-
-                Spacer().frame(height: 30)
-              }
-              .frame(height: 200)
+      NavigationStack {
+        VStack(spacing: 0) {
+          SMNavigationView(
+            leftText: "취소",
+            leftAction: {
+              viewStore.send(.backButtonTapped)
+            },
+            rightText: "확인",
+            rightAction: {
+              viewStore.send(.confirmButtonTapped(photoView))
             }
-          }
-          .ignoresSafeArea(.keyboard, edges: .bottom)
-
-          // 텍스트 설정 모달
-          IfLetStore(
-            store.scope(state: \.$destination, action: { .destination($0) }),
-            state: /PhotoEditorCore.Destination.State.photoTextEditor,
-            action: PhotoEditorCore.Destination.Action.photoTextEditor,
-            then: PhotoTextEditorView.init(store:)
           )
-        }
-        .onAppear {
-          viewStore.send(._onAppear)
+
+          ZStack {
+            // 이미지 필터링
+            VStack(spacing: 0) {
+              // 메인 사진
+              photoView
+                .padding(.horizontal, 16)
+
+              Spacer().frame(height: 12)
+
+              if viewStore.isChanging {
+                VStack {
+                  Circle()
+                    .stroke(style: .init(lineWidth: 1))
+                    .frame(width: 42, height: 42)
+                    .scaleEffect(viewStore.isHovering ? 1.2 : 1)
+                    .animation(.spring(response: 0.2, dampingFraction: 0.9), value: viewStore.isHovering)
+                    .overlay {
+                      Image(icon: .xmark_circle)
+                        .renderingMode(.template)
+                        .foregroundColor(.ds(.white))
+                    }
+                }
+                .frame(height: 200)
+                .frame(maxWidth: .infinity)
+                .background(Color.clear)
+
+              } else {
+                VStack {
+                  filteredPhotoScrollView
+
+                  Spacer().frame(height: 24)
+
+                  PhotoEditorTextAddButton {
+                    viewStore.send(.addTextButtonTapped, animation: .linear(duration: 0.2))
+                  }
+
+                  Spacer().frame(height: 30)
+                }
+                .frame(height: 200)
+              }
+            }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
+
+            // 텍스트 설정 모달
+            IfLetStore(
+              store.scope(state: \.$destination, action: { .destination($0) }),
+              state: /PhotoEditorCore.Destination.State.photoTextEditor,
+              action: PhotoEditorCore.Destination.Action.photoTextEditor,
+              then: PhotoTextEditorView.init(store:)
+            )
+          }
+          .onAppear {
+            viewStore.send(._onAppear)
+          }
         }
       }
     }

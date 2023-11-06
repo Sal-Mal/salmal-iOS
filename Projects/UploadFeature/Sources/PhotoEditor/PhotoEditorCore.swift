@@ -101,8 +101,6 @@ public struct PhotoEditorCore: Reducer {
             return .none
           }
 
-          UIImageWriteToSavedPhotosAlbum(UIImage(data: data)!, self, nil, nil)
-
           return .run { send in
             try await voteRepository.register(data: data)
             await send(.delegate(.savePhoto))
@@ -127,6 +125,7 @@ public struct PhotoEditorCore: Reducer {
         }
         state.photoTextBoxes[index].offset = .zero
         state.photoTextBoxes[index].lastOffset = .zero
+        state.photoTextBoxes.remove(at: index)
         return .none
 
       case .textBoxOffsetChanged(let textBox, let offset):
