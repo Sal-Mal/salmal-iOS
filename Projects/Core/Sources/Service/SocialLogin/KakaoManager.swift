@@ -30,17 +30,17 @@ public final class KakaoManager {
         UserApi.shared.loginWithKakaoTalk { oauthToken, error in
           if let error {
             continuation.resume(throwing: SMError.login(.unknown(error)))
+          } else {
+            continuation.resume(returning: ())
           }
-          
-          continuation.resume(returning: ())
         }
       } else {
         UserApi.shared.loginWithKakaoAccount { oauthToken, error in
           if let error {
             continuation.resume(throwing: SMError.login(.unknown(error)))
+          } else {
+            continuation.resume(returning: ())
           }
-          
-          continuation.resume(returning: ())
         }
       }
     }

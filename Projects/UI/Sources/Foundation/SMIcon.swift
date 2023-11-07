@@ -19,6 +19,8 @@ extension SM {
     case ic_pencil
     case ic_trash
     case ic_message
+    case ic_kakao
+    case ic_apple
 
     /// 레거시
     case chevron_left = "chevron.left"
