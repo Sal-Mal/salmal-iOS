@@ -18,7 +18,7 @@ public struct ProfileView: View {
     NavigationStackStore(store.scope(state: \.path, action: { .path($0) })) {
       WithViewStore(store, observe: { $0 }) { viewStore in
         VStack {
-          VStack(spacing: scrollOffsetY >= 0 ? 32 : 16) {
+          VStack(spacing: viewStore.scrollViewOffset.y >= 0 ? 32 : 16) {
             if scrollOffsetY >= 0 {
               UnFoldedHeaderView(member: viewStore.member)
             } else {
@@ -58,9 +58,7 @@ public struct ProfileView: View {
                 }
               }
               
-              SMScrollView { offset in
-                scrollOffsetY = offset.y
-              } content: {
+              SMScrollView(onOffsetChanged: viewStore.$scrollViewOffset) {
                 LazyVGrid(columns: [.init(), .init()]) {
                   ForEach(viewStore.tab == .uploads ? viewStore.votes : viewStore.evaluations, id: \.id) { vote in
                     if let imageURL = URL(string: vote.imageURL) {

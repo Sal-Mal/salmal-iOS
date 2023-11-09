@@ -11,8 +11,8 @@ public struct ProfileCore: Reducer {
   }
 
   public struct State: Equatable {
+    @BindingState var scrollViewOffset: CGPoint = .zero
     var path = StackState<Path.State>()
-
     var tab: Tab = .uploads
     var member: Member?
     var votes: IdentifiedArrayOf<Vote> = []
@@ -21,7 +21,7 @@ public struct ProfileCore: Reducer {
     public init() {}
   }
 
-  public enum Action {
+  public enum Action: BindableAction {
     case onAppear
     case path(StackAction<Path.State, Path.Action>)
     case setTab(Tab)
@@ -31,6 +31,8 @@ public struct ProfileCore: Reducer {
     
     case requestVote(Int)
     case moveToSalMalDetail(Vote)
+
+    case binding(BindingAction<State>)
   }
 
   @Dependency(\.voteRepository) var voteRepository: VoteRepository
@@ -55,6 +57,7 @@ public struct ProfileCore: Reducer {
         
       case let .path(.element(_, action: .salmalDetail(.delegate(.moveToOtherProfile(id))))):
         state.path.append(.otherProfile(.init(memberID: id)))
+
         return .none
 
       case .path:
@@ -97,6 +100,9 @@ public struct ProfileCore: Reducer {
         
       case let .moveToSalMalDetail(vote):
         state.path.append(.salmalDetail(.init(vote: vote)))
+        return .none
+
+      case .binding:
         return .none
       }
     }
