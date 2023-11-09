@@ -18,6 +18,7 @@ public struct LoginCore: Reducer {
   
   @Dependency(\.userDefault) var userDefault
   @Dependency(\.kakaoManager) var kakaoManager
+  @Dependency(\.appleManager) var appleManager
   @Dependency(\.authRepository) var authRepository
   
   public var body: some ReducerOf<Self> {
@@ -33,7 +34,10 @@ public struct LoginCore: Reducer {
         }
         
       case .tapAppleLogin:
-        return .none
+        return .run { send in
+          let id = try await appleManager.requestLogin()
+          await send(.saveSocialData(id: id, provider: "apple"))
+        }
 
       case let .saveSocialData(id, provider):
         userDefault.socialID = id

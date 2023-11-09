@@ -35,43 +35,42 @@ private extension LoginView {
     Button {
       store.send(.tapKakaoLogin)
     } label: {
-      Text("카카오톡 으로 시작하기")
-        .foregroundColor(.ds(.black))
-        .padding(.vertical, 20)
-        .frame(maxWidth: .infinity)
-        .frame(height: 60)
-        .background(Color.ds(.yellow))
-        .clipShape(Capsule())
+      ZStack(alignment: .leading) {
+        Text("카카오로 계속하기")
+          .font(.system(size: 20, weight: .semibold))
+          .foregroundColor(.ds(.black))
+          .padding(.vertical, 20)
+          .frame(maxWidth: .infinity)
+          .frame(height: 56)
+          .background(Color.ds(.yellow))
+          .clipShape(Capsule())
+        
+        Image(icon: .ic_kakao)
+          .fit(size: 32)
+          .padding(.leading, 24)
+      }
     }
   }
   
   var AppleButton: some View {
-    SignInWithAppleButton(
-      .continue,
-      onRequest: { request in
-        request.requestedScopes = [.fullName, .email]
-      },
-      onCompletion: { result in
-        switch result {
-        case let .success(auth):
-          switch auth.credential {
-          case let appIDCredential as ASAuthorizationAppleIDCredential:
-            let id = appIDCredential.user
-            print(id)
-          default:
-            break
-          }
-        case let .failure(error):
-          print(error.localizedDescription)
-        }
+    Button {
+      store.send(.tapAppleLogin)
+    } label: {
+      ZStack(alignment: .leading) {
+        Text("Apple로 계속하기")
+          .font(.system(size: 20, weight: .semibold))
+          .foregroundColor(.ds(.black))
+          .padding(.vertical, 20)
+          .frame(maxWidth: .infinity)
+          .frame(height: 56)
+          .background(Color.ds(.white))
+          .clipShape(Capsule())
         
-        // TODO: apple login
-        store.send(.saveSocialData(id: "sample-apple-id", provider: "apple"))
+        Image(icon: .ic_apple)
+          .fit(size: 32)
+          .padding(.leading, 24)
       }
-    )
-    .signInWithAppleButtonStyle(.white)
-    .clipShape(Capsule())
-    .frame(height: 60)
+    }
   }
 }
 

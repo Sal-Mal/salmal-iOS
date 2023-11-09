@@ -15,7 +15,7 @@ let project = Project(
       name: "SalmalApp",
       platform: .iOS,
       product: .app,
-      bundleId: "com.salmal.SalmalApp",
+      bundleId: "com.salmalProject.SalmalApp",
       deploymentTarget: .iOS(targetVersion: "16.0", devices: [.iphone]),
       infoPlist: .extendingDefault(with: [
         "CFBundleShortVersionString": "1.0",
@@ -37,6 +37,7 @@ let project = Project(
       ]),
       sources: ["Sources/**"],
       resources: ["Resources/**"],
+      entitlements: "Resources/App.entitlements",
       dependencies: [
         .project(target: "MainFeature", path: "../MainFeature"),
         .project(target: "LoginFeature", path: "../LoginFeature"),
