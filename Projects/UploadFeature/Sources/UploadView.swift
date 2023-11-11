@@ -59,9 +59,13 @@ public struct UploadView: View {
       }
       .onAppear { viewStore.send(._onAppear) }
       .fullScreenCover(isPresented: viewStore.$isCameraSheetPresented) {
-        SMImagePicker {
+        SMImagePicker(onCapture: {
           viewStore.send(.cameraTakeButtonTapped($0))
-        } onDismiss: { viewStore.send(.cameraCancelButtonTapped) }
+
+        }, onDismiss: {
+          viewStore.send(.cameraCancelButtonTapped)
+        })
+        .frame(maxHeight: .infinity)
       }
       .sheet(
         store: store.scope(state: \.$destination, action: { .destination($0) }),

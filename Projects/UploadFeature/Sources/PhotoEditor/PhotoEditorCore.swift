@@ -97,7 +97,7 @@ public struct PhotoEditorCore: Reducer {
 
         default:
           let uiImage = photoView.snapshot()
-          guard let data = uiImage.jpegData(compressionQuality: 1) else {
+          guard let data = uiImage.jpegData(compressionQuality: 0.5) else {
             return .none
           }
 

@@ -68,6 +68,7 @@ public struct UploadCore: Reducer {
         }
 
       case .cameraTakeButtonTapped(let uiImage):
+        state.isCameraSheetPresented = false
         return .send(.menuTapped(.init(type: .library, uiImage: uiImage)))
 
       case .cameraCancelButtonTapped:
@@ -85,7 +86,7 @@ public struct UploadCore: Reducer {
 
       case ._requestPhotoLibraryAuthorizationResponse(let status):
         switch status {
-        case .authorized:
+        case .authorized, .limited:
           state.isPhotoLibraryAuthorized = true
           return .send(._fetchPhotoLibrary)
 
