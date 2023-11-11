@@ -73,7 +73,7 @@ public struct BlockedMemberListCore: Reducer {
         }
 
       case ._fetchBlockedMemberListResponse(let page):
-        state.blockedMemberList.removeAll()
+        state.blockedMemberList = []
         state.blockedMemberList.append(contentsOf: page.members)
         state.hasNext = page.hasNext
         state.cursorId = page.members.last?.id

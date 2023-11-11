@@ -32,6 +32,8 @@ public struct LoginView: View {
         
         KakaoButton
         AppleButton
+
+        Spacer().frame(height: 30) // 바텀 34pt
       }
     }
     .padding(.horizontal, 20)

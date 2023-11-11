@@ -105,10 +105,12 @@ public struct ProfileCore: Reducer {
         return .none
 
       case ._fetchVotesResponse(let votes):
+        state.votes = []
         state.votes.append(contentsOf: votes)
         return .none
 
       case ._fetchEvaluationsResponse(let evaluations):
+        state.evaluations = []
         state.evaluations.append(contentsOf: evaluations)
         return .none
         

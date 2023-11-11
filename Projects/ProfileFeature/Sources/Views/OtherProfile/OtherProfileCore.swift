@@ -114,7 +114,7 @@ public struct OtherProfileCore: Reducer {
         return .none
 
       case ._fetchVotesResponse(let votes):
-        state.votes.removeAll()
+        state.votes = []
         state.votes.append(contentsOf: votes)
         state.cursorId = votes.last?.id
         return .none

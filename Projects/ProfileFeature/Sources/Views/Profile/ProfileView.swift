@@ -39,7 +39,7 @@ public struct ProfileView: View {
                   viewStore.send(.uploadTabButtonTapped)
                 } label: {
                   Text("업로드")
-                    .foregroundColor(viewStore.tab == .upload ? .ds(.white) : .ds(.gray4))
+                    .foregroundColor(viewStore.tab == .upload ? .ds(.white) : .ds(.gray3))
                     .font(.ds(.title2(.semibold)))
                 }
 
@@ -69,7 +69,7 @@ public struct ProfileView: View {
 
               SMScrollView(showIndicators: false, onOffsetChanged: viewStore.$scrollViewOffset) {
                 LazyVGrid(columns: columns) {
-                  ForEach(viewStore.votes) { vote in
+                  ForEach(viewStore.tab == .upload ? viewStore.votes : viewStore.evaluations) { vote in
                     ProfileCell(imageURL: vote.imageURL) {
                       viewStore.send(.voteCellTapped(vote))
                     }

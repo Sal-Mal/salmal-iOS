@@ -60,6 +60,7 @@ public struct BookmarkListCore: Reducer {
         return .none
 
       case ._setBookmarkList(let votes):
+        state.bookmarkedList = []
         state.bookmarkedList.append(contentsOf: votes)
         return .none
 

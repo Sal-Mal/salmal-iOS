@@ -56,6 +56,7 @@ public struct UploadListCore: Reducer {
         }
 
       case ._setVotes(let votes):
+        state.votes = []
         state.votes.append(contentsOf: votes)
         return .none
       }
