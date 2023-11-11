@@ -2,17 +2,24 @@ import ComposableArchitecture
 import Core
 import Foundation
 
+public enum CommentMode: Equatable {
+  case editComment(commentID: Int)
+  case writeComment(voteID: Int)
+  case writeReply(commentID: Int)
+}
+
 public struct CommentListCore: Reducer {
   public struct State: Equatable {
     let voteID: Int
     var comments: IdentifiedArrayOf<CommentCore.State> = []
     @BindingState var text: String = ""
     
-    var editingCommentID: Int?
     var profileImageURL: String?
+    var commentMode: CommentMode?
     
     public init(voteID: Int, commentCount: Int) {
       self.voteID = voteID
+      self.commentMode = .writeComment(voteID: voteID)
     }
   }
   
@@ -31,6 +38,7 @@ public struct CommentListCore: Reducer {
   
   @Dependency(\.commentRepository) var commentRepo
   @Dependency(\.memberRepository) var memberRepo
+  @Dependency(\.toastManager) var toastManager
   
   public var body: some ReducerOf<Self> {
     BindingReducer()
@@ -39,15 +47,18 @@ public struct CommentListCore: Reducer {
       case .binding:
         return .none
         
-      case let .comment(id, .delegate(.editComment)):
+      case let .comment(_, .delegate(.editComment(comment))):
+        state.text = comment.content
+        state.commentMode = .editComment(commentID: comment.id)
+        NotificationService.post(.tapAddComment)
+        return .none
+      
+      case let .comment(id, action: .writeCommentToggle):
         guard let comment = state.comments[id: id]?.comment else {
           return .none
         }
         
-        state.text = comment.content
-        state.editingCommentID = comment.id
-        NotificationService.post(.tapAddComment)
-        
+        state.commentMode = .writeReply(commentID: comment.id)
         return .none
         
       case .comment(_, .delegate(.refreshList)):
@@ -93,26 +104,26 @@ public struct CommentListCore: Reducer {
         return .run { [state] send in
           
           let text = state.text
-          let voteID = state.voteID
           
-          // editing
-          if let commentID = state.editingCommentID {
-            try await commentRepo.edit(commentID: commentID, text: text)
-          }
-          // writing
-          else {
+          switch state.commentMode {
+          case let .writeComment(voteID):
             try await commentRepo.write(voteID: voteID, text: text)
+          case let .editComment(commentID):
+            try await commentRepo.edit(commentID: commentID, text: text)
+          case let .writeReply(commentID):
+            try await commentRepo.writeReply(commentID: commentID, text: text)
+          case .none:
+            break
           }
 
           await send(.requestComments)
           await send(.reset)
         } catch: { error, send in
-          // TODO: 댓글 입력 업로드 실패 (Toast Message)
-          print(error)
+          await toastManager.showToast(.error("댓글 작성중 문제가 발생했어요"))
         }
         
       case .reset:
-        state.editingCommentID = nil
+        state.commentMode = .writeComment(voteID: state.voteID)
         state.text = ""
         return .none
       }

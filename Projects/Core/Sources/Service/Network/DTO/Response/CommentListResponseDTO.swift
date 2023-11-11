@@ -23,23 +23,27 @@ public struct CommentListResponseDTO: Responsable {
 public struct CommentResponseDTO: Responsable {
   let id: Int
   let memberId: Int
+  let nickName: String
   let memberImageUrl: String
   let content: String
   let liked: Bool
   let likeCount: Int
   let createdAt: String
   let updatedAt: String
+  let replyCount: Int
   
   public static var mock: CommentResponseDTO {
     .init(
       id: (0...10000).randomElement()!,
       memberId: (0...10000).randomElement()!,
+      nickName: "dudu",
       memberImageUrl: "https://picsum.photos/100",
       content: "농부룩 같아요...!!!",
       liked: Bool.random(),
       likeCount: (0...100).randomElement()!,
       createdAt: "2023-10-12T11:43:31.299933",
-      updatedAt: "2023-10-12T11:43:31.299933"
+      updatedAt: "2023-10-12T11:43:31.299933",
+      replyCount: Int.random(in: 0...10)
     )
   }
   
@@ -47,12 +51,14 @@ public struct CommentResponseDTO: Responsable {
     .init(
       id: id,
       memberId: memberId,
+      nickName: nickName,
       memberImageUrl: memberImageUrl,
       content: content,
       liked: liked,
       likeCount: likeCount,
       createdAt: createdAt.toDate,
-      updatedAt: updatedAt.toDate
+      updatedAt: updatedAt.toDate,
+      replyCount: replyCount
     )
   }
 }

@@ -170,6 +170,7 @@ public struct ProfileEditView: View {
       }
       .onAppear {
         viewStore.send(.onAppear)
+        NotificationService.post(.hideTabBar)
       }
       .sheet(isPresented: viewStore.$isTakePhotoPresented) {
         SMImagePicker { uiImage in

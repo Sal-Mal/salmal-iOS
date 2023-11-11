@@ -2,12 +2,19 @@ import Foundation
 import ComposableArchitecture
 
 public enum CommentAPI {
+  // 댓글
   case list(id: Int)
   case write(id: Int, text: String)
-  case edit(id: Int, text: String)
-  case delete(id: Int)
   case like(id: Int)
   case disLike(id: Int)
+  
+  
+  // 대댓글
+  case replyList(id: Int)
+  case replyWrite(id: Int, text: String)
+  // 기타
+  case edit(id: Int, text: String)
+  case delete(id: Int)
   case report(id: Int)
 }
 
@@ -33,6 +40,10 @@ extension CommentAPI: TargetType {
       return "comments/\(id)/likes"
     case let .report(id):
       return "comments/\(id)/reports"
+    case let .replyList(id):
+      return "comments/\(id)/replies?size=100"
+    case let .replyWrite(id, _):
+      return "comments/\(id)/replies"
     }
   }
   
@@ -51,6 +62,10 @@ extension CommentAPI: TargetType {
     case .disLike:
       return .delete
     case .report:
+      return .post
+    case .replyList:
+      return .get
+    case .replyWrite:
       return .post
     }
   }
@@ -71,6 +86,10 @@ extension CommentAPI: TargetType {
       return nil
     case .report:
       return nil
+    case .replyList:
+      return nil
+    case let .replyWrite(_, text):
+      return CommentRequestDTO(content: text)
     }
   }
   

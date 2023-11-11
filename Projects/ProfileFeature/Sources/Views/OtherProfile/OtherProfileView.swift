@@ -103,6 +103,7 @@ public struct OtherProfileView: View {
       )
       .onAppear {
         viewStore.send(._onAppear)
+		NotificationService.post(.hideTabBar)
       }
       .alert(isPresented: viewStore.$isBlockSheetPresented, alert: .blocking) {
         viewStore.send(.blockSheetConfirmButtonTapped)

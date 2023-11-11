@@ -8,6 +8,8 @@ public protocol CommentRepository {
   func like(commentID: Int) async throws
   func disLike(commentID: Int) async throws
   func report(commentID: Int) async throws
+  func writeReply(commentID: Int, text: String) async throws
+  func listReply(commentID: Int) async throws -> [Comment]
 }
 
 public final class CommentRepositoryImpl: CommentRepository {
@@ -51,6 +53,18 @@ public final class CommentRepositoryImpl: CommentRepository {
   public func report(commentID: Int) async throws {
     let target = CommentAPI.report(id: commentID)
     try await networkManager.request(target)
+  }
+  
+  public func writeReply(commentID: Int, text: String) async throws {
+    let target = CommentAPI.replyWrite(id: commentID, text: text)
+    try await networkManager.request(target)
+  }
+  
+  public func listReply(commentID: Int) async throws -> [Comment] {
+    let target = CommentAPI.replyList(id: commentID)
+    try await networkManager.request(target, type: CommentListResponseDTO.self)
+    let dto = try await networkManager.request(target, type: CommentListResponseDTO.self)
+    return dto.comments.map(\.toDomain)
   }
 }
 

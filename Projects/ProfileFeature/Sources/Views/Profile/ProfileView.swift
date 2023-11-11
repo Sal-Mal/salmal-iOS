@@ -105,6 +105,7 @@ public struct ProfileView: View {
         })
         .onAppear {
           viewStore.send(._onAppear)
+		  NotificationService.post(.showTabBar)
         }
       }
     } destination: { state in

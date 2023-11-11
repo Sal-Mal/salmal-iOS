@@ -1,4 +1,5 @@
 import SwiftUI
+import Core
 import ComposableArchitecture
 
 public struct AlarmCore: Reducer {
@@ -46,6 +47,9 @@ struct AlarmView: View {
         .listRowSeparator(.hidden)
     }
     .listStyle(.plain)
+    .onAppear {
+      NotificationService.post(.hideTabBar)
+    }
     .smNavigationBar(title: "알림", leftItems: {
       Image(icon: .chevron_left)
         .fit(size: 32)

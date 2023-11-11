@@ -36,6 +36,7 @@ public struct SalMalDetailView: View {
     }
     .onAppear {
       store.send(.requestVote(id: viewStore.vote.id))
+      NotificationService.post(.hideTabBar)
     }
     .padding(.vertical, 18)
     .sheet(

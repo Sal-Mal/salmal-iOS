@@ -1,5 +1,6 @@
 import SwiftUI
 import UI
+import Core
 import ComposableArchitecture
 import ProfileFeature
 
@@ -47,6 +48,9 @@ public struct SalMalView: View {
         .padding(2)
       }
       .padding(16)
+      .onAppear {
+        NotificationService.post(.showTabBar)
+      }
       .smMainNavigationBar(
         selection: viewStore.$tab,
         isAlarmExist: true

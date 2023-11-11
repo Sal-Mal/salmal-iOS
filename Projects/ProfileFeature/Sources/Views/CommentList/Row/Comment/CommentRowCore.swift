@@ -38,16 +38,18 @@ public struct CommentCore: Reducer {
   public enum Action: Equatable {
     case delegate(Delegate)
     case report(PresentationAction<ReportCommentCore.Action>)
-    case replayComment(id: ReplyCommentCore.State.ID, action: ReplyCommentCore.Action)
+    case replyComment(id: ReplyCommentCore.State.ID, action: ReplyCommentCore.Action)
     case optionsTapped
     case moreCommentToggle
     case writeCommentToggle
     case likeTapped
+    case requestReplys
+    case setReplys(value: [Comment])
     case setLiked(to: Bool)
     
     public enum Delegate: Equatable {
       case refreshList
-      case editComment
+      case editComment(Comment)
     }
   }
   
@@ -59,8 +61,8 @@ public struct CommentCore: Reducer {
       case .delegate:
         return .none
         
-      case .report(.presented(.delegate(.editComment))):
-        return .send(.delegate(.editComment))
+      case let .report(.presented(.delegate(.editComment(comment)))):
+        return .send(.delegate(.editComment(comment)))
         
       case .report(.presented(.delegate(.refreshList))):
         return .send(.delegate(.refreshList))
@@ -68,20 +70,32 @@ public struct CommentCore: Reducer {
       case .report:
         return .none
         
-      case .replayComment:
+      case let .replyComment(id: id, action: .optionsTapped):
+        guard let reply = state.replys[id: id] else { return .none }
+        state.report = .init(comment: reply.comment)
+        
+        return .none
+        
+      case .replyComment:
         return .none
         
       case .optionsTapped:
-        state.report = .init(
-          memberID: state.comment.memberId,
-          commentID: state.comment.id
-        )
+        state.report = .init(comment: state.comment)
         return .none
         
+      // 답글 4개보기
       case .moreCommentToggle:
         state.showMoreComment.toggle()
-        return .none
         
+        if state.showMoreComment {
+          return .send(.requestReplys)
+        } else {
+          state.replys = []
+        }
+        
+        return .none
+      
+      // 답글 달기
       case .writeCommentToggle:
         NotificationService.post(.tapAddComment)
         return .none
@@ -110,9 +124,25 @@ public struct CommentCore: Reducer {
         state.comment.likeCount += value ? 1 : -1
         
         return .none
+        
+      case .requestReplys:
+        return .run { [state] send in
+          let result = try await commentRepo.listReply(commentID: state.comment.id)
+          await send(.setReplys(value: result))
+        } catch: { error, send in
+          // MARK: 일단 dummy로 넣어놓기
+          let comment = CommentResponseDTO.mock.toDomain
+          await send(.setReplys(value: [comment]))
+        }
+        
+      case let .setReplys(value):
+        state.replys = IdentifiedArray(uniqueElements: value.map {
+          ReplyCommentCore.State(comment: $0)
+        })
+        return .none
       }
     }
-    .forEach(\.replys, action: /Action.replayComment(id:action:)) {
+    .forEach(\.replys, action: /Action.replyComment(id:action:)) {
       ReplyCommentCore()
     }
     .ifLet(\.$report, action: /Action.report) {
