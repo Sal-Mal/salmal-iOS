@@ -38,6 +38,10 @@ struct BookmarkListView: View {
         viewStore.send(._onAppear)
         NotificationService.post(.hideTabBar)
       }
+      .navigationDestination(
+        store: store.scope(state: \.$salmalDetailState, action: { .salmalDetail($0) }),
+        destination: SalMalDetailView.init(store:)
+      )
     }
   }
 

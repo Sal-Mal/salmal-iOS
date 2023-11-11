@@ -1,6 +1,7 @@
 import SwiftUI
 import ComposableArchitecture
 
+import Core
 import UI
 
 public struct OtherProfileView: View {
@@ -103,7 +104,7 @@ public struct OtherProfileView: View {
       )
       .onAppear {
         viewStore.send(._onAppear)
-		NotificationService.post(.hideTabBar)
+        NotificationService.post(.hideTabBar)
       }
       .alert(isPresented: viewStore.$isBlockSheetPresented, alert: .blocking) {
         viewStore.send(.blockSheetConfirmButtonTapped)

@@ -30,7 +30,7 @@ public struct UploadView: View {
         ZStack {
           if viewStore.isPhotoLibraryAuthorized {
             VStack(spacing: 0) {
-              sortTopNavigationBar
+              //sortTopNavigationBar
 
               ScrollView(showsIndicators: false) {
                 LazyVGrid(columns: columns) {
