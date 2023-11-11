@@ -6,14 +6,16 @@ import Core
 public struct ProfileCore: Reducer {
 
   public enum Tab {
-    case uploads
-    case votes
+    case upload
+    case evaluation
   }
 
   public struct State: Equatable {
     @BindingState var scrollViewOffset: CGPoint = .zero
+    @BindingState var isHeaderFolded: Bool = false
+
     var path = StackState<Path.State>()
-    var tab: Tab = .uploads
+    var tab: Tab = .upload
     var member: Member?
     var votes: IdentifiedArrayOf<Vote> = []
     var evaluations: IdentifiedArrayOf<Vote> = []
@@ -22,87 +24,113 @@ public struct ProfileCore: Reducer {
   }
 
   public enum Action: BindableAction {
-    case onAppear
-    case path(StackAction<Path.State, Path.Action>)
-    case setTab(Tab)
-    case setMember(Member?)
-    case setVotes([Vote])
-    case setEvaluations([Vote])
-    
-    case requestVote(Int)
-    case moveToSalMalDetail(Vote)
+    case uploadTabButtonTapped
+    case evaluationTabButtonTapped
+    case voteCellTapped(Vote)
+    case voteEditButtonTapped
+
+    case _onAppear
+    case _onScrollViewAppear(Vote)
+    case _fetchMyPageResponse(Member)
+    case _fetchVotesResponse([Vote])
+    case _fetchEvaluationsResponse([Vote])
+    case _moveToSalMalDetail(Vote)
+    case _scrollViewBottomReached
 
     case binding(BindingAction<State>)
+    case path(StackAction<Path.State, Path.Action>)
   }
 
-  @Dependency(\.voteRepository) var voteRepository: VoteRepository
-  @Dependency(\.memberRepository) var memberRepository: MemberRepository
+  @Dependency(\.toastManager) var toastManager
+  @Dependency(\.voteRepository) var voteRepository
+  @Dependency(\.memberRepository) var memberRepository
   @Dependency(\.userDefault) var userDefault
 
   public init() {}
 
   public var body: some ReducerOf<Self> {
+    BindingReducer()
     Reduce { state, action in
       switch action {
-      case .onAppear:
+      case .uploadTabButtonTapped:
+        state.tab = .upload
         return .run { send in
-          let member = try await memberRepository.myPage()
-          let votes = try await memberRepository.votes(memberID: userDefault.memberID!, cursorId: nil, size: 100)
-          await send(.setMember(member))
-          await send(.setVotes(votes))
-
+          let votes = try await memberRepository.votes(memberID: userDefault.memberID ?? -1, cursorId: nil, size: 100)
+          await send(._fetchVotesResponse(votes))
         } catch: { error, send in
-          print(error)
+          await toastManager.showToast(.error(error.localizedDescription))
         }
-        
-      case let .path(.element(_, action: .salmalDetail(.delegate(.moveToOtherProfile(id))))):
-        state.path.append(.otherProfile(.init(memberID: id)))
 
+      case .evaluationTabButtonTapped:
+        state.tab = .evaluation
+        return .run { send in
+          let evaluations = try await memberRepository.evaluations(cursorId: nil, size: 100)
+          await send(._fetchEvaluationsResponse(evaluations))
+        } catch: { error, send in
+          await toastManager.showToast(.error(error.localizedDescription))
+        }
+
+      case .voteCellTapped(let vote):
+        return .run { send in
+          let vote = try await voteRepository.getVote(id: vote.id)
+          await send(._moveToSalMalDetail(vote))
+        }
+
+      case .voteEditButtonTapped:
+        state.path.append(.uploadList())
         return .none
 
-      case .path:
-        return .none
-
-      case .setTab(let tab):
-        state.tab = tab
-
-        switch tab {
-        case .uploads:
-          return .run { send in
+      case ._onAppear:
+        return .merge(
+          .run { send in
+            let member = try await memberRepository.myPage()
+            await send(._fetchMyPageResponse(member))
+          } catch: { error, send in
+            await toastManager.showToast(.error(error.localizedDescription))
+          },
+          .run { send in
             let votes = try await memberRepository.votes(memberID: userDefault.memberID!, cursorId: nil, size: 100)
-            await send(.setVotes(votes))
+            await send(._fetchVotesResponse(votes))
+          } catch: { error, send in
+            await toastManager.showToast(.error(error.localizedDescription))
           }
+        )
 
-        case .votes:
-          return .run { send in
-            let evaluations = try await memberRepository.evaluations(cursorId: nil, size: 100)
-            await send(.setEvaluations(evaluations))
-          }
-        }
+      case ._onScrollViewAppear(let vote):
+        return vote == state.votes.last ? .send(._scrollViewBottomReached) : .none
+        return .none
 
-      case .setMember(let member):
+      case ._fetchMyPageResponse(let member):
         state.member = member
         return .none
 
-      case .setVotes(let votes):
+      case ._fetchVotesResponse(let votes):
         state.votes.append(contentsOf: votes)
         return .none
 
-      case .setEvaluations(let evaluations):
+      case ._fetchEvaluationsResponse(let evaluations):
         state.evaluations.append(contentsOf: evaluations)
         return .none
         
-      case let .requestVote(id):
-        return .run { send in
-          let vote = try await voteRepository.getVote(id: id)
-          await send(.moveToSalMalDetail(vote))
-        }
-        
-      case let .moveToSalMalDetail(vote):
+      case let ._moveToSalMalDetail(vote):
         state.path.append(.salmalDetail(.init(vote: vote)))
         return .none
 
+      case ._scrollViewBottomReached:
+        return .none
+
+      case .binding(\.$scrollViewOffset):
+        state.isHeaderFolded = -state.scrollViewOffset.y > 0
+        return .none
+
       case .binding:
+        return .none
+
+      case let .path(.element(_, action: .salmalDetail(.delegate(.moveToOtherProfile(id))))):
+        state.path.append(.otherProfile(.init(memberID: id)))
+        return .none
+
+      case .path:
         return .none
       }
     }

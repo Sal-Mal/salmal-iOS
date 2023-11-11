@@ -23,11 +23,13 @@ struct ProfileCell: View {
         default:
           RoundedRectangle(cornerRadius: 24.0)
             .fill(.gray)
+            .aspectRatio(1, contentMode: .fill)
         }
       }
     } else {
       RoundedRectangle(cornerRadius: 24.0)
         .fill(.gray)
+        .aspectRatio(1, contentMode: .fill)
     }
   }
 }

@@ -21,6 +21,7 @@ public struct BlockedMemberListCore: Reducer {
     case unblockButtonTapped(Member)
 
     case _onAppear
+    case _onScrollViewAppear
     case _fetchBlockedMemberList
     case _fetchBlockedMemberListResponse(MemberPage)
 
@@ -55,11 +56,14 @@ public struct BlockedMemberListCore: Reducer {
         }
 
       case ._onAppear:
+        state.cursorId = nil
+        return .send(._fetchBlockedMemberList)
+
+      case ._onScrollViewAppear:
+        guard state.hasNext else { return .none }
         return .send(._fetchBlockedMemberList)
 
       case ._fetchBlockedMemberList:
-        guard state.hasNext else { return .none }
-
         return .run { [cursorId = state.cursorId, size = state.pagingSize] send in
           let memberPage = try await memberRepository.blocks(cursorId: cursorId, size: size)
           await send(._fetchBlockedMemberListResponse(memberPage))

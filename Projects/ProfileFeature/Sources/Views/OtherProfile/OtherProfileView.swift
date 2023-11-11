@@ -15,38 +15,59 @@ public struct OtherProfileView: View {
   public var body: some View {
     WithViewStore(store, observe: { $0 }) { (viewStore: ViewStoreOf<OtherProfileCore>) in
       VStack(spacing: 0) {
-        if viewStore.isHeaderFolded {
-          foldedHeaderView
-            .debug()
+        VStack(spacing: 0) {
+          ZStack {
+            if viewStore.isHeaderFolded {
+              foldedHeaderView
+                .transition(.opacity)
 
-        } else {
-          unFoldedHeaderView
-
-          Spacer().frame(height: 46)
-
-          HStack {
-            Text("업로드")
-              .foregroundColor(.ds(.white))
-              .font(.ds(.title2(.semibold)))
-
-            Spacer()
+            } else {
+              unFoldedHeaderView
+                .transition(.opacity)
+            }
           }
-        }
+          .frame(maxWidth: .infinity)
+          .background(Color.ds(.green1))
+          .cornerRadius(30)
 
-        Spacer().frame(height: 16)
+          if !viewStore.isHeaderFolded {
+            Spacer().frame(height: 46)
+            HStack {
+              Text("업로드")
+                .foregroundColor(.ds(.white))
+                .font(.ds(.title2(.semibold)))
 
-        SMScrollView(showIndicators: false, onOffsetChanged: viewStore.$scrollViewOffset) {
-          LazyVGrid(columns: columns) {
-            ForEach(viewStore.votes) { vote in
-              ProfileCell(imageURL: vote.imageURL) {
-                viewStore.send(.voteCellTapped(vote))
+              Spacer()
+            }
+            .transition(.opacity)
+          }
+
+          VStack {
+            Spacer().frame(height: 16)
+
+            SMScrollView(showIndicators: false, onOffsetChanged: viewStore.$scrollViewOffset) {
+              LazyVGrid(columns: columns) {
+                ForEach(viewStore.votes) { vote in
+                  ProfileCell(imageURL: vote.imageURL) {
+                    viewStore.send(.voteCellTapped(vote))
+                  }
+                  .onAppear {
+                    viewStore.send(._onScrollViewAppear(vote), animation: .default)
+                  }
+                }
+
+                Spacer()
               }
-              .onAppear {
-                viewStore.send(._onScrollViewAppear(vote))
-              }
+            }
+            .onAppear {
+              UIScrollView.appearance().bounces = false
+            }
+            .onDisappear {
+              UIScrollView.appearance().bounces = true
             }
           }
         }
+        .animation(.spring(), value: viewStore.isHeaderFolded)
       }
       .padding(.top, 9)
       .padding(.horizontal, 18)
@@ -60,7 +81,7 @@ public struct OtherProfileView: View {
           }
         },
         rightItems: {
-          if viewStore.member?.blocked != true {
+          if viewStore.member?.blocked == true {
             Button {
               viewStore.send(.unBlockButtonTapped)
             } label: {
@@ -121,11 +142,11 @@ public struct OtherProfileView: View {
         Spacer().frame(height: 16)
 
         VStack(spacing: 6) {
-          Text(viewStore.state?.nickName ?? "")
+          Text(viewStore.state?.nickName ?? "비회원")
             .font(.ds(.title3(.semibold)))
             .foregroundColor(.ds(.black))
 
-          Text(viewStore.state?.introduction ?? "")
+          Text(viewStore.state?.introduction ?? "비회원 사용자입니다")
             .font(.ds(.title4(.medium)))
             .foregroundColor(.ds(.black))
         }
@@ -164,9 +185,6 @@ public struct OtherProfileView: View {
 
         Spacer().frame(height: 32)
       }
-      .frame(maxWidth: .infinity)
-      .background(Color.ds(.green1))
-      .cornerRadius(30)
     }
   }
 
@@ -201,7 +219,7 @@ public struct OtherProfileView: View {
 
         HStack {
           VStack(alignment: .leading, spacing: 8) {
-            Text(viewStore.state?.nickName ?? "")
+            Text(viewStore.state?.nickName ?? "비회원")
               .font(.ds(.title3(.semibold)))
               .foregroundColor(.ds(.black))
 
@@ -267,7 +285,7 @@ public struct OtherProfileView: View {
 struct OtherProfileView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
-      OtherProfileView(store: .init(initialState: .init(memberID: 2), reducer: {
+      OtherProfileView(store: .init(initialState: .init(memberID: 1), reducer: {
         OtherProfileCore()._printChanges()
       }))
     }

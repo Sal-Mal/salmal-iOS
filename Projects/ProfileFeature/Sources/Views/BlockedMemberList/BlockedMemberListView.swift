@@ -39,6 +39,9 @@ public struct BlockedMemberListView: View {
               .listRowSeparator(.hidden)
             }
             .listStyle(.plain)
+            .onAppear {
+              viewStore.send(._onScrollViewAppear)
+            }
           }
         }
       }

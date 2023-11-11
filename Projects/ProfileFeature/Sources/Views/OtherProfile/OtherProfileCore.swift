@@ -129,7 +129,7 @@ public struct OtherProfileCore: Reducer {
         }
 
       case .binding(\.$scrollViewOffset):
-        state.isHeaderFolded = -state.scrollViewOffset.y >= 150
+        state.isHeaderFolded = -state.scrollViewOffset.y > 0
         return .none
 
       case .binding:

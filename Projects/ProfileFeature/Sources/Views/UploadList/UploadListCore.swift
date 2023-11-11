@@ -51,7 +51,7 @@ public struct UploadListCore: Reducer {
 
       case ._onAppear:
         return .run { send in
-          let votes = try await memberRepository.votes(memberID: userDefault.memberID!, cursorId: nil, size: 100)
+          let votes = try await memberRepository.votes(memberID: userDefault.memberID ?? -1, cursorId: nil, size: 100)
           await send(._setVotes(votes))
         }
 
