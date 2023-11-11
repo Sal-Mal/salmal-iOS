@@ -5,99 +5,94 @@ import Core
 import UI
 
 public struct ProfileView: View {
-  
-  @State private var scrollOffsetY: CGFloat = 0
-  
+
+  private let columns = [GridItem(.flexible()), GridItem(.flexible())]
   private let store: StoreOf<ProfileCore>
   
   public init(store: StoreOf<ProfileCore>) {
     self.store = store
   }
-  
+
   public var body: some View {
     NavigationStackStore(store.scope(state: \.path, action: { .path($0) })) {
       WithViewStore(store, observe: { $0 }) { viewStore in
-        VStack {
-          VStack(spacing: scrollOffsetY >= 0 ? 32 : 16) {
-            if scrollOffsetY >= 0 {
-              UnFoldedHeaderView(member: viewStore.member)
-            } else {
-              FoldedHeaderView(member: viewStore.member)
+        VStack(spacing: 0) {
+          VStack(spacing: 0) {
+            ZStack {
+              if viewStore.isHeaderFolded {
+                foldedHeaderView
+                  .transition(.opacity)
+
+              } else {
+                unFoldedHeaderView
+                  .transition(.opacity)
+              }
             }
-            
-            VStack {
-              if scrollOffsetY >= 0 {
-                HStack {
-                  HStack(spacing: 12) {
-                    Button {
-                      viewStore.send(.setTab(.uploads))
-                    } label: {
-                      Text("업로드")
-                        .foregroundColor(viewStore.tab == .uploads ? .ds(.white) : .ds(.white36))
-                        .font(.ds(.title2(.semibold)))
-                    }
-                    
-                    Button {
-                      viewStore.send(.setTab(.votes))
-                    } label: {
-                      Text("투표")
-                        .foregroundColor(viewStore.tab == .votes ? .ds(.white) : .ds(.white36))
-                        .font(.ds(.title2(.semibold)))
-                    }
-                  }
-                  
-                  Spacer()
-                  
-                  NavigationLink(
-                    state: ProfileCore.Path.State.uploadList()
-                  ) {
-                    Text("편집")
-                      .foregroundColor(.ds(.white80))
-                      .font(.ds(.title3(.medium)))
-                  }
+            .frame(maxWidth: .infinity)
+            .background(Color.ds(.green1))
+            .cornerRadius(30)
+
+            if !viewStore.isHeaderFolded {
+              Spacer().frame(height: 46)
+              HStack(spacing: 12) {
+                Button {
+                  viewStore.send(.uploadTabButtonTapped)
+                } label: {
+                  Text("업로드")
+                    .foregroundColor(viewStore.tab == .upload ? .ds(.white) : .ds(.gray4))
+                    .font(.ds(.title2(.semibold)))
+                }
+
+                Button {
+                  viewStore.send(.evaluationTabButtonTapped)
+                } label: {
+                  Text("투표")
+                    .foregroundColor(viewStore.tab == .evaluation ? .ds(.white) : .ds(.gray3))
+                    .font(.ds(.title2(.semibold)))
+                }
+
+                Spacer()
+
+                Button {
+                  viewStore.send(.voteEditButtonTapped)
+                } label: {
+                  Text("편집")
+                    .foregroundColor(.ds(.white80))
+                    .font(.ds(.title3(.medium)))
                 }
               }
-              
-              SMScrollView { offset in
-                scrollOffsetY = offset.y
-              } content: {
-                LazyVGrid(columns: [.init(), .init()]) {
-                  ForEach(viewStore.tab == .uploads ? viewStore.votes : viewStore.evaluations, id: \.id) { vote in
-                    if let imageURL = URL(string: vote.imageURL) {
-                      CacheAsyncImage(url: imageURL) { phase in
-                        switch phase {
-                        case .success(let image):
-                          image
-                            .resizable()
-                            .aspectRatio(1, contentMode: .fill)
-                            .cornerRadius(24)
-                            .onTapGesture {
-                              store.send(.requestVote(vote.id))
-                            }
-                          
-                        default:
-                          RoundedRectangle(cornerRadius: 24)
-                            .fill(Color.ds(.gray2))
-                            .aspectRatio(1, contentMode: .fill)
-                        }
-                      }
-                      
-                    } else {
-                      RoundedRectangle(cornerRadius: 24)
-                        .fill(Color.ds(.gray2))
-                        .aspectRatio(1, contentMode: .fill)
+              .transition(.opacity)
+            }
+
+            VStack {
+              Spacer().frame(height: 16)
+
+              SMScrollView(showIndicators: false, onOffsetChanged: viewStore.$scrollViewOffset) {
+                LazyVGrid(columns: columns) {
+                  ForEach(viewStore.votes) { vote in
+                    ProfileCell(imageURL: vote.imageURL) {
+                      viewStore.send(.voteCellTapped(vote))
+                    }
+                    .onAppear {
+                      viewStore.send(._onScrollViewAppear(vote), animation: .default)
                     }
                   }
+
+                  Spacer()
                 }
+              }
+              .onAppear {
+                UIScrollView.appearance().bounces = false
+              }
+              .onDisappear {
+                UIScrollView.appearance().bounces = true
               }
             }
           }
-          .padding(18)
+          .animation(.spring(), value: viewStore.isHeaderFolded)
         }
-        .onAppear {
-          viewStore.send(.onAppear)
-          NotificationService.post(.showTabBar)
-        }
+        .padding(.top, 9)
+        .padding(.horizontal, 18)
         .smNavigationBar(title: "", rightItems: {
           HStack {
             NavigationLink(state: ProfileCore.Path.State.bookmarkList(.init())) {
@@ -108,6 +103,10 @@ public struct ProfileView: View {
             }
           }
         })
+        .onAppear {
+          viewStore.send(._onAppear)
+		  NotificationService.post(.showTabBar)
+        }
       }
     } destination: { state in
       switch state {
@@ -153,77 +152,14 @@ public struct ProfileView: View {
     }
   }
   
-  func FoldedHeaderView(member: Member?) -> some View {
-    HStack(spacing: 16) {
-      if let imageURL = URL(string: member?.imageURL ?? "") {
-        CacheAsyncImage(url: imageURL) { phase in
-          switch phase {
-          case .success(let image):
-            image
-              .resizable()
-              .scaledToFill()
-              .frame(width: 70, height: 70)
-              .clipShape(Circle())
-              .overlay {
-                Circle()
-                  .stroke(lineWidth: 1)
-                  .foregroundColor(.ds(.white))
-              }
-            
-          default:
-            DefaultImage()
-          }
-        }
-        
-      } else {
-        DefaultImage()
-      }
-      
-      VStack(alignment: .leading, spacing: 8) {
-        Text(member?.nickName ?? "닉네임")
-          .font(.ds(.title3(.semibold)))
-          .foregroundColor(.ds(.black))
-        
-        HStack(spacing: 16) {
-          HStack(spacing: 6) {
-            Text("👍🏻")
-              .font(.pretendard(.semiBold, size: 12))
-              .padding(6)
-              .background(Color.ds(.black))
-              .clipShape(Circle())
-            
-            Text("\(member?.likeCount ?? 0)")
-              .font(.ds(.title2(.semibold)))
-              .foregroundColor(.ds(.black))
-          }
-          
-          HStack(spacing: 6) {
-            Text("👎🏻")
-              .font(.pretendard(.semiBold, size: 12))
-              .padding(6)
-              .background(Color.ds(.black))
-              .clipShape(Circle())
-            
-            Text("\(member?.disLikeCount ?? 0)")
-              .font(.ds(.title2(.semibold)))
-              .foregroundColor(.ds(.black))
-          }
-        }
-      }
-      Spacer()
-    }
-    .padding(.vertical, 18)
-    .padding(.horizontal, 24)
-    .frame(maxWidth: .infinity)
-    .background(Color.ds(.green1))
-    .cornerRadius(30)
-  }
-  
-  func UnFoldedHeaderView(member: Member?) -> some View {
-    VStack(spacing: 30) {
-      VStack(spacing: 16) {
-        if let imageURL = URL(string: member?.imageURL ?? "") {
-          CacheAsyncImage(url: imageURL) { phase in
+  var unFoldedHeaderView: some View {
+    WithViewStore(store, observe: { $0.member }) { viewStore in
+      VStack(spacing: 0) {
+        Spacer().frame(height: 29)
+
+        if let imageURL = viewStore.state?.imageURL,
+           let url = URL(string: imageURL) {
+          CacheAsyncImage(url: url) { phase in
             switch phase {
             case .success(let image):
               image
@@ -233,80 +169,158 @@ public struct ProfileView: View {
                 .clipShape(Circle())
                 .overlay {
                   Circle()
-                    .stroke(lineWidth: 1)
-                    .foregroundColor(.ds(.white))
+                    .stroke(lineWidth: 2)
+                    .foregroundColor(.white)
                 }
-              
+
             default:
-              DefaultImage()
+              defaultProfileImage(size: 80)
             }
           }
-          
         } else {
-          DefaultImage()
+          defaultProfileImage(size: 80)
         }
-        
+
+        Spacer().frame(height: 16)
+
         VStack(spacing: 6) {
-          Text(member?.nickName ?? "닉네임")
+          Text(viewStore.state?.nickName ?? "비회원")
             .font(.ds(.title3(.semibold)))
             .foregroundColor(.ds(.black))
-          
-          Text(member?.introduction ?? "자기 소개")
+
+          Text(viewStore.state?.introduction ?? "비회원 사용자입니다")
             .font(.ds(.title4(.medium)))
             .foregroundColor(.ds(.black))
         }
-      }
-      
-      HStack(spacing: 62) {
-        HStack(spacing: 6) {
-          Text("👍🏻살")
-            .font(.pretendard(.semiBold, size: 14))
-            .foregroundColor(.ds(.green1))
-            .padding(.vertical, 4)
-            .padding(.horizontal, 6)
-            .background(Color.ds(.black))
-            .clipShape(Capsule())
-          
-          Text("\(member?.likeCount ?? 0)")
-            .font(.ds(.title2(.semibold)))
-            .foregroundColor(.ds(.black))
+
+        Spacer().frame(height: 29)
+
+        HStack(spacing: 62) {
+          HStack {
+            Text("👍🏻살")
+              .font(.pretendard(.semiBold, size: 14))
+              .foregroundColor(.ds(.green1))
+              .padding(.vertical, 4)
+              .padding(.horizontal, 6)
+              .background(Color.ds(.black))
+              .clipShape(Capsule())
+
+            Text("\(viewStore.state?.likeCount ?? 0)")
+              .font(.ds(.title2(.semibold)))
+              .foregroundColor(.ds(.black))
+          }
+
+          HStack {
+            Text("👎🏻말")
+              .font(.pretendard(.semiBold, size: 14))
+              .foregroundColor(.ds(.green1))
+              .padding(.vertical, 4)
+              .padding(.horizontal, 6)
+              .background(Color.ds(.black))
+              .clipShape(Capsule())
+
+            Text("\(viewStore.state?.disLikeCount ?? 0)")
+              .font(.ds(.title2(.semibold)))
+              .foregroundColor(.ds(.black))
+          }
         }
-        HStack(spacing: 6) {
-          Text("👎🏻말")
-            .font(.pretendard(.semiBold, size: 14))
-            .foregroundColor(.ds(.green1))
-            .padding(.vertical, 4)
-            .padding(.horizontal, 6)
-            .background(Color.ds(.black))
-            .clipShape(Capsule())
-          
-          Text("\(member?.disLikeCount ?? 0)")
-            .font(.ds(.title2(.semibold)))
-            .foregroundColor(.ds(.black))
-        }
+
+        Spacer().frame(height: 32)
       }
     }
-    .padding(.vertical, 30)
-    .frame(maxWidth: .infinity)
-    .background(Color.ds(.green1))
-    .cornerRadius(30)
   }
-  
-  func DefaultImage() -> some View {
+
+  var foldedHeaderView: some View {
+    WithViewStore(store, observe: { $0.member }) { viewStore in
+      HStack(spacing: 0) {
+        if let imageURL = viewStore.state?.imageURL,
+           let url = URL(string: imageURL) {
+          CacheAsyncImage(url: url) { phase in
+            switch phase {
+            case .success(let image):
+              image
+                .resizable()
+                .scaledToFill()
+                .frame(width: 60, height: 60)
+                .clipShape(Circle())
+                .overlay {
+                  Circle()
+                    .stroke(lineWidth: 2)
+                    .foregroundColor(.white)
+                }
+
+            default:
+              defaultProfileImage(size: 60)
+            }
+          }
+        } else {
+          defaultProfileImage(size: 60)
+        }
+
+        Spacer().frame(width: 16)
+
+        HStack {
+          VStack(alignment: .leading, spacing: 8) {
+            Text(viewStore.state?.nickName ?? "비회원")
+              .font(.ds(.title3(.semibold)))
+              .foregroundColor(.ds(.black))
+
+            HStack(spacing: 16) {
+              HStack {
+                Text("👍🏻살")
+                  .font(.pretendard(.semiBold, size: 14))
+                  .foregroundColor(.ds(.green1))
+                  .padding(.vertical, 4)
+                  .padding(.horizontal, 6)
+                  .background(Color.ds(.black))
+                  .clipShape(Capsule())
+
+                Text("\(viewStore.state?.likeCount ?? 0)")
+                  .font(.ds(.title2(.semibold)))
+                  .foregroundColor(.ds(.black))
+              }
+
+              HStack {
+                Text("👎🏻말")
+                  .font(.pretendard(.semiBold, size: 14))
+                  .foregroundColor(.ds(.green1))
+                  .padding(.vertical, 4)
+                  .padding(.horizontal, 6)
+                  .background(Color.ds(.black))
+                  .clipShape(Capsule())
+
+                Text("\(viewStore.state?.disLikeCount ?? 0)")
+                  .font(.ds(.title2(.semibold)))
+                  .foregroundColor(.ds(.black))
+              }
+            }
+          }
+
+          Spacer()
+        }
+      }
+      .padding(.vertical, 18)
+      .padding(.horizontal, 24)
+      .frame(maxWidth: .infinity)
+      .background(Color.ds(.green1))
+      .cornerRadius(30)
+    }
+  }
+
+  func defaultProfileImage(size: CGFloat) -> some View {
     Image(icon: .person_fill)
       .resizable()
-      .frame(width: 30, height: 30)
-      .scaledToFit()
-      .frame(width: 70, height: 70)
-      .background(Color.ds(.gray2))
+      .frame(width: size / 2, height: size / 2)
+      .aspectRatio(contentMode: .fit)
+      .frame(width: size, height: size)
+      .background(.gray)
       .clipShape(Circle())
       .overlay {
         Circle()
-          .stroke(lineWidth: 1)
-          .foregroundColor(.white)
+          .stroke(lineWidth: 2)
+          .foregroundColor(.ds(.white))
       }
   }
-  
 }
 
 struct ProfileView_Previews: PreviewProvider {

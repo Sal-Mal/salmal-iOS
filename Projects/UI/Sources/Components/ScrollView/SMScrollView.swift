@@ -7,20 +7,20 @@ struct SMScrollViewPreferenceKey: PreferenceKey {
 
 public struct SMScrollView<Content: View>: View {
 
-  let axis: Axis.Set
-  let showIndicators: Bool
-  let onChangedOffset: (CGPoint) -> Void
-  let content: Content
+  private let axis: Axis.Set
+  private let showIndicators: Bool
+  @Binding private var onOffsetChanged: CGPoint
+  private let content: Content
 
   public init(
     axis: Axis.Set = .vertical,
     showIndicators: Bool = true,
-    onChangedOffset: @escaping (CGPoint) -> Void = { _ in },
+    onOffsetChanged: Binding<CGPoint>,
     @ViewBuilder content: () -> Content
   ) {
     self.axis = axis
     self.showIndicators = showIndicators
-    self.onChangedOffset = onChangedOffset
+    self._onOffsetChanged = onOffsetChanged
     self.content = content()
   }
 
@@ -36,7 +36,9 @@ public struct SMScrollView<Content: View>: View {
       content
     }
     .coordinateSpace(name: "SMScrollView")
-    .onPreferenceChange(SMScrollViewPreferenceKey.self, perform: onChangedOffset)
+    .onPreferenceChange(SMScrollViewPreferenceKey.self) { point in
+      onOffsetChanged = point
+    }
     .scrollIndicators(.hidden)
   }
 }

@@ -6,37 +6,48 @@ import Core
 public struct OtherProfileCore: Reducer {
 
   public struct State: Equatable {
+    @BindingState var scrollViewOffset: CGPoint = .zero
     @BindingState var isBlockSheetPresented: Bool = false
-    let memberID: Int
+    @BindingState var isHeaderFolded: Bool = false
 
-    var member: Member? = MemberResponseDTO.mock.toDomain
-    var votes = [Vote]()
+    let memberId: Int
+    var member: Member?
+    var votes: IdentifiedArrayOf<Vote> = []
+
+    var cursorId: Int?
+    var pagingSize: Int = 10
+    var hasNext: Bool = false
 
     public init(memberID: Int) {
-      self.memberID = memberID
+      self.memberId = memberID
     }
   }
 
   public enum Action: BindableAction, Equatable {
+    case backButtonTapped
+    case blockButtonTapped
+    case unBlockButtonTapped
+    case blockSheetConfirmButtonTapped
+    case voteCellTapped(Vote)
+    
+    case _onAppear
+    case _onScrollViewAppear(Vote)
+    case _fetchMemberResponse(Member)
+    case _fetchVotesResponse([Vote])
+    case _scrollViewBottomReached
+
     case binding(BindingAction<State>)
     case delegate(Delegate)
-    case onAppear
-    case setMember(Member?)
-    case setVote([Vote])
-    case dismissButtonTapped
-    case blockButtonTapped
-    
-    case requestVote(Int)
-    
-    
+
     public enum Delegate: Equatable {
       case moveToSalMalDetail(Vote)
     }
   }
 
   @Dependency(\.dismiss) var dismiss
-  @Dependency(\.memberRepository) var memberRepository: MemberRepository
-  @Dependency(\.voteRepository) var voteRepository: VoteRepository
+  @Dependency(\.voteRepository) var voteRepository
+  @Dependency(\.memberRepository) var memberRepository
+  @Dependency(\.toastManager) var toastManager
 
   public init() {}
 
@@ -44,51 +55,88 @@ public struct OtherProfileCore: Reducer {
     BindingReducer()
     Reduce { state, action in
       switch action {
-      case .binding:
-        return .none
-        
-      case .delegate:
-        return .none
-        
-      case .onAppear:
-        return .run { [state] send in
-          let member = try await memberRepository.member(id: state.memberID)
-          let votes = try await memberRepository.votes(memberID: state.memberID, cursorId: nil, size: 20)
-          print(votes)
-          await send(.setMember(member))
-          await send(.setVote(votes))
-        } catch: { error, send in
-          print(error)
-        }
-        
-      case let .setMember(member):
-        state.member = member
-        return .none
-        
-      case let .setVote(vote):
-        state.votes = vote
-        return .none
-
-      case .dismissButtonTapped:
-        return .run { send in
-          await dismiss()
-        }
+      case .backButtonTapped:
+        return .run { send in await dismiss() }
 
       case .blockButtonTapped:
-        return .run { [state] send in
-          try await memberRepository.block(id: state.memberID)
-          await dismiss()
+        state.isBlockSheetPresented = true
+        return .none
+
+      case .unBlockButtonTapped:
+        return .run { [id = state.memberId] send in
+          try await memberRepository.unBlock(id: id)
+
         } catch: { error, send in
-          print(error.localizedDescription)
+          await toastManager.showToast(.error(error.localizedDescription))
         }
-        
-      case let .requestVote(id):
-        return .run { send in
+
+      case .blockSheetConfirmButtonTapped:
+        return .run { [state] send in
+          try await memberRepository.block(id: state.memberId)
+          await dismiss()
+
+        } catch: { error, send in
+          await toastManager.showToast(.error(error.localizedDescription))
+        }
+
+      case .voteCellTapped(let vote):
+        return .run { [id = vote.id] send in
           let vote = try await voteRepository.getVote(id: id)
           await send(.delegate(.moveToSalMalDetail(vote)))
+
         } catch: { error, send in
-          print(error.localizedDescription)
+          await toastManager.showToast(.error(error.localizedDescription))
         }
+
+      case ._onAppear:
+        return .merge(
+          .run { [memberId = state.memberId] send in
+            let member = try await memberRepository.member(id: memberId)
+            await send(._fetchMemberResponse(member))
+
+          } catch: { error, send in
+            await toastManager.showToast(.error(error.localizedDescription))
+          },
+          .run { [memberId = state.memberId, cursorId = state.cursorId, size = state.pagingSize] send in
+            let votes = try await memberRepository.votes(memberID: memberId, cursorId: cursorId, size: size)
+            await send(._fetchVotesResponse(votes))
+
+          } catch: { error, send in
+            await toastManager.showToast(.error(error.localizedDescription))
+          }
+        )
+
+      case ._onScrollViewAppear(let vote):
+        return vote == state.votes.last ? .send(._scrollViewBottomReached) : .none
+
+      case ._fetchMemberResponse(let member):
+        state.member = member
+        return .none
+
+      case ._fetchVotesResponse(let votes):
+        state.votes.removeAll()
+        state.votes.append(contentsOf: votes)
+        state.cursorId = votes.last?.id
+        return .none
+
+      case ._scrollViewBottomReached:
+        return .run { [memberId = state.memberId, cursorId = state.cursorId, size = state.pagingSize] send in
+          let votes = try await memberRepository.votes(memberID: memberId, cursorId: cursorId, size: size)
+          await send(._fetchVotesResponse(votes))
+
+        } catch: { error, send in
+          await toastManager.showToast(.error(error.localizedDescription))
+        }
+
+      case .binding(\.$scrollViewOffset):
+        state.isHeaderFolded = -state.scrollViewOffset.y > 0
+        return .none
+
+      case .binding:
+        return .none
+
+      case .delegate:
+        return .none
       }
     }
   }
