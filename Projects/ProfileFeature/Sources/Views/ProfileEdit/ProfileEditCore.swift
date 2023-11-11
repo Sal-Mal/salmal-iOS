@@ -1,3 +1,4 @@
+import UIKit
 import SwiftUI
 import PhotosUI
 import AVFoundation
@@ -29,6 +30,7 @@ public struct ProfileEditCore: Reducer {
     case selectInPhotoLibraryButtonTapped
     case takePhotoButtonTapped
     case cancelTakePhotoButtonTapped
+    case cameraTakeButtonTapped(UIImage)
     case removeCurrentPhotoButtonTapped
     case logoutButtonTapped
     case withdrawalButtonTapped
@@ -46,7 +48,6 @@ public struct ProfileEditCore: Reducer {
 
   public var body: some ReducerOf<Self> {
     BindingReducer()
-
     Reduce { state, action in
       switch action {
       case .onAppear:
@@ -91,6 +92,10 @@ public struct ProfileEditCore: Reducer {
       case .cancelTakePhotoButtonTapped:
         state.isTakePhotoPresented = false
         return .none
+
+      case .cameraTakeButtonTapped(let uiImage):
+        state.isTakePhotoPresented = false
+        return .send(.setImage(uiImage.jpegData(compressionQuality: 0.5)))
 
       case .binding(\.$selectedItem):
         guard let item = state.selectedItem else { return .none }

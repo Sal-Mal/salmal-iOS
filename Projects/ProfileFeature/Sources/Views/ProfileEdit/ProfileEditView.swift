@@ -173,11 +173,12 @@ public struct ProfileEditView: View {
         NotificationService.post(.hideTabBar)
       }
       .sheet(isPresented: viewStore.$isTakePhotoPresented) {
-        SMImagePicker { uiImage in
-          viewStore.send(.setImage(uiImage.jpegData(compressionQuality: 1)!))
-        } onDismiss: {
+        SMImagePicker(onCapture: {
+          viewStore.send(.cameraTakeButtonTapped($0))
+        }, onDismiss: {
           viewStore.send(.cancelTakePhotoButtonTapped)
-        }
+        })
+        .frame(maxHeight: .infinity)
       }
       .photosPicker(isPresented: viewStore.$isPhotoLibraryPresented, selection: viewStore.$selectedItem)
     }
