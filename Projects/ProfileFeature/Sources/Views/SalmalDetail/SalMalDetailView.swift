@@ -7,6 +7,7 @@ import ComposableArchitecture
 public struct SalMalDetailView: View {
   let store: StoreOf<SalMalDetailCore>
   @ObservedObject var viewStore: ViewStoreOf<SalMalDetailCore>
+  @State var modalHeight: CGFloat = .zero
   
   public init(store: StoreOf<SalMalDetailCore>) {
     self.store = store
@@ -53,6 +54,15 @@ public struct SalMalDetailView: View {
       .sheet(
         store: store.scope(state: \.$reportState, action: SalMalDetailCore.Action.report)) { subStore in
           ReportView(store: subStore)
+            .readHeight()
+            .onPreferenceChange(HeightPreferenceKey.self) { height in
+              if let height {
+                self.modalHeight = height
+              }
+            }
+            .presentationDetents([.height(self.modalHeight)])
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.ds(.gray4))
         }
         .smNavigationBar(
           title: "",
@@ -65,13 +75,13 @@ public struct SalMalDetailView: View {
           },
           rightItems: {
             if viewStore.isMine {
-              EmptyView()
-            } else {
               Button {
                 store.send(.deleteVoteTapped)
               } label: {
                 Image(icon: .ic_trash)
               }
+            } else {
+              EmptyView()
             }
           }
         )

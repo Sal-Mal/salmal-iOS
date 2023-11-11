@@ -75,6 +75,7 @@ public struct DefaultNetworkService: NetworkService {
     }
     
     debugPrint("StatusCode: \(dataResponse.response?.statusCode)")
+    debugPrint(dataResponse.data?.prettifyJSONString)
     
     guard let statusCode = dataResponse.response?.statusCode,
           (200..<300) ~= statusCode

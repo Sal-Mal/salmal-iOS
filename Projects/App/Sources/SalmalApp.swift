@@ -80,6 +80,7 @@ extension SalmalApp {
       }
       .opacity(showTab ? 1 : 0)
     }
+    .animation(.none, value: tabIndex)
     .onReceive(NotificationService.publisher(.showTabBar)) { _ in
       showTab = true
     }
