@@ -36,6 +36,7 @@ struct BookmarkListView: View {
       }
       .onAppear {
         viewStore.send(._onAppear)
+        NotificationService.post(.hideTabBar)
       }
     }
   }

@@ -21,6 +21,7 @@ extension SM {
     case ic_message
     case ic_kakao
     case ic_apple
+    case bubble
 
     /// 레거시
     case chevron_left = "chevron.left"

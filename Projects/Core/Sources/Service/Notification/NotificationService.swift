@@ -8,6 +8,8 @@ public enum NotificationService {
     case login
     case logout
     case tapAddComment
+    case showTabBar
+    case hideTabBar
     
     var name: Notification.Name {
       return .init(self.rawValue)

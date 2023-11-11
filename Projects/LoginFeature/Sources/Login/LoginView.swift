@@ -18,8 +18,17 @@ public struct LoginView: View {
   public var body: some View {
     ZStack {
       
+      VStack(spacing: 42) {
+        Image(icon: .ic_salmalApp)
+          .fill(size: 86)
+        titles
+      }
+      
       VStack(spacing: 12) {
         Spacer()
+        
+        Image(icon: .bubble)
+          .padding(.bottom, 5)
         
         KakaoButton
         AppleButton
@@ -31,6 +40,16 @@ public struct LoginView: View {
 }
 
 private extension LoginView {
+  var titles: some View {
+    VStack(spacing: 12) {
+      Text("든든한 쇼핑 메이트")
+        .font(.blackHanSans(size: 24))
+      
+      Text("살말")
+        .font(.blackHanSans(size: 40))
+    }
+  }
+  
   var KakaoButton: some View {
     Button {
       store.send(.tapKakaoLogin)

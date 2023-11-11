@@ -28,6 +28,9 @@ public struct SettingView: View {
         .listRowSeparator(.hidden)
       }
       .listStyle(.plain)
+      .onAppear {
+        NotificationService.post(.hideTabBar)
+      }
       .smNavigationBar(
         title: "설정",
         leftItems: {

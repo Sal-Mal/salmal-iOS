@@ -34,6 +34,7 @@ public struct BlockedMemberListView: View {
       )
       .onAppear {
         viewStore.send(.onAppear)
+        NotificationService.post(.hideTabBar)
       }
     }
   }

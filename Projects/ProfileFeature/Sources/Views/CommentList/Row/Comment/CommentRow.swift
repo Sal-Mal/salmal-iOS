@@ -32,7 +32,7 @@ struct CommentRow: View {
       
       VStack(alignment: .leading, spacing: 9) {
         HStack(spacing: 8) {
-          Text("username")
+          Text(viewStore.comment.nickName)
             .font(.ds(.title4(.semibold)))
             .foregroundColor(.ds(.white))
           
@@ -79,19 +79,21 @@ struct CommentRow: View {
           }
         }
         
-        if let subCommentCount = viewStore.comment.subComments {
+        if let replyCount = viewStore.comment.replyCount,
+           replyCount != .zero {
           Button {
             store.send(.moreCommentToggle)
           } label: {
-            Text("답글 \(subCommentCount)개 보기")
+            Text("답글 \(replyCount)개 보기")
               .font(.ds(.title4(.semibold)))
               .foregroundColor(.ds(.green1))
-
           }
           .padding(.top, 5)
           
           if viewStore.showMoreComment {
-            Text("대댓글 UI")
+            ForEachStore(store.scope(state: \.replys, action: CommentCore.Action.replyComment(id: action:))) { store in
+              ReplyCommentRow(store: store)
+            }
           }
         }
       }

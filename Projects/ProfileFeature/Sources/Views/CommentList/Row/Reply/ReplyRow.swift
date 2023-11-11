@@ -4,31 +4,6 @@ import Core
 import UI
 import ComposableArchitecture
 
-public struct ReplyCommentCore: Reducer {
-  public struct State: Equatable, Identifiable {
-    var comment: Comment
-    
-    public var id: Int {
-      return comment.id
-    }
-  }
-  
-  public enum Action: Equatable {
-    case likeTapped
-  }
-  
-  @Dependency(\.commentRepository) var commentRepository
-  
-  public var body: some ReducerOf<Self> {
-    Reduce { state, action in
-      switch action {
-      default:
-        return .none
-      }
-    }
-  }
-}
-
 struct ReplyCommentRow: View {
   let store: StoreOf<ReplyCommentCore>
   @ObservedObject var viewStore: ViewStoreOf<ReplyCommentCore>
@@ -55,21 +30,22 @@ struct ReplyCommentRow: View {
       
       VStack(alignment: .leading, spacing: 9) {
         HStack(spacing: 8) {
-          Text("username")
+          Text(viewStore.comment.nickName)
             .font(.ds(.title4(.semibold)))
             .foregroundColor(.ds(.white))
           
-          Text("3시간 전")
+          Text(viewStore.timeDifference)
             .font(.ds(.title4(.medium)))
             .foregroundColor(.ds(.gray2))
           
           Spacer()
           
           Button {
+            store.send(.optionsTapped)
             // MARK: - 더보기 버튼 탭
           } label: {
-            Image(systemName: "poweron")
-              .fit(size: 16)
+            Image(icon: .ic_more)
+              .fit(size: 24)
           }
           .padding(.trailing, 10)
         }
@@ -89,6 +65,7 @@ struct ReplyCommentRow: View {
           .padding(.trailing, 5)
           
           Text("\(viewStore.comment.likeCount)")
+            .monospacedDigit()
             .padding(.trailing, 16)
         }
       }

@@ -45,7 +45,7 @@ public struct ReportCommentView: View {
 
 struct ReportCommentView_Previews: PreviewProvider {
   static var previews: some View {
-    ReportCommentView(store: .init(initialState: .init(memberID: 2, commentID: 2)) {
+    ReportCommentView(store: .init(initialState: .init(comment: CommentResponseDTO.mock.toDomain)) {
       ReportCommentCore()
     })
   }

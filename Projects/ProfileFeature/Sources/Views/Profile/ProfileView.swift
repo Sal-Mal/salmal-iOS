@@ -96,6 +96,7 @@ public struct ProfileView: View {
         }
         .onAppear {
           viewStore.send(.onAppear)
+          NotificationService.post(.showTabBar)
         }
         .smNavigationBar(title: "", rightItems: {
           HStack {

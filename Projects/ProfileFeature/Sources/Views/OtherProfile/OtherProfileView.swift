@@ -235,6 +235,7 @@ public struct OtherProfileView: View {
       .onAppear {
         scrollOffsetY = 0
         viewHeight = 200
+        NotificationService.post(.hideTabBar)
       }
       .onChange(of: scrollOffsetY) { newValue in
         withAnimation(.linear(duration: 0.2)) {

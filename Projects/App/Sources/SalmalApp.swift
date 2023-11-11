@@ -75,11 +75,16 @@ extension SalmalApp {
       
       Spacer()
       
-      if showTab {
-        SalMalTabBar(tabIndex: $tabIndex) {
-           isUploadPresented = true
-        }
+      SalMalTabBar(tabIndex: $tabIndex) {
+         isUploadPresented = true
       }
+      .opacity(showTab ? 1 : 0)
+    }
+    .onReceive(NotificationService.publisher(.showTabBar)) { _ in
+      showTab = true
+    }
+    .onReceive(NotificationService.publisher(.hideTabBar)) { _ in
+      showTab = false
     }
     .fullScreenCover(isPresented: $isUploadPresented) {
       UploadView(store: uploadStore)
