@@ -18,7 +18,7 @@ public extension SMCapsuleTextField {
     case let .tint(color):
       new.tintColor = color
     case let .placeholder(color):
-      new.tintColor = color
+      new.placeholderColor = color
     }
     
     return new

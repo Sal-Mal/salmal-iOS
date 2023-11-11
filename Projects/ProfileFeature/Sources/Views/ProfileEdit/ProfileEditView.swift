@@ -16,62 +16,31 @@ public struct ProfileEditView: View {
 
   public var body: some View {
     WithViewStore(store, observe: { $0 }) { viewStore in
-      VStack {
+      VStack(spacing: 0) {
         Spacer()
 
         VStack(spacing: 24) {
           if let imageData = viewStore.imageData, let uiImage = UIImage(data: imageData) {
-            Image(uiImage: uiImage)
-              .resizable()
-              .scaledToFill()
-              .frame(width: 80, height: 80)
-              .clipShape(Circle())
-              .overlay {
-                Circle()
-                  .stroke(lineWidth: 2)
-                  .foregroundColor(.ds(.white))
-              }
+            profileImageView(image: Image(uiImage: uiImage))
+
           } else {
             if let url = URL(string: viewStore.member?.imageURL ?? "") {
               CacheAsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):
-                  image
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 80, height: 80)
-                    .clipShape(Circle())
-                    .overlay {
-                      Circle()
-                        .stroke(lineWidth: 2)
-                        .foregroundColor(.ds(.white))
-                    }
+                  profileImageView(image: image)
 
                 default:
-                  Circle()
-                    .fill(.gray)
-                    .frame(width: 80, height: 80)
-                    .overlay {
-                      Circle()
-                        .stroke(lineWidth: 2)
-                        .foregroundColor(.ds(.white))
-                    }
+                  defaultProfileImageView
                 }
               }
             } else {
-              Circle()
-                .fill(.gray)
-                .frame(width: 80, height: 80)
-                .overlay {
-                  Circle()
-                    .stroke(lineWidth: 2)
-                    .foregroundColor(.ds(.white))
-                }
+              defaultProfileImageView
             }
           }
 
           Button {
-            viewStore.send(.binding(.set(\.$isPhotoSheetPresented, true)))
+            viewStore.send(.changeProfileImageButtonTapped)
           } label: {
             Text("사진 변경")
               .font(.ds(.title4(.medium)))
@@ -79,17 +48,20 @@ public struct ProfileEditView: View {
           }
         }
 
-        Spacer()
+        Spacer().frame(height: 98)
 
+        // 닉네임 & 한줄 소개 입력
         VStack(spacing: 42) {
           VStack(alignment: .leading) {
             Text("닉네임")
               .font(.ds(.title4(.medium)))
               .foregroundColor(.ds(.gray2))
+
             SMCapsuleTextField(
               text: viewStore.$nickName,
               placeholder: "닉네임을 입력해주세요"
             )
+            .color(.placeholder(.clear))
             .font(.pretendard(.regular, size: 16))
           }
 
@@ -97,16 +69,20 @@ public struct ProfileEditView: View {
             Text("한줄 소개")
               .font(.ds(.title4(.medium)))
               .foregroundColor(.ds(.gray2))
+
             SMCapsuleTextField(
               text: viewStore.$introduction,
               placeholder: "소개를 입력해주세요"
             )
+            .color(.placeholder(.clear))
             .font(.pretendard(.regular, size: 16))
           }
         }
+        .padding(.horizontal, 18)
 
         Spacer()
 
+        // 로그아웃 & 회원탈퇴
         VStack(spacing: 24) {
           Button {
             viewStore.send(.logoutButtonTapped)
@@ -117,7 +93,7 @@ public struct ProfileEditView: View {
           }
 
           Button {
-            viewStore.send(.binding(.set(\.$isWithdrawalPresented, true)))
+            viewStore.send(.withdrawalButtonTapped)
           } label: {
             Text("서비스 탈퇴")
               .font(.ds(.title4(.medium)))
@@ -129,11 +105,11 @@ public struct ProfileEditView: View {
         title: "개인정보 수정",
         leftItems: {
           Button {
-            viewStore.send(.dismissButtonTapped)
+            viewStore.send(.backButtonTapped)
           } label: {
             Text("취소")
-              .foregroundColor(.ds(.white80))
               .font(.ds(.title2(.semibold)))
+              .foregroundColor(.ds(.white80))
           }
         },
         rightItems: {
@@ -146,45 +122,73 @@ public struct ProfileEditView: View {
           }
         }
       )
-      .bottomSheet(isPresented: viewStore.$isPhotoSheetPresented) {
+      .bottomSheet(isPresented: viewStore.$isProfileImageSheetPresented) {
         VStack(spacing: 0) {
-          MenuButton(icon: Image(icon: .gallery), title: "사진첩에서 선택하기") {
-            viewStore.send(.selectInPhotoLibraryButtonTapped)
+          menuButton(icon: Image(icon: .gallery), title: "사진첩에서 선택하기") {
+            viewStore.send(.showPhotoLibrarySheetButtonTapped)
           }
 
-          MenuButton(icon: Image(icon: .camera), title: "촬영하기") {
-            viewStore.send(.takePhotoButtonTapped)
+          menuButton(icon: Image(icon: .camera), title: "촬영하기") {
+            viewStore.send(.showCameraSheetButtonTapped)
           }
 
-          MenuButton(icon: Image(icon: .ic_trash), title: "현재 사진 삭제") {
+          // TODO: - 현재 사진 삭제 API 나올 때까지 주석
+          /*
+          menuButton(icon: Image(icon: .ic_trash), title: "현재 사진 삭제") {
             viewStore.send(.removeCurrentPhotoButtonTapped)
           }
+           */
         }
         .padding(.top, 43)
       }
-      .alert(
-        isPresented: viewStore.$isWithdrawalPresented,
-        alert: .withdrawal
-      ) {
-        viewStore.send(.withdrawalButtonTapped)
-      }
       .onAppear {
-        viewStore.send(.onAppear)
+        viewStore.send(._onAppear)
         NotificationService.post(.hideTabBar)
       }
-      .sheet(isPresented: viewStore.$isTakePhotoPresented) {
+      .photosPicker(
+        isPresented: viewStore.$isPhotoLibrarySheetPresented,
+        selection: viewStore.$selectedItem
+      )
+      .fullScreenCover(isPresented: viewStore.$isCameraSheetPresented) {
         SMImagePicker(onCapture: {
-          viewStore.send(.cameraTakeButtonTapped($0))
+          viewStore.send(.takePhotoButtonTapped($0))
         }, onDismiss: {
-          viewStore.send(.cancelTakePhotoButtonTapped)
+          viewStore.send(.cancelCameraSheetButtonTapped)
         })
-        .frame(maxHeight: .infinity)
+        .ignoresSafeArea(.all, edges: .bottom)
       }
-      .photosPicker(isPresented: viewStore.$isPhotoLibraryPresented, selection: viewStore.$selectedItem)
+      .alert(isPresented: viewStore.$isWithdrawalSheetPresented, alert: .withdrawal) {
+        viewStore.send(.withdrawalButtonTapped)
+      }
     }
+    .ignoresSafeArea(.keyboard)
   }
 
-  func MenuButton(icon: Image, title: String, action: (() -> Void)? = nil) -> some View {
+  func profileImageView(image: Image) -> some View {
+    image
+      .resizable()
+      .scaledToFill()
+      .frame(width: 80, height: 80)
+      .clipShape(Circle())
+      .overlay {
+        Circle()
+          .stroke(lineWidth: 2)
+          .foregroundColor(.ds(.white))
+      }
+  }
+
+  var defaultProfileImageView: some View {
+    Circle()
+      .fill(.gray)
+      .frame(width: 80, height: 80)
+      .overlay {
+        Circle()
+          .stroke(lineWidth: 2)
+          .foregroundColor(.ds(.white))
+      }
+  }
+
+  func menuButton(icon: Image, title: String, action: (() -> Void)? = nil) -> some View {
     Button {
       action?()
     } label: {
@@ -215,7 +219,6 @@ struct ProfileEditView_Previews: PreviewProvider {
         ProfileEditCore()._printChanges()
       }))
     }
-    .padding()
     .preferredColorScheme(.dark)
     .onAppear {
       SM.Font.initFonts()

@@ -11,10 +11,10 @@ public struct ProfileEditCore: Reducer {
   public struct State: Equatable {
     @BindingState var nickName: String = ""
     @BindingState var introduction: String = ""
-    @BindingState var isPhotoSheetPresented: Bool = false
-    @BindingState var isPhotoLibraryPresented: Bool = false
-    @BindingState var isTakePhotoPresented: Bool = false
-    @BindingState var isWithdrawalPresented: Bool = false
+    @BindingState var isProfileImageSheetPresented: Bool = false
+    @BindingState var isPhotoLibrarySheetPresented: Bool = false
+    @BindingState var isCameraSheetPresented: Bool = false
+    @BindingState var isWithdrawalSheetPresented: Bool = false
     @BindingState var selectedItem: PhotosPickerItem?
 
     var member: Member?
@@ -24,18 +24,21 @@ public struct ProfileEditCore: Reducer {
   }
 
   public enum Action: BindableAction, Equatable {
-    case onAppear
-    case dismissButtonTapped
+    case backButtonTapped
     case confirmButtonTapped
-    case selectInPhotoLibraryButtonTapped
-    case takePhotoButtonTapped
-    case cancelTakePhotoButtonTapped
-    case cameraTakeButtonTapped(UIImage)
+    case changeProfileImageButtonTapped
+    case showPhotoLibrarySheetButtonTapped
+    case showCameraSheetButtonTapped
+    case cancelCameraSheetButtonTapped
+    case takePhotoButtonTapped(UIImage)
     case removeCurrentPhotoButtonTapped
     case logoutButtonTapped
     case withdrawalButtonTapped
-    case setMember(Member)
-    case setImage(Data?)
+
+    case _onAppear
+    case _setMember(Member)
+    case _setImage(UIImage?)
+    
     case binding(BindingAction<State>)
   }
 
@@ -50,59 +53,73 @@ public struct ProfileEditCore: Reducer {
     BindingReducer()
     Reduce { state, action in
       switch action {
-      case .onAppear:
-        return .run { send in
-          let member = try await memberRepository.myPage()
-          await send(.setMember(member))
-        }
-
-      case .dismissButtonTapped:
+      case .backButtonTapped:
         return .run { send in
           await dismiss()
         }
 
       case .confirmButtonTapped:
-        return .run { [state] send in
-          try await memberRepository.update(nickname: state.nickName, introduction: state.introduction)
-
-          if let data = state.imageData {
-            try await memberRepository.updateImage(data: data)
+        guard let imageData = state.imageData else {
+          return .run { send in
+            await toastManager.showToast(.error("이미지 데이터가 없어요."))
           }
+        }
+
+        return .run { [nickName = state.nickName, introduction = state.introduction, data = imageData] send in
+          try await memberRepository.update(nickname: nickName, introduction: introduction)
+          try await memberRepository.updateImage(data: data)
           await dismiss()
 
         } catch: { error, send in
-          print(error)
+          await toastManager.showToast(.error(error.localizedDescription))
         }
 
-      case .selectInPhotoLibraryButtonTapped:
-        state.isPhotoLibraryPresented = true
-        state.isPhotoSheetPresented = false
+      case .changeProfileImageButtonTapped:
+        state.isProfileImageSheetPresented = true
         return .none
 
-      case .takePhotoButtonTapped:
-        state.isPhotoSheetPresented = false
-        state.isTakePhotoPresented = true
+      case .showPhotoLibrarySheetButtonTapped:
+        state.isProfileImageSheetPresented = false
+        state.isPhotoLibrarySheetPresented = true
         return .none
+
+      case .showCameraSheetButtonTapped:
+        state.isProfileImageSheetPresented = false
+        state.isCameraSheetPresented = true
+        return .none
+
+      case .cancelCameraSheetButtonTapped:
+        state.isCameraSheetPresented = false
+        return .none
+
+      case .takePhotoButtonTapped(let uiImage):
+        state.isCameraSheetPresented = false
+        return .send(._setImage(uiImage))
 
       case .removeCurrentPhotoButtonTapped:
-        state.isPhotoSheetPresented = false
+        state.isProfileImageSheetPresented = false
         state.imageData = nil
         return .none
 
-      case .cancelTakePhotoButtonTapped:
-        state.isTakePhotoPresented = false
-        return .none
-
-      case .cameraTakeButtonTapped(let uiImage):
-        state.isTakePhotoPresented = false
-        return .send(.setImage(uiImage.jpegData(compressionQuality: 0.5)))
+      case ._onAppear:
+        return .run { send in
+          let member = try await memberRepository.myPage()
+          await send(._setMember(member))
+        }
 
       case .binding(\.$selectedItem):
         guard let item = state.selectedItem else { return .none }
 
         return .run { send in
-          let data = try await item.loadTransferable(type: Data.self)
-          await send(.setImage(data))
+          guard let data = try await item.loadTransferable(type: Data.self) else {
+            return
+          }
+
+          let uiImage = UIImage(data: data)
+          await send(._setImage(uiImage))
+
+        } catch: { error, send in
+          await toastManager.showToast(.error(error.localizedDescription))
         }
 
       case .binding:
@@ -124,13 +141,14 @@ public struct ProfileEditCore: Reducer {
           await toastManager.showToast(.error("회원탈퇴 실패!"))
         }
 
-      case .setMember(let member):
+      case ._setMember(let member):
         state.member = member
         state.nickName = member.nickName
         state.introduction = member.introduction
         return .none
 
-      case .setImage(let data):
+      case ._setImage(let uiImage):
+        let data = uiImage?.jpegData(compressionQuality: 0.5)
         state.imageData = data
         return .none
       }

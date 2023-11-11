@@ -106,12 +106,12 @@ public struct PaletteView: View {
   ]
 
   private let fonts: [Font] = [
-    .pretendard(.semiBold, size: 16),
-    .maruBuri(size: 16),
-    .ttTogether(size: 15),
-    .twaySky(size: 15),
-    .binggrae(size: 15),
-    .gabiaSolmee(size: 15)
+    .pretendard(.semiBold, size: 20),
+    .maruBuri(size: 20),
+    .ttTogether(size: 20),
+    .twaySky(size: 20),
+    .binggrae(size: 20),
+    .gabiaSolmee(size: 20)
   ]
 
   @State private var paletteType: PaletteType = .font

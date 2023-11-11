@@ -18,7 +18,7 @@ public struct SalMalTabBar: View {
   
   public var body: some View {
     VStack(spacing: .zero) {
-      Color.ds(.white20).frame(height: 1)
+      Color.ds(.white20).opacity(0.5).frame(height: 1)
       HStack {
         Image(icon : tabIndex == .home ? .home_fill : .home)
           .fill(size: 32)
