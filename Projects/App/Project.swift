@@ -18,6 +18,7 @@ let project = Project(
       bundleId: "com.salmalProject.SalmalApp",
       deploymentTarget: .iOS(targetVersion: "16.0", devices: [.iphone]),
       infoPlist: .extendingDefault(with: [
+        "CFBundleDisplayName": "살말",
         "CFBundleShortVersionString": "1.0",
         "CFBundleVersion": "1",
         "UILaunchStoryboardName": "LaunchScreen",
@@ -28,7 +29,9 @@ let project = Project(
             "CFBundleURLName": "com.salmal.app"
           ]
         ],
-        
+        "UISupportedInterfaceOrientations": [
+          "UIInterfaceOrientationPortrait"
+        ],
         "NSPhotoLibraryUsageDescription": "살말 업로드를 위해 앨범 접근권한이 필요해요",
         "NSCameraUsageDescription": "살말 업로드를 위해 카메라 접근권한이 필요해요",
         "NSAppTransportSecurity": .dictionary([
