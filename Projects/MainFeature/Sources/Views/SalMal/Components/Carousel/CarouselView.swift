@@ -41,8 +41,7 @@ public struct CarouselView: View {
       .clipped()
     }
     .task {
-      // TODO: 무지성 로딩이아니라, 이전 커서를 유지해야함
-      store.send(.requestVoteList)
+      store.send(._onAppear)
     }
     .onReceive(NotificationService.publisher(.reportVote)) { userInfo in
       guard let id = userInfo?["id"] as? Int else { return }
@@ -57,6 +56,11 @@ public struct CarouselView: View {
   var dragGesture: some Gesture {
     DragGesture(minimumDistance: 10)
       .updating($dragOffset) { value, state, _ in
+        // 마지막 아이템인경우 하단 스크롤 막음
+        if viewStore.index == viewStore.votes.count - 1 {
+          return
+        }
+        
         state = value.translation.height
       }
       .onEnded { value in

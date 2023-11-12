@@ -21,7 +21,14 @@ public struct CarouselCore: Reducer {
   }
   
   public enum Action: Equatable {
+    
     case vote(id: VoteItemCore.State.ID, action: VoteItemCore.Action)
+    
+    // MARK: - User Action
+    
+    // MARK: - Internal Action
+    case _onAppear
+    
     case requestVoteList
     case updateIndex(y: CGFloat)
     case voteResponse(VoteList)
@@ -56,6 +63,10 @@ public struct CarouselCore: Reducer {
         
       case .delegate:
         return .none
+      
+      case ._onAppear:
+        state = .init(tab: state.tab)
+        return .send(.requestVoteList)
       
       case .requestVoteList:
         return .run { [state] send in

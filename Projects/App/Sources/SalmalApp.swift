@@ -66,18 +66,20 @@ struct SalmalApp: App {
 extension SalmalApp {
   var MainScene: some View {
     VStack {
-      switch tabIndex {
-      case .home:
+      TabView(selection: $tabIndex) {
         SalMalView(store: mainStore)
-      case .profile:
+          .tag(TabItem.home)
+          .toolbar(.hidden, for: .tabBar)
+        
         ProfileView(store: profileStore)
+          .tag(TabItem.profile)
+          .toolbar(.hidden, for: .tabBar)
       }
-      
-      Spacer()
-      
+
       SalMalTabBar(tabIndex: $tabIndex) {
          isUploadPresented = true
       }
+      .frame(height: 52)
       .opacity(showTab ? 1 : 0)
     }
     .animation(.none, value: tabIndex)

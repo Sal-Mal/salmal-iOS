@@ -47,7 +47,6 @@ public struct SalMalDetailView: View {
             .padding(.bottom, -20)
           CommentListView(store: subStore)
         }
-        .presentationDetents([.large, .medium])
         .presentationDragIndicator(.hidden)
         .background(Color.ds(.gray4))
       }

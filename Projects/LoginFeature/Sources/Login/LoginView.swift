@@ -50,6 +50,7 @@ private extension LoginView {
       Text("살말")
         .font(.blackHanSans(size: 40))
     }
+    .foregroundColor(.ds(.green1))
   }
   
   var KakaoButton: some View {
