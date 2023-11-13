@@ -38,7 +38,9 @@ public struct ProfileEditCore: Reducer {
     case _onAppear
     case _setMember(Member)
     case _setImage(UIImage?)
-    
+    case _presentPhotoLibrarySheet
+    case _presentCameraSheet
+
     case binding(BindingAction<State>)
   }
 
@@ -80,13 +82,17 @@ public struct ProfileEditCore: Reducer {
 
       case .showPhotoLibrarySheetButtonTapped:
         state.isProfileImageSheetPresented = false
-        state.isPhotoLibrarySheetPresented = true
-        return .none
+        return .run { send in
+          try await Task.sleep(for: .milliseconds(100))
+          await send(._presentPhotoLibrarySheet)
+        }
 
       case .showCameraSheetButtonTapped:
         state.isProfileImageSheetPresented = false
-        state.isCameraSheetPresented = true
-        return .none
+        return .run { send in
+          try await Task.sleep(for: .milliseconds(100))
+          await send(._presentCameraSheet)
+        }
 
       case .cancelCameraSheetButtonTapped:
         state.isCameraSheetPresented = false
@@ -99,30 +105,6 @@ public struct ProfileEditCore: Reducer {
       case .removeCurrentPhotoButtonTapped:
         state.isProfileImageSheetPresented = false
         state.imageData = nil
-        return .none
-
-      case ._onAppear:
-        return .run { send in
-          let member = try await memberRepository.myPage()
-          await send(._setMember(member))
-        }
-
-      case .binding(\.$selectedItem):
-        guard let item = state.selectedItem else { return .none }
-
-        return .run { send in
-          guard let data = try await item.loadTransferable(type: Data.self) else {
-            return
-          }
-
-          let uiImage = UIImage(data: data)
-          await send(._setImage(uiImage))
-
-        } catch: { error, send in
-          await toastManager.showToast(.error(error.localizedDescription))
-        }
-
-      case .binding:
         return .none
 
       case .logoutButtonTapped:
@@ -141,6 +123,12 @@ public struct ProfileEditCore: Reducer {
           await toastManager.showToast(.error("회원탈퇴 실패!"))
         }
 
+      case ._onAppear:
+        return .run { send in
+          let member = try await memberRepository.myPage()
+          await send(._setMember(member))
+        }
+
       case ._setMember(let member):
         state.member = member
         state.nickName = member.nickName
@@ -150,6 +138,32 @@ public struct ProfileEditCore: Reducer {
       case ._setImage(let uiImage):
         let data = uiImage?.jpegData(compressionQuality: 0.5)
         state.imageData = data
+        return .none
+
+      case ._presentPhotoLibrarySheet:
+        state.isPhotoLibrarySheetPresented = true
+        return .none
+
+      case ._presentCameraSheet:
+        state.isCameraSheetPresented = true
+        return .none
+
+      case .binding(\.$selectedItem):
+        guard let item = state.selectedItem else { return .none }
+
+        return .run { send in
+          guard let data = try await item.loadTransferable(type: Data.self) else {
+            return
+          }
+
+          let uiImage = UIImage(data: data)
+          await send(._setImage(uiImage))
+
+        } catch: { error, send in
+          await toastManager.showToast(.error(error.localizedDescription))
+        }
+
+      case .binding:
         return .none
       }
     }

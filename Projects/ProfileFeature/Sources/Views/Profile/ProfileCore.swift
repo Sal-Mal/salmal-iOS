@@ -98,7 +98,6 @@ public struct ProfileCore: Reducer {
 
       case ._onScrollViewAppear(let vote):
         return vote == state.votes.last ? .send(._scrollViewBottomReached) : .none
-        return .none
 
       case ._fetchMyPageResponse(let member):
         state.member = member
