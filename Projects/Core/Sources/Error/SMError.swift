@@ -29,14 +29,51 @@ extension SMError {
   public var errorDescription: String? {
     switch self {
     case .network(let reason):
-      return "네트워크 오류"
+      return reason.errorDescription
     case .login(let reason):
-      return "로그인 오류"
+      return reason.errorDescription
     case .authorization(let reason):
-      switch reason {
-      case .photoLibrary:
-        return "이미지를 가져올 수 없어요.\n설정에서 권한을 허용해주세요"
-      }
+      return reason.errorDescription
+    }
+  }
+}
+
+extension SMError.NetworkReason {
+
+  var errorDescription: String? {
+    switch self {
+    case .invalidURL:
+      return "올바르지 않은 URL입니다."
+    case .invalidResponse:
+      return "올바르지 않은 응답 객체입니다."
+    case .invalidURLHTTPResponse:
+      return "올바르지 않은 HTTP 응답입니다."
+    case .emptyRefreshToken:
+      return "갱신 토큰을 찾을 수 없습니다."
+    case .default:
+      return "서버와의 통신에 실패했습니다. 다시 시도해주세요."
+    }
+  }
+}
+
+extension SMError.LoginReason {
+
+  var errorDescription: String? {
+    switch self {
+    case .unknown(let error):
+      return error.localizedDescription
+    case .noUserID:
+      return "사용자 ID를 찾을 수 없습니다."
+    }
+  }
+}
+
+extension SMError.AuthorizationReason {
+
+  var errorDescription: String? {
+    switch self {
+    case .photoLibrary:
+      return "이미지를 가져올 수 없어요.\n설정에서 권한을 허용해주세요"
     }
   }
 }
