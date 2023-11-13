@@ -81,20 +81,37 @@ public struct ProfileCore: Reducer {
         return .none
 
       case ._onAppear:
-        return .merge(
-          .run { send in
-            let member = try await memberRepository.myPage()
-            await send(._fetchMyPageResponse(member))
-          } catch: { error, send in
-            await toastManager.showToast(.error(error.localizedDescription))
-          },
-          .run { send in
-            let votes = try await memberRepository.votes(memberID: userDefault.memberID!, cursorId: nil, size: 100)
-            await send(._fetchVotesResponse(votes))
-          } catch: { error, send in
-            await toastManager.showToast(.error(error.localizedDescription))
-          }
-        )
+        if state.tab == .upload {
+          return .merge(
+            .run { send in
+              let member = try await memberRepository.myPage()
+              await send(._fetchMyPageResponse(member))
+            } catch: { error, send in
+              await toastManager.showToast(.error(error.localizedDescription))
+            },
+            .run { send in
+              let votes = try await memberRepository.votes(memberID: userDefault.memberID!, cursorId: nil, size: 100)
+              await send(._fetchVotesResponse(votes))
+            } catch: { error, send in
+              await toastManager.showToast(.error(error.localizedDescription))
+            }
+          )
+        } else {
+          return .merge(
+            .run { send in
+              let member = try await memberRepository.myPage()
+              await send(._fetchMyPageResponse(member))
+            } catch: { error, send in
+              await toastManager.showToast(.error(error.localizedDescription))
+            },
+            .run { send in
+              let votes = try await memberRepository.evaluations(cursorId: nil, size: 100)
+              await send(._fetchEvaluationsResponse(votes))
+            } catch: { error, send in
+              await toastManager.showToast(.error(error.localizedDescription))
+            }
+          )
+        }
 
       case ._onScrollViewAppear(let vote):
         return vote == state.votes.last ? .send(._scrollViewBottomReached) : .none
