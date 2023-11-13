@@ -62,4 +62,3 @@ struct SplashView_Previews: PreviewProvider {
     .preferredColorScheme(.dark)
   }
 }
-

@@ -3,7 +3,7 @@ import Foundation
 public struct CommentListResponseDTO: Responsable {
   public let hasNext: Bool
   public let comments: [CommentResponseDTO]
-  
+
   public static var mock: CommentListResponseDTO {
     .init(hasNext: true, comments: [
       CommentResponseDTO.mock,
@@ -30,7 +30,7 @@ public struct CommentResponseDTO: Responsable {
   let likeCount: Int
   let createdAt: String
   let updatedAt: String
-  let replyCount: Int
+  let replyCount: Int?
   
   public static var mock: CommentResponseDTO {
     .init(
