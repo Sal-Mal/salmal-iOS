@@ -27,7 +27,7 @@ public struct UploadCore: Reducer {
     // MARK: - 내부 Action
     case _onAppear
     case _requestPhotoLibraryAuthorization
-    case _requestPhotoLibraryAuthorizationResponse(PHAuthorizationStatus)
+    case _requestPhotoLibraryAuthorizationResponse(TaskResult<Void>)
     case _fetchPhotoLibrary
     case _fetchPhotoLibraryResponse([UIImage])
     case _onDisappear
@@ -80,25 +80,27 @@ public struct UploadCore: Reducer {
 
       case ._requestPhotoLibraryAuthorization:
         return .run { send in
-          let status = await photoService.requestAuthorization()
-          await send(._requestPhotoLibraryAuthorizationResponse(status))
+          await send(._requestPhotoLibraryAuthorizationResponse(TaskResult<Void> {
+            try await photoService.requestAuthorization()
+          }))
         }
 
-      case ._requestPhotoLibraryAuthorizationResponse(let status):
-        switch status {
-        case .authorized, .limited:
-          state.isPhotoLibraryAuthorized = true
-          return .send(._fetchPhotoLibrary)
+      case ._requestPhotoLibraryAuthorizationResponse(.success):
+        state.isPhotoLibraryAuthorized = true
+        return .send(._fetchPhotoLibrary)
 
-        default:
-          state.isPhotoLibraryAuthorized = false
-          return .none
+      case ._requestPhotoLibraryAuthorizationResponse(.failure(let error)):
+        state.isPhotoLibraryAuthorized = false
+        return .run { [error] send in
+          await toastManager.showToast(.warning(error.localizedDescription))
         }
 
       case ._fetchPhotoLibrary:
         return .run { send in
-          let uiImages = await photoService.albums(size: .init(width: 1024, height: 1024)) // 앨범 이미지 사이즈? 화질 저하의 원인
+          let uiImages = try await photoService.albums()
           await send(._fetchPhotoLibraryResponse(uiImages))
+        } catch: { error, send in
+          await toastManager.showToast(.warning(error.localizedDescription))
         }
 
       case ._fetchPhotoLibraryResponse(let uiImages):

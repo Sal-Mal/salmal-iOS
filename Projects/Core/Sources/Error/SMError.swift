@@ -73,7 +73,7 @@ extension SMError.AuthorizationReason {
   var errorDescription: String? {
     switch self {
     case .photoLibrary:
-      return "이미지를 가져올 수 없어요.\n설정에서 권한을 허용해주세요"
+      return "이미지를 가져올 수 없어요. 권한을 허용해주세요"
     }
   }
 }
