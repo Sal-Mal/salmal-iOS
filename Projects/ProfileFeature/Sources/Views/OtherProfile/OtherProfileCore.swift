@@ -65,6 +65,8 @@ public struct OtherProfileCore: Reducer {
       case .unBlockButtonTapped:
         return .run { [id = state.memberId] send in
           try await memberRepository.unBlock(id: id)
+          let member = try await memberRepository.member(id: id)
+          await send(._fetchMemberResponse(member))
 
         } catch: { error, send in
           await toastManager.showToast(.error(error.localizedDescription))

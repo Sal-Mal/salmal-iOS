@@ -53,6 +53,7 @@ public struct PhotoEditorCore: Reducer {
 
   @Dependency(\.dismiss) private var dismiss
   @Dependency(\.voteRepository) private var voteRepository
+  @Dependency(\.photoService) private var photoService
 
   private let filters: [CIFilter] = [
     .photoEffectFade(),
@@ -97,12 +98,10 @@ public struct PhotoEditorCore: Reducer {
 
         default:
           let uiImage = photoView.snapshot()
-          guard let data = uiImage.jpegData(compressionQuality: 0.5) else {
-            return .none
-          }
+          let imageData = photoService.exportCompressedImage(uiImage)
 
           return .run { send in
-            try await voteRepository.register(data: data)
+            try await voteRepository.register(data: imageData)
             await send(.delegate(.savePhoto))
             await dismiss()
           } catch: { error, send in

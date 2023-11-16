@@ -47,6 +47,7 @@ public struct ProfileEditCore: Reducer {
   @Dependency(\.dismiss) var dismiss
   @Dependency(\.memberRepository) var memberRepository
   @Dependency(\.authRepository) var authRepository
+  @Dependency(\.photoService) var photoService
   @Dependency(\.toastManager) var toastManager
 
   public init() {}
@@ -112,7 +113,7 @@ public struct ProfileEditCore: Reducer {
           try await authRepository.logOut()
           NotificationService.post(.logout)
         } catch: { error, send in
-          await toastManager.showToast(.error("로그아웃 실패!"))
+          await toastManager.showToast(.error("로그아웃에 실패했어요."))
         }
 
       case .withdrawalButtonTapped:
@@ -120,7 +121,7 @@ public struct ProfileEditCore: Reducer {
           try await memberRepository.delete()
           NotificationService.post(.logout)
         } catch: { error, send in
-          await toastManager.showToast(.error("회원탈퇴 실패!"))
+          await toastManager.showToast(.error("회원탈퇴에 실패했어요."))
         }
 
       case ._onAppear:
@@ -136,8 +137,10 @@ public struct ProfileEditCore: Reducer {
         return .none
 
       case ._setImage(let uiImage):
-        let data = uiImage?.jpegData(compressionQuality: 0.5)
-        state.imageData = data
+        guard let uiImage else { return .none }
+
+        let imageData = photoService.exportCompressedImage(uiImage)
+        state.imageData = imageData
         return .none
 
       case ._presentPhotoLibrarySheet:

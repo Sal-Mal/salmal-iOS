@@ -55,6 +55,22 @@ public final class PhotoService: NSObject {
     }
   }
 
+  public func exportCompressedImage(_ uiImage: UIImage) -> Data {
+    let maximumImageDataBytesCount = 1_000_000 // 3MB
+
+    var data = Data()
+    for quality in stride(from: 1.0, to: 0, by: -0.1) {
+      guard let imageData = uiImage.jpegData(compressionQuality: quality) else { break }
+
+      let bytes = imageData.count
+      if bytes <= maximumImageDataBytesCount {
+        data = imageData
+        break
+      }
+    }
+    return data
+  }
+
   private func fetchImage(for asset: PHAsset, targetSize: CGSize, contentMode: PHImageContentMode) throws -> UIImage {
     let options = PHImageRequestOptions()
     options.isNetworkAccessAllowed = false

@@ -23,8 +23,6 @@ public struct BlockedMemberListView: View {
               Text("혹시 마음에 들지 않는 사용자가 있나요?")
                 .foregroundColor(.ds(.gray3))
                 .font(.ds(.title4(.medium)))
-
-              Spacer().frame(height: 100)
             }
             .frame(maxHeight: .infinity)
 
