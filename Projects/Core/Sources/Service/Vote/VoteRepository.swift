@@ -11,7 +11,7 @@ public protocol VoteRepository {
   func report(voteID: Int) async throws
   func getVote(id: Int) async throws -> Vote
   func delete(voteID: Int) async throws
-  func homeList(size: Int, cursor: Int?, cursorLikes: Int?) async throws -> VoteList
+  func homeList(size: Int, cursor: Int?) async throws -> VoteList
   func bestList(size: Int, cursor: Int?, cursorLikes: Int?) async throws -> VoteList
 }
 
@@ -66,8 +66,8 @@ public final class VoteRepositoryImpl: VoteRepository {
     try await networkManager.request(target)
   }
 
-  public func homeList(size: Int, cursor: Int? = nil, cursorLikes: Int? = nil) async throws -> VoteList {
-    let target = VoteAPI.homeList(size: size, cursor: cursor, cursorLikes: cursorLikes)
+  public func homeList(size: Int, cursor: Int? = nil) async throws -> VoteList {
+    let target = VoteAPI.homeList(size: size, cursor: cursor)
     let dto = try await networkManager.request(target, type: VoteListResponseDTO.self)
     return dto.toDomain
   }

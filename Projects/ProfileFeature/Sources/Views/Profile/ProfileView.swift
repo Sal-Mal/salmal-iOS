@@ -148,6 +148,13 @@ public struct ProfileView: View {
            action: ProfileCore.Path.Action.salmalDetail,
            then: SalMalDetailView.init(store:)
         )
+      
+//      case .web:
+//        CaseLet(
+//          /ProfileCore.Path.State.web,
+//           action: ProfileCore.Path.Action.web,
+//           then: WebView.init(store:)
+//        )
       }
     }
   }

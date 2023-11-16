@@ -49,12 +49,14 @@ public struct SettingView: View {
 
 struct SettingView_Previews: PreviewProvider {
   static var previews: some View {
-    SettingView(store: .init(initialState: .init(), reducer: {
-      SettingCore()._printChanges()
-    }))
-    .preferredColorScheme(.dark)
-    .onAppear {
-      SM.Font.initFonts()
+    NavigationView {
+      SettingView(store: .init(initialState: .init(), reducer: {
+        SettingCore()._printChanges()
+      }))
+      .preferredColorScheme(.dark)
+      .onAppear {
+        SM.Font.initFonts()
+      }
     }
   }
 }

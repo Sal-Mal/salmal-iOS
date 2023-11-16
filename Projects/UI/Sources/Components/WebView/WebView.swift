@@ -1,26 +1,25 @@
-import SwiftUI
-import WebKit
-
-public struct WebView: UIViewRepresentable {
-  
-  var urlString: String
-  
-  public init(urlString: String) {
-    self.urlString = urlString
-  }
-  
-  public func makeUIView(context: Context) -> WKWebView {
-    let view = WKWebView()
-    
-    guard let url = URL(string: urlString) else {
-      return view
-    }
-    
-    view.load(URLRequest(url: url))
-    return view
-  }
-  
-  public func updateUIView(_ uiView: WKWebView, context: Context) {
-    // empty
-  }
-}
+//import SwiftUI
+//
+//import ComposableArchitecture
+//
+//public struct WebView: View {
+//  let store: StoreOf<WebCore>
+//  @Environment(\.dismiss) var dismiss
+//  
+//  public init(store: StoreOf<WebCore>) {
+//    self.store = store
+//  }
+//  
+//  public var body: some View {
+//    WithViewStore(store, observe: { $0 }) { viewStore in
+//      WebViewRepresentable(urlString: viewStore.urlString)
+//        .smNavigationBar(title: viewStore.title, leftItems: {
+//          Image(icon: .chevron_left)
+//            .fit(size: 32)
+//            .onTapGesture {
+//              dismiss()
+//            }
+//        })
+//    }
+//  }
+//}

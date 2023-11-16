@@ -2,6 +2,7 @@ import Foundation
 import ComposableArchitecture
 
 import Core
+import UI
 
 public struct ProfileCore: Reducer {
 
@@ -173,6 +174,7 @@ extension ProfileCore {
       case bookmarkList(BookmarkListCore.State = .init())
       case uploadList(UploadListCore.State = .init())
       case salmalDetail(SalMalDetailCore.State)
+//      case web(WebCore.State)
     }
 
     public enum Action {
@@ -183,6 +185,7 @@ extension ProfileCore {
       case bookmarkList(BookmarkListCore.Action)
       case uploadList(UploadListCore.Action)
       case salmalDetail(SalMalDetailCore.Action)
+//      case web(WebCore.Action)
     }
 
     public var body: some ReducerOf<Self> {
@@ -207,6 +210,10 @@ extension ProfileCore {
       Scope(state: /State.salmalDetail, action: /Action.salmalDetail) {
         SalMalDetailCore()
       }
+      
+//      Scope(state: /State.web, action: /Action.web) {
+//        WebCore()
+//      }
     }
   }
 

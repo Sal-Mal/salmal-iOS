@@ -15,14 +15,10 @@ struct TermDetailView: View {
   }
   
   var body: some View {
-    WebView(urlString: viewStore.url)
-      .smNavigationBar(title: viewStore.title, leftItems: {
-        Image(icon: .chevron_left)
-          .fit(size: 32)
-          .onTapGesture {
-            dismiss()
-          }
-      })
+    EmptyView()
+//    WebView(store: .init(initialState: .init(title: "이용약관", urlString: viewStore.url)) {
+//      WebCore()
+//    })
   }
 }
 

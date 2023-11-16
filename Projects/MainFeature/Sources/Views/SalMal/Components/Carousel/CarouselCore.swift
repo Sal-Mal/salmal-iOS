@@ -76,8 +76,7 @@ public struct CarouselCore: Reducer {
           if state.tab == .home {
             result = try await voteRepository.homeList(
               size: Const.size,
-              cursor: state.cursorID,
-              cursorLikes: state.cursorLikes
+              cursor: state.cursorID
             )
           } else {
             result = try await voteRepository.bestList(

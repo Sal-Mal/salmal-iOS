@@ -9,7 +9,7 @@ public enum VoteAPI {
   case report(id: Int) // 신고
   case get(id: Int) // 조회
   case delete(id: Int) // 삭제
-  case homeList(size: Int, cursor: Int?, cursorLikes: Int?) // Home 목록 조회
+  case homeList(size: Int, cursor: Int?) // Home 목록 조회
   case bestList(size: Int, cursor: Int?, cursorLikes: Int?) // Best 목록 조회
 }
 
@@ -44,9 +44,9 @@ extension VoteAPI: TargetType {
     case let .delete(id):
       return "votes/\(id)"
       
-    case let .homeList(size, cursor, cursorLike):
-      if let cursor, let cursorLike {
-        return "votes?cursorId=\(cursor)&cursorLikes=\(cursorLike)&size=\(size)&searchType=HOME"
+    case let .homeList(size, cursor):
+      if let cursor {
+        return "votes?cursorId=\(cursor)&size=\(size)&searchType=HOME"
       } else {
         return "votes?size=\(size)&searchType=HOME"
       }
