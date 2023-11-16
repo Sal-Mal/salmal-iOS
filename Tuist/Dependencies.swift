@@ -1,7 +1,7 @@
 import ProjectDescription
 
-let dependencies = Dependencies(
-  swiftPackageManager: [
+let dependencies1 = Dependencies(
+  swiftPackageManager: .init([
     .remote(
       url: "https://github.com/Alamofire/Alamofire",
       requirement: .upToNextMajor(from: "5.0.0")
@@ -18,6 +18,8 @@ let dependencies = Dependencies(
       url: "https://github.com/firebase/firebase-ios-sdk",
       requirement: .upToNextMajor(from: "10.16")
     )
-  ],
+  ], productTypes: [
+    "ComposableArchitecture": .framework
+  ]),
   platforms: [.iOS]
 )
