@@ -134,8 +134,9 @@ extension VoteAPI: TargetType {
   public var task: HTTPTask {
     switch self {
     case .create(let data, let boundary):
+      debugPrint(data.count)
       let multipartFormData = MultipartFormData(boundary: boundary)
-      multipartFormData.append(data, withName: "imageFile", fileName: "TestImage.jpg", mimeType: "image/jpeg")
+      multipartFormData.append(data, withName: "imageFile", fileName: "\(boundary).jpeg", mimeType: "image/jpeg")
       return .uploadMultipartFormData(multipartFormData)
 
     default:

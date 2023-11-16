@@ -10,6 +10,7 @@ public struct UploadCore: Reducer {
     @PresentationState var destination: Destination.State?
     @BindingState var isCameraSheetPresented: Bool = false
     @BindingState var isPhotoLibraryAuthorized: Bool = false
+    @BindingState var isLoading: Bool = false
 
     var menus: [UploadMenu] = [UploadMenu(type: .camera)]
 
@@ -29,7 +30,7 @@ public struct UploadCore: Reducer {
     case _requestPhotoLibraryAuthorization
     case _requestPhotoLibraryAuthorizationResponse(TaskResult<Void>)
     case _fetchPhotoLibrary
-    case _fetchPhotoLibraryResponse([UIImage])
+    case _fetchPhotoLibraryResponse([UploadMenu])
     case _onDisappear
 
     // MARK: - 기타 Action
@@ -62,14 +63,23 @@ public struct UploadCore: Reducer {
           return .none
 
         } else {
-          guard let uiImage = menu.uiImage else { return .none }
+          guard let asset = menu.asset else { return .none }
+
+          let ratio: CGFloat = 1.4
+          let width: CGFloat = UIScreen.main.bounds.width
+          let size = CGSize(width: width, height: width * ratio)
+
+          guard let uiImage = try? photoService.fetchImage(for: asset, size: size) else {
+            return .none
+          }
           state.destination = .photoEditor(.init(uiImage: uiImage))
           return .none
         }
 
       case .cameraTakeButtonTapped(let uiImage):
         state.isCameraSheetPresented = false
-        return .send(.menuTapped(.init(type: .library, uiImage: uiImage)))
+        state.destination = .photoEditor(.init(uiImage: uiImage))
+        return .none
 
       case .cameraCancelButtonTapped:
         state.isCameraSheetPresented = false
@@ -96,17 +106,46 @@ public struct UploadCore: Reducer {
         }
 
       case ._fetchPhotoLibrary:
+        state.isLoading = true
+        let ratio = 1.4
+        let width = UIScreen.main.bounds.width / 3
+        let size = CGSize(width: width, height: width * ratio)
+
+        let assets = photoService.fetchAssets()
+
         return .run { send in
-          let uiImages = try await photoService.albums()
-          await send(._fetchPhotoLibraryResponse(uiImages))
-        } catch: { error, send in
-          await toastManager.showToast(.warning(error.localizedDescription))
+          let menus = await withTaskGroup(of: UploadMenu?.self, returning: [UploadMenu].self) { group in
+            for asset in assets {
+              group.addTask {
+                guard let uiImage = try? photoService.fetchImage(for: asset, size: size) else {
+                  return nil
+                }
+                let menu = UploadMenu(type: .library, uiImage: uiImage, asset: asset)
+                return menu
+              }
+            }
+
+            var menus = [UploadMenu]()
+            for await menu in group {
+              if let menu {
+                menus.append(menu)
+              }
+            }
+
+            menus.sort {
+              guard let lhs = $0.asset?.creationDate,
+                    let rhs = $1.asset?.creationDate else { return false }
+              return lhs > rhs
+            }
+            return menus
+          }
+
+          await send(._fetchPhotoLibraryResponse(menus))
         }
 
-      case ._fetchPhotoLibraryResponse(let uiImages):
-        var menus = [UploadMenu(type: .camera)]
-        menus += uiImages.map { UploadMenu(type: .library, uiImage: $0) }
-        state.menus = menus
+      case ._fetchPhotoLibraryResponse(let menus):
+        state.isLoading = false
+        state.menus = [UploadMenu(type: .camera)] + menus
         return .none
 
       case ._onDisappear:

@@ -1,5 +1,5 @@
-import Foundation
 import UIKit
+import Photos
 
 public struct UploadMenu: Equatable, Identifiable {
 
@@ -11,4 +11,5 @@ public struct UploadMenu: Equatable, Identifiable {
   public let id: UUID = UUID()
   let type: MenuType
   var uiImage: UIImage?
+  var asset: PHAsset?
 }

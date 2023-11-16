@@ -35,6 +35,7 @@ public struct OtherProfileCore: Reducer {
     case _fetchMemberResponse(Member)
     case _fetchVotesResponse([Vote])
     case _scrollViewBottomReached
+    case _blockResponse(TaskResult<Bool>)
 
     case binding(BindingAction<State>)
     case delegate(Delegate)
@@ -63,22 +64,26 @@ public struct OtherProfileCore: Reducer {
         return .none
 
       case .unBlockButtonTapped:
-        return .run { [id = state.memberId] send in
+        return .run { [id = state.memberId, cursorId = state.cursorId, size = state.pagingSize] send in
           try await memberRepository.unBlock(id: id)
           let member = try await memberRepository.member(id: id)
           await send(._fetchMemberResponse(member))
+          let votes = try await memberRepository.votes(memberID: id, cursorId: cursorId, size: size)
+          await send(._fetchVotesResponse(votes))
 
         } catch: { error, send in
           await toastManager.showToast(.error(error.localizedDescription))
         }
 
       case .blockSheetConfirmButtonTapped:
-        return .run { [state] send in
-          try await memberRepository.block(id: state.memberId)
-          await dismiss()
+        return .run { [id = state.memberId] send in
+          await send(._blockResponse(TaskResult {
+            try await memberRepository.block(id: id)
+            return true
+          }))
 
-        } catch: { error, send in
-          await toastManager.showToast(.error(error.localizedDescription))
+          let member = try await memberRepository.member(id: id)
+          await send(._fetchMemberResponse(member))
         }
 
       case .voteCellTapped(let vote):
@@ -91,7 +96,7 @@ public struct OtherProfileCore: Reducer {
         }
 
       case ._onAppear:
-        return .merge(
+        return .concatenate(
           .run { [memberId = state.memberId] send in
             let member = try await memberRepository.member(id: memberId)
             await send(._fetchMemberResponse(member))
@@ -116,6 +121,8 @@ public struct OtherProfileCore: Reducer {
         return .none
 
       case ._fetchVotesResponse(let votes):
+        guard state.member?.blocked == false else { return .none }
+
         state.votes = []
         state.votes.append(contentsOf: votes)
         state.cursorId = votes.last?.id
@@ -127,6 +134,17 @@ public struct OtherProfileCore: Reducer {
           await send(._fetchVotesResponse(votes))
 
         } catch: { error, send in
+          await toastManager.showToast(.error(error.localizedDescription))
+        }
+
+      case ._blockResponse(.success):
+        state.votes = []
+        return .run { send in
+          await toastManager.showToast(.success("더 이상 해당 사용자가 피드에서 보이지 않습니다."))
+        }
+
+      case ._blockResponse(.failure(let error)):
+        return .run { send in
           await toastManager.showToast(.error(error.localizedDescription))
         }
 

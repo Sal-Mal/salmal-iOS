@@ -81,6 +81,7 @@ public struct DefaultNetworkService: NetworkService {
           (200..<300) ~= statusCode
     else {
       debugPrint("실패: InvalidStatusCode")
+      debugPrint(String(data: dataResponse.data ?? .init(), encoding: .utf8))
       try self.printErrorMessage(dataResponse.data)
       throw SMError.network(.invalidURLHTTPResponse)
     }

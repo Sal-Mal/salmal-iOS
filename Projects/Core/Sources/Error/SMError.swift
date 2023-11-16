@@ -17,10 +17,15 @@ public enum SMError: LocalizedError {
   public enum AuthorizationReason {
     case photoLibrary
   }
+
+  public enum ServiceReason {
+    case fetchAlbumImageFailed
+  }
   
   case network(NetworkReason)
   case login(LoginReason)
   case authorization(reason: AuthorizationReason)
+  case service(reason: ServiceReason)
 }
 
 
@@ -33,6 +38,8 @@ extension SMError {
     case .login(let reason):
       return reason.errorDescription
     case .authorization(let reason):
+      return reason.errorDescription
+    case .service(let reason):
       return reason.errorDescription
     }
   }
@@ -74,6 +81,16 @@ extension SMError.AuthorizationReason {
     switch self {
     case .photoLibrary:
       return "이미지를 가져올 수 없어요. 권한을 허용해주세요"
+    }
+  }
+}
+
+extension SMError.ServiceReason {
+
+  var errorDescription: String? {
+    switch self {
+    case .fetchAlbumImageFailed:
+      return "이미지를 가져오는데 실패했어요."
     }
   }
 }

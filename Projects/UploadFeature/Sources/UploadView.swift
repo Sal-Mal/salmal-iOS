@@ -29,19 +29,31 @@ public struct UploadView: View {
 
         ZStack {
           if viewStore.isPhotoLibraryAuthorized {
-            VStack(spacing: 0) {
-              //sortTopNavigationBar
+            ZStack {
+              if viewStore.isLoading {
+                ProgressView()
+                  .progressViewStyle(.circular)
+                  .tint(.ds(.green1))
+                  .scaleEffect(1.5)
 
-              ScrollView(showsIndicators: false) {
-                LazyVGrid(columns: columns) {
-                  ForEach(viewStore.menus) { menu in
-                    UploadMenuView(menu: menu)
-                      .onTapGesture { viewStore.send(.menuTapped(menu)) }
+              } else {
+                VStack(spacing: 0) {
+                  //sortTopNavigationBar
+
+                  ScrollView(showsIndicators: false) {
+                    LazyVGrid(columns: columns) {
+                      ForEach(viewStore.menus) { menu in
+                        UploadMenuView(menu: menu)
+                          .onTapGesture { viewStore.send(.menuTapped(menu)) }
+                      }
+                    }
+                    .padding(.horizontal, 5)
                   }
                 }
-                .padding(.horizontal, 5)
               }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
           } else {
             VStack(spacing: 16) {
               Text("사진 접근 권한을 허용해주세요")
