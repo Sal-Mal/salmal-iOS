@@ -44,7 +44,7 @@ struct MainTabView: View {
       }
       .fullScreenCover(store: store.scope(
         state: \.$uploadState,
-        action: { .uploadAction($0)}
+        action: { .uploadAction($0) }
       )) { subStore in
         UploadView(store: subStore)
       }

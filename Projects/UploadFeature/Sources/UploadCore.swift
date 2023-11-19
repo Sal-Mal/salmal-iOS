@@ -31,7 +31,6 @@ public struct UploadCore: Reducer {
     case _requestPhotoLibraryAuthorizationResponse(TaskResult<Void>)
     case _fetchPhotoLibrary
     case _fetchPhotoLibraryResponse([UploadMenu])
-    case _onDisappear
 
     // MARK: - 기타 Action
     case destination(PresentationAction<Destination.Action>)
@@ -146,9 +145,6 @@ public struct UploadCore: Reducer {
       case ._fetchPhotoLibraryResponse(let menus):
         state.isLoading = false
         state.menus = [UploadMenu(type: .camera)] + menus
-        return .none
-
-      case ._onDisappear:
         return .none
 
       case .destination(.presented(.photoEditor(.delegate(.savePhoto)))):

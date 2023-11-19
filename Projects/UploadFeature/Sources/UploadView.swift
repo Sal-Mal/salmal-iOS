@@ -91,7 +91,6 @@ public struct UploadView: View {
         action: UploadCore.Destination.Action.photoEditor,
         content: PhotoEditorView.init(store:)
       )
-      .onDisappear { viewStore.send(._onDisappear) }
     }
   }
 

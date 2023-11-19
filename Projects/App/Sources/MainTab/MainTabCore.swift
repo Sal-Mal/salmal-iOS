@@ -32,7 +32,7 @@ struct MainTabCore: Reducer {
   
   var body: some ReducerOf<Self> {
     BindingReducer()
-    
+
     Reduce { state, action in
       switch action {
       case .binding:
@@ -45,8 +45,6 @@ struct MainTabCore: Reducer {
         
       case let ._setTabOpacity(value):
         state.showTab = value
-      default:
-        break
       }
       
       return .none
@@ -54,11 +52,11 @@ struct MainTabCore: Reducer {
     .ifLet(\.$uploadState, action: /Action.uploadAction) {
       UploadCore()
     }
-    
+
     Scope(state: \.salmalState, action: /Action.salmalAction) {
       SalMalCore()
     }
-    
+
     Scope(state: \.profileState, action: /Action.profileAction) {
       ProfileCore()
     }
