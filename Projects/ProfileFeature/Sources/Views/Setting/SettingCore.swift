@@ -19,17 +19,17 @@ public struct SettingCore: Reducer {
       .init(
         title: "이용약관 및 개인정보 처리 방침",
         icon: .ic_component,
-        state: .none//.web(.init(title: "이용약관 및 개인정보 처리 방침", urlString: "https://www.naver.com/"))
+        state: .web(.init(title: "이용약관 및 개인정보 처리 방침", urlString: "https://www.naver.com/"))
       ),
       .init(
         title: "개발자한테 연락하기",
         icon: .ic_send,
-        state: .none//.web(.init(title: "개발자한테 연락하기", urlString: "https://open.kakao.com/o/sVNGzjSf"))
+        state: .web(.init(title: "개발자한테 연락하기", urlString: "https://open.kakao.com/o/sVNGzjSf"))
       ),
       .init(
         title: "E-mail 및 SMS 광고성 정보 수신동의",
         icon: .ic_send,
-        state: .none//.web(.init(title: "E-mail 및 SMS 광고성 정보", urlString: "https://www.naver.com/"))
+        state: .web(.init(title: "E-mail 및 SMS 광고성 정보", urlString: "https://www.naver.com/"))
       ),
       .init(title: "차단한 사용자 목록", icon: .ic_send, state: .blockedMemberList()),
     ]

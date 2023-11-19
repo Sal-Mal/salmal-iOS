@@ -15,10 +15,9 @@ struct TermDetailView: View {
   }
   
   var body: some View {
-    EmptyView()
-//    WebView(store: .init(initialState: .init(title: "이용약관", urlString: viewStore.url)) {
-//      WebCore()
-//    })
+    WebView(store: .init(initialState: .init(title: "이용약관", urlString: viewStore.url)) {
+      WebCore()
+    })
   }
 }
 
