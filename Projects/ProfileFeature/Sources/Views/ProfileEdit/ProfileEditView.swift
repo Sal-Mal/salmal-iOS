@@ -16,89 +16,97 @@ public struct ProfileEditView: View {
 
   public var body: some View {
     WithViewStore(store, observe: { $0 }) { viewStore in
-      VStack(spacing: 0) {
-        Spacer()
+      GeometryReader { proxy in
+        ScrollView(.vertical, showsIndicators: false) {
+          VStack(spacing: 0) {
+            Spacer()
 
-        VStack(spacing: 24) {
-          if let imageData = viewStore.imageData, let uiImage = UIImage(data: imageData) {
-            profileImageView(image: Image(uiImage: uiImage))
+            VStack(spacing: 24) {
+              if let imageData = viewStore.imageData, let uiImage = UIImage(data: imageData) {
+                profileImageView(image: Image(uiImage: uiImage))
 
-          } else {
-            if let url = URL(string: viewStore.member?.imageURL ?? "") {
-              CacheAsyncImage(url: url) { phase in
-                switch phase {
-                case .success(let image):
-                  profileImageView(image: image)
+              } else {
+                if let url = URL(string: viewStore.member?.imageURL ?? "") {
+                  CacheAsyncImage(url: url) { phase in
+                    switch phase {
+                    case .success(let image):
+                      profileImageView(image: image)
 
-                default:
+                    default:
+                      defaultProfileImageView
+                    }
+                  }
+                } else {
                   defaultProfileImageView
                 }
               }
-            } else {
-              defaultProfileImageView
+
+              Button {
+                viewStore.send(.changeProfileImageButtonTapped)
+              } label: {
+                Text("사진 변경")
+                  .font(.ds(.title4(.medium)))
+                  .foregroundColor(.ds(.green1))
+              }
+            }
+
+            Spacer().frame(height: 98)
+
+            // 닉네임 & 한줄 소개 입력
+            VStack(spacing: 42) {
+              VStack(alignment: .leading) {
+                Text("닉네임")
+                  .font(.ds(.title4(.medium)))
+                  .foregroundColor(.ds(.gray2))
+
+                SMCapsuleTextField(
+                  text: viewStore.$nickName,
+                  placeholder: "닉네임을 입력해주세요"
+                )
+                .color(.placeholder(.clear))
+                .font(.pretendard(.regular, size: 16))
+              }
+
+              VStack(alignment: .leading) {
+                Text("한줄 소개")
+                  .font(.ds(.title4(.medium)))
+                  .foregroundColor(.ds(.gray2))
+
+                SMCapsuleTextField(
+                  text: viewStore.$introduction,
+                  placeholder: "소개를 입력해주세요"
+                )
+                .color(.placeholder(.clear))
+                .font(.pretendard(.regular, size: 16))
+              }
+            }
+            .padding(.horizontal, 18)
+            .ignoresSafeArea()
+
+            Spacer()
+
+            // 로그아웃 & 회원탈퇴
+            VStack(spacing: 24) {
+              Spacer().frame(height: 20)
+
+              Button {
+                viewStore.send(.logoutButtonTapped)
+              } label: {
+                Text("로그아웃")
+                  .font(.ds(.title4(.medium)))
+                  .foregroundColor(.ds(.green1))
+              }
+
+              Button {
+                viewStore.send(.withdrawalButtonTapped)
+              } label: {
+                Text("서비스 탈퇴")
+                  .font(.ds(.title4(.medium)))
+                  .foregroundColor(.ds(.gray2))
+              }
             }
           }
-
-          Button {
-            viewStore.send(.changeProfileImageButtonTapped)
-          } label: {
-            Text("사진 변경")
-              .font(.ds(.title4(.medium)))
-              .foregroundColor(.ds(.green1))
-          }
-        }
-
-        Spacer().frame(height: 98)
-
-        // 닉네임 & 한줄 소개 입력
-        VStack(spacing: 42) {
-          VStack(alignment: .leading) {
-            Text("닉네임")
-              .font(.ds(.title4(.medium)))
-              .foregroundColor(.ds(.gray2))
-
-            SMCapsuleTextField(
-              text: viewStore.$nickName,
-              placeholder: "닉네임을 입력해주세요"
-            )
-            .color(.placeholder(.clear))
-            .font(.pretendard(.regular, size: 16))
-          }
-
-          VStack(alignment: .leading) {
-            Text("한줄 소개")
-              .font(.ds(.title4(.medium)))
-              .foregroundColor(.ds(.gray2))
-
-            SMCapsuleTextField(
-              text: viewStore.$introduction,
-              placeholder: "소개를 입력해주세요"
-            )
-            .color(.placeholder(.clear))
-            .font(.pretendard(.regular, size: 16))
-          }
-        }
-        .padding(.horizontal, 18)
-
-        Spacer()
-
-        // 로그아웃 & 회원탈퇴
-        VStack(spacing: 24) {
-          Button {
-            viewStore.send(.logoutButtonTapped)
-          } label: {
-            Text("로그아웃")
-              .font(.ds(.title4(.medium)))
-              .foregroundColor(.ds(.green1))
-          }
-
-          Button {
-            viewStore.send(.withdrawalButtonTapped)
-          } label: {
-            Text("서비스 탈퇴")
-              .font(.ds(.title4(.medium)))
-              .foregroundColor(.ds(.gray2))
-          }
+          .frame(width: proxy.size.width, height: proxy.size.height)
         }
       }
       .smNavigationBar(
@@ -161,7 +169,7 @@ public struct ProfileEditView: View {
         viewStore.send(.withdrawalButtonTapped)
       }
     }
-    .ignoresSafeArea(.keyboard)
+    //.ignoresSafeArea(.keyboard)
   }
 
   func profileImageView(image: Image) -> some View {
