@@ -45,8 +45,14 @@ let project = Project(
         .project(target: "MainFeature", path: "../MainFeature"),
         .project(target: "LoginFeature", path: "../LoginFeature"),
         .project(target: "ProfileFeature", path: "../ProfileFeature"),
-        .project(target: "UploadFeature", path: "../UploadFeature")
-      ]
+        .project(target: "UploadFeature", path: "../UploadFeature"),
+        .external(name: "FirebaseDynamicLinks"),
+        .external(name: "FirebaseMessaging")
+      ],
+      settings: .settings(base: [
+        "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
+        "OTHER_LDFLAGS": "-ObjC"
+      ])
     )
   ]
 )

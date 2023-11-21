@@ -10,7 +10,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
   ) -> Bool {
     
     FirebaseApp.configure()
-    
     return true
   }
 }
