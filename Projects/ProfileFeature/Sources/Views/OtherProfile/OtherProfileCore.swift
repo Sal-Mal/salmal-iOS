@@ -70,7 +70,6 @@ public struct OtherProfileCore: Reducer {
           await send(._fetchMemberResponse(member))
           let votes = try await memberRepository.votes(memberID: id, cursorId: cursorId, size: size)
           await send(._fetchVotesResponse(votes))
-
         } catch: { error, send in
           await toastManager.showToast(.error(error.localizedDescription))
         }

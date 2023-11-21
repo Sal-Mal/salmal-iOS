@@ -25,6 +25,7 @@ public struct ReportCore: Reducer {
     
   }
   
+  @Dependency(\.toastManager) var toastManager
   @Dependency(\.dismiss) var dismiss
   @Dependency(\.voteRepository) var voteRepository
   @Dependency(\.memberRepository) var memberRepository
@@ -38,21 +39,20 @@ public struct ReportCore: Reducer {
         case 0:
           return .run { [id = state.voteID] send in
             try await voteRepository.report(voteID: id)
-            NotificationService.post(.reportVote, userInfo: ["id": id])
-            // TODO:  토스트 메시지 띄우기
+            await toastManager.showToast(.success("해당 게시물을 신고했어요"))
+            
             await dismiss()
           } catch: { error, send in
-            // TODO: 에러처리 (토스트)
+            await toastManager.showToast(.error("게시물 신고 실패"))
             await dismiss()
           }
         case 1:
           return .run { [id = state.memberID] send in
             try await memberRepository.block(id: id)
-            NotificationService.post(.banUser, userInfo: ["id": id])
-            // TODO:  토스트 메시지 띄우기
+            await toastManager.showToast(.success("해당 유저를 차단했어요"))
             await dismiss()
           } catch: { error, send in
-            // TODO: 에러처리 (토스트)
+            await toastManager.showToast(.error("유저 차단 실패"))
             await dismiss()
           }
           

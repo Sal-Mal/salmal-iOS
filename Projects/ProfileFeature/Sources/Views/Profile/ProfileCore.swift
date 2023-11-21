@@ -75,6 +75,8 @@ public struct ProfileCore: Reducer {
         return .run { send in
           let vote = try await voteRepository.getVote(id: vote.id)
           await send(._moveToSalMalDetail(vote))
+        } catch: { error, send in
+          await toastManager.showToast(.error("투표 조회에 실패했어요"))
         }
 
       case .voteEditButtonTapped:

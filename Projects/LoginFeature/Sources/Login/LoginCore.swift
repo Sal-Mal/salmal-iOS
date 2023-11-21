@@ -16,6 +16,7 @@ public struct LoginCore: Reducer {
   
   public init() {}
   
+  @Dependency(\.toastManager) var toastManager
   @Dependency(\.userDefault) var userDefault
   @Dependency(\.kakaoManager) var kakaoManager
   @Dependency(\.appleManager) var appleManager
@@ -29,14 +30,15 @@ public struct LoginCore: Reducer {
           let id = try await kakaoManager.logIn()
           await send(.saveSocialData(id: String(id), provider: "kakao"))
         } catch: { error, send in
-          // TODO: ToastMessage
-          debugPrint("로그인 실패")
+          await toastManager.showToast(.error("카카오 로그인 실패"))
         }
         
       case .tapAppleLogin:
         return .run { send in
           let id = try await appleManager.requestLogin()
           await send(.saveSocialData(id: id, provider: "apple"))
+        } catch: { error, send in
+          await toastManager.showToast(.error("애플 로그인 실패"))
         }
 
       case let .saveSocialData(id, provider):

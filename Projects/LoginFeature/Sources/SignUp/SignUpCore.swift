@@ -27,6 +27,7 @@ public struct SignUpCore: Reducer {
   
   public init() {}
   
+  @Dependency(\.toastManager) var toastManager
   @Dependency(\.userDefault) var userDefault
   @Dependency(\.authRepository) var authRepository
   
@@ -63,8 +64,7 @@ public struct SignUpCore: Reducer {
 
           NotificationService.post(.login)
         } catch: { error, send in
-          // TODO: 에러처리 (중복 id, 통신 실패)
-          print(error)
+          await toastManager.showToast(.error("회원가입 실패!"))
         }
         
       case let .setErrorMessage(text):

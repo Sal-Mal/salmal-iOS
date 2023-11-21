@@ -9,7 +9,6 @@ import UploadFeature
 struct MainTabCore: Reducer {
   struct State: Equatable {
     @BindingState var tabIndex: TabItem = .home
-    var showTab = true
         
     var salmalState = SalMalCore.State()
     var profileState = ProfileCore.State()
@@ -27,7 +26,6 @@ struct MainTabCore: Reducer {
     case uploadButtonTapped
     
     // MARK: - internal Action
-    case _setTabOpacity(Bool)
   }
   
   var body: some ReducerOf<Self> {
@@ -42,9 +40,6 @@ struct MainTabCore: Reducer {
         
       case .uploadButtonTapped:
         state.uploadState = .init()
-        
-      case let ._setTabOpacity(value):
-        state.showTab = value
       }
       
       return .none

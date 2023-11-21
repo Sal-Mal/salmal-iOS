@@ -44,6 +44,7 @@ public struct ReplyCommentCore: Reducer {
   }
   
   @Dependency(\.commentRepository) var commentRepository
+  @Dependency(\.toastManager) var toastManager
   
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
@@ -68,7 +69,7 @@ public struct ReplyCommentCore: Reducer {
           }
           
         } catch: { [state] error, send in
-          // TODO: Show ToastMessage
+          await toastManager.showToast(.error("댓글 좋아요 실패"))
           await send(.setLiked(to: state.comment.liked))
         }
         

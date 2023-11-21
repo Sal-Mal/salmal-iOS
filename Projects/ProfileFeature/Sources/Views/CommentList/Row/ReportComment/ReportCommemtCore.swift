@@ -72,9 +72,10 @@ public struct ReportCommentCore: Reducer {
         }
         
       case let .response(.failure(error)):
-        print(error.localizedDescription)
-        // TODO: Show Toast Message
-        return .none
+        return .run { send in
+          await dismiss()
+          await toastManager.showToast(.error("작업에 실패했어요. 다시 시도해 주세요"))
+        }
         
       case .delegate:
         return .none

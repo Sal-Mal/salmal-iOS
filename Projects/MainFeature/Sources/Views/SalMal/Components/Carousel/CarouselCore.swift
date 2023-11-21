@@ -33,9 +33,6 @@ public struct CarouselCore: Reducer {
     case updateIndex(y: CGFloat)
     case voteResponse(VoteList)
     
-    case removeVote(id: Int)
-    case removeAllVote(userID: Int)
-    
     case delegate(Delegate)
     
     public enum Delegate: Equatable {
@@ -46,6 +43,7 @@ public struct CarouselCore: Reducer {
   
   @Dependency(\.voteRepository) var voteRepository
   @Dependency(\.memberRepository) var memberRepository
+  @Dependency(\.toastManager) var toastManager
   
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
@@ -63,11 +61,11 @@ public struct CarouselCore: Reducer {
         
       case .delegate:
         return .none
-      
+        
       case ._onAppear:
         state = .init(tab: state.tab)
         return .send(.requestVoteList)
-      
+        
       case .requestVoteList:
         return .run { [state] send in
           
@@ -85,11 +83,10 @@ public struct CarouselCore: Reducer {
               cursorLikes: state.cursorLikes
             )
           }
-                    
+          
           await send(.voteResponse(result))
         } catch: { error, send in
-          // TODO: Erorr 처리
-          print(error)
+          await toastManager.showToast(.error("투표 리스트 조회에 실패했어요"))
         }
         
       case let .voteResponse(result):
@@ -130,26 +127,6 @@ public struct CarouselCore: Reducer {
           )
         } else {
           return .send(.delegate(.updateVote(vote: item)))
-        }
-        
-      case let .removeVote(id):
-        return .run { send in
-          // 신고 요청
-          try await voteRepository.report(voteID: id)
-          // TODO: - ToastMessage를 띄운다
-          // TODO: - 내가 보고있던 Votes를 없애버린다
-        } catch: { error, send in
-          // TODO: - ToastMessage를 띄운다
-        }
-
-      case let .removeAllVote(userID):
-        return .run { send in
-          // 차단 요청
-          try await memberRepository.block(id: userID)
-          // TODO: - ToastMessage를 띄운다
-          // TODO: - 해당 유저의 게시물을 모두 지워버린다
-        } catch: { error, send in
-          // TODO: - ToastMessage를 띄운다
         }
       }
     }

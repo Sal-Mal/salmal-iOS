@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 import ComposableArchitecture
 import UI
@@ -10,6 +11,8 @@ import UploadFeature
 
 struct MainTabView: View {
   let store: StoreOf<MainTabCore>
+  
+  @EnvironmentObject var appState: AppState
   
   var body: some View {
     WithViewStore(store, observe: { $0 }) { viewStore in
@@ -34,13 +37,7 @@ struct MainTabView: View {
           store.send(.uploadButtonTapped)
         }
         .frame(height: 52)
-        .opacity(viewStore.showTab ? 1 : 0)
-      }
-      .onReceive(NotificationService.publisher(.showTabBar)) { _ in
-        store.send(._setTabOpacity(true))
-      }
-      .onReceive(NotificationService.publisher(.hideTabBar)) { _ in
-        store.send(._setTabOpacity(false))
+        .opacity(appState.showTab ? 1 : 0)
       }
       .fullScreenCover(store: store.scope(
         state: \.$uploadState,

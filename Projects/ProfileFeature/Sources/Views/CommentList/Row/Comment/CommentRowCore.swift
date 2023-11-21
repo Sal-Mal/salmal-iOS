@@ -54,6 +54,7 @@ public struct CommentCore: Reducer {
   }
   
   @Dependency(\.commentRepository) var commentRepo
+  @Dependency(\.toastManager) var toastManager
   
   public var body: some ReducerOf<Self> {
     Reduce { state, action in
@@ -115,7 +116,7 @@ public struct CommentCore: Reducer {
           }
           
         } catch: { [state] error, send in
-          // TODO: Show ToastMessage
+          await toastManager.showToast(.error("댓글 좋아요 실패"))
           await send(.setLiked(to: state.comment.liked))
         }
         
@@ -130,9 +131,7 @@ public struct CommentCore: Reducer {
           let result = try await commentRepo.listReply(commentID: state.comment.id)
           await send(.setReplys(value: result))
         } catch: { error, send in
-          // MARK: 일단 dummy로 넣어놓기
-          let comment = CommentResponseDTO.mock.toDomain
-          await send(.setReplys(value: [comment]))
+          await toastManager.showToast(.error("대댓글 조회 실패"))
         }
         
       case let .setReplys(value):
