@@ -10,6 +10,8 @@ public protocol MemberRepository {
   func update(nickname: String, introduction: String) async throws
   /// 회원 이미지 수정
   func updateImage(data: Data) async throws
+  /// 회원 이미지 삭제
+  func deleteImage() async throws
   /// 회원탈퇴
   func delete() async throws
   /// 회원 차단
@@ -68,6 +70,15 @@ public final class MemberRepositoryImpl: MemberRepository {
     }
 
     let target = MemberAPI.updateImage(id: id, data: data)
+    try await networkManager.request(target)
+  }
+
+  public func deleteImage() async throws {
+    guard let id = userDefault.memberID else {
+      throw SMError.network(.default)
+    }
+
+    let target = MemberAPI.deleteImage(id: id)
     try await networkManager.request(target)
   }
 

@@ -7,6 +7,8 @@ public enum MemberAPI {
   case update(id: Int, nickName: String, introduction: String)
   /// 회원 이미지 수정
   case updateImage(id: Int, data: Data, boundary: String = UUID().uuidString)
+  /// 회원 이미지 삭제
+  case deleteImage(id: Int)
   /// 회원탈퇴
   case delete(id: Int)
   /// 회원 차단
@@ -35,6 +37,8 @@ extension MemberAPI: TargetType {
     case let .update(id, _, _):
       return "members/\(id)"
     case let .updateImage(id, _, _):
+      return "members/\(id)/images"
+    case let .deleteImage(id):
       return "members/\(id)/images"
     case let .delete(id):
       return "members/\(id)"
@@ -71,7 +75,6 @@ extension MemberAPI: TargetType {
   }
   
   public var method: HTTPMethod {
-    // TODO: - type
     switch self {
     case .fetch:
       return .get
@@ -79,6 +82,8 @@ extension MemberAPI: TargetType {
       return .put
     case .updateImage:
       return .post
+    case .deleteImage:
+      return .delete
     case .delete:
       return .delete
     case .block:
@@ -104,6 +109,8 @@ extension MemberAPI: TargetType {
       return UpdateMemberRequestDTO(nickName: nickName, introduction: introduction)
     case .updateImage(_, let data, _):
       //return UpdateMemberImageRequestDTO(imageFile: data)
+      return nil
+    case .deleteImage:
       return nil
     case .delete:
       return nil
