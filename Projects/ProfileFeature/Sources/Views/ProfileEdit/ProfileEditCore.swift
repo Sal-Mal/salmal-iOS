@@ -62,20 +62,32 @@ public struct ProfileEditCore: Reducer {
         }
 
       case .confirmButtonTapped:
-        guard let imageData = state.imageData else {
-          return .run { send in
-            await toastManager.showToast(.error("이미지 데이터가 없어요."))
+        if let imageData = state.imageData {
+          return .run { [nickName = state.nickName, introduction = state.introduction, data = imageData] send in
+            try await memberRepository.update(nickname: nickName, introduction: introduction)
+            try await memberRepository.updateImage(data: data)
+            await dismiss()
+
+          } catch: { error, send in
+            await toastManager.showToast(.error(error.localizedDescription))
           }
         }
 
-        return .run { [nickName = state.nickName, introduction = state.introduction, data = imageData] send in
-          try await memberRepository.update(nickname: nickName, introduction: introduction)
-          try await memberRepository.updateImage(data: data)
-          await dismiss()
+        return .merge(
+          .run { [nickName = state.nickName, introduction = state.introduction] send in
+            try await memberRepository.update(nickname: nickName, introduction: introduction)
+            await dismiss()
 
-        } catch: { error, send in
-          await toastManager.showToast(.error(error.localizedDescription))
-        }
+          } catch: { error, send in
+            await toastManager.showToast(.error(error.localizedDescription))
+          },
+          .run { send in
+            try await memberRepository.deleteImage()
+
+          } catch: { error, send in
+            await toastManager.showToast(.error(error.localizedDescription))
+          }
+        )
 
       case .changeProfileImageButtonTapped:
         state.isProfileImageSheetPresented = true
@@ -106,7 +118,9 @@ public struct ProfileEditCore: Reducer {
       case .removeCurrentPhotoButtonTapped:
         state.isProfileImageSheetPresented = false
         state.imageData = nil
-        return .none
+        return .run { send in
+          try await memberRepository.deleteImage()
+        }
 
       case .logoutButtonTapped:
         return .run { send in

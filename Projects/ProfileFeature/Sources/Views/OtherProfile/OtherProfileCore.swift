@@ -70,6 +70,7 @@ public struct OtherProfileCore: Reducer {
           await send(._fetchMemberResponse(member))
           let votes = try await memberRepository.votes(memberID: id, cursorId: cursorId, size: size)
           await send(._fetchVotesResponse(votes))
+          await toastManager.showToast(.success("차단 해제되었습니다."))
 
         } catch: { error, send in
           await toastManager.showToast(.error(error.localizedDescription))
