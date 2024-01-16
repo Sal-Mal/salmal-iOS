@@ -13,7 +13,7 @@ public protocol TargetType: URLRequestConvertible {
 extension TargetType {
 
   public var baseURL: String {
-    return "http://13.125.97.6/api"
+    return "https://api.sal-mal.com/api"
   }
 
   public func asURLRequest() throws -> URLRequest {
