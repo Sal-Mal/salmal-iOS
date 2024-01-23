@@ -201,6 +201,7 @@ public struct SMCapsuleTextField: View {
         .font(font),
       axis: lineLimit > 1 ? .vertical : .horizontal
     )
+    .autocorrectionDisabled(true)
     .focused($focus)
     .lineLimit(lineLimit)
     .font(font)

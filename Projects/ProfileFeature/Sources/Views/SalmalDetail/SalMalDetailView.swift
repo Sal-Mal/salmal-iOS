@@ -3,6 +3,7 @@ import SwiftUI
 import Core
 import UI
 import ComposableArchitecture
+import Kingfisher
 
 public struct SalMalDetailView: View {
   let store: StoreOf<SalMalDetailCore>
@@ -89,18 +90,14 @@ public struct SalMalDetailView: View {
 
 extension SalMalDetailView {
   var VoteImage: some View {
-    CacheAsyncImage(url: URL(string: viewStore.vote.imageURL)!) { phase in
-      switch phase {
-      case .success(let image):
-        image
-          .fill()
-          .frame(width: UIScreen.main.bounds.width - 36)
-          .clipped()
-          .cornerRadius(24)
-      default:
+    KFImage(URL(string: viewStore.vote.imageURL))
+      .placeholder {
         Rectangle()
       }
-    }
+      .resizable()
+      .frame(width: UIScreen.main.bounds.width - 36)
+      .clipped()
+      .cornerRadius(24)
   }
   
   var ProfileImage: some View {

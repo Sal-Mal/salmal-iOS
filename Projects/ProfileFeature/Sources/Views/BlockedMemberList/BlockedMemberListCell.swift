@@ -2,6 +2,7 @@ import SwiftUI
 
 import UI
 import Core
+import Kingfisher
 
 struct BlockedMemberListCell: View {
 
@@ -18,23 +19,14 @@ struct BlockedMemberListCell: View {
   var body: some View {
     HStack(spacing: 18) {
       HStack(spacing: 12) {
-        if let imageURL = URL(string: member.imageURL) {
-          CacheAsyncImage(url: imageURL) { phase in
-            switch phase {
-            case .success(let image):
-              image
-                .resizable()
-                .frame(width: 48, height: 48)
-                .scaledToFit()
-                .clipShape(Circle())
-
-            default:
-              defaultImage
-            }
+        KFImage(URL(string: member.imageURL))
+          .placeholder {
+            defaultImage
           }
-        } else {
-          defaultImage
-        }
+          .resizable()
+          .frame(width: 48, height: 48)
+          .scaledToFit()
+          .clipShape(Circle())
 
         Text(member.nickName)
           .font(.ds(.title4(.semibold)))

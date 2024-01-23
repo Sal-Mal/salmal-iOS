@@ -43,6 +43,7 @@ public struct SalMalTabBar: View {
       }
       .frame(height: 52)
       .frame(maxWidth: .infinity)
+      .background(Color.black)
     }
   }
 }

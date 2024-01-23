@@ -3,6 +3,7 @@ import ComposableArchitecture
 
 import Core
 import UI
+import Kingfisher
 
 public struct ProfileView: View {
 
@@ -164,29 +165,20 @@ public struct ProfileView: View {
       VStack(spacing: 0) {
         Spacer().frame(height: 29)
 
-        if let imageURL = viewStore.state?.imageURL,
-           let url = URL(string: imageURL) {
-          CacheAsyncImage(url: url) { phase in
-            switch phase {
-            case .success(let image):
-              image
-                .resizable()
-                .scaledToFill()
-                .frame(width: 80, height: 80)
-                .clipShape(Circle())
-                .overlay {
-                  Circle()
-                    .stroke(lineWidth: 2)
-                    .foregroundColor(.white)
-                }
-
-            default:
-              defaultProfileImage(size: 80)
-            }
+        
+        KFImage(URL(string: viewStore.state?.imageURL ?? ""))
+          .placeholder {
+            defaultProfileImage(size: 80)
           }
-        } else {
-          defaultProfileImage(size: 80)
-        }
+          .resizable()
+          .scaledToFill()
+          .frame(width: 80, height: 80)
+          .clipShape(Circle())
+          .overlay {
+            Circle()
+              .stroke(lineWidth: 2)
+              .foregroundColor(.white)
+          }
 
         Spacer().frame(height: 16)
 
@@ -240,29 +232,19 @@ public struct ProfileView: View {
   var foldedHeaderView: some View {
     WithViewStore(store, observe: { $0.member }) { viewStore in
       HStack(spacing: 0) {
-        if let imageURL = viewStore.state?.imageURL,
-           let url = URL(string: imageURL) {
-          CacheAsyncImage(url: url) { phase in
-            switch phase {
-            case .success(let image):
-              image
-                .resizable()
-                .scaledToFill()
-                .frame(width: 60, height: 60)
-                .clipShape(Circle())
-                .overlay {
-                  Circle()
-                    .stroke(lineWidth: 2)
-                    .foregroundColor(.white)
-                }
-
-            default:
-              defaultProfileImage(size: 60)
-            }
+        KFImage(URL(string: viewStore.state?.imageURL ?? ""))
+          .placeholder {
+            defaultProfileImage(size: 60)
           }
-        } else {
-          defaultProfileImage(size: 60)
-        }
+          .resizable()
+          .scaledToFill()
+          .frame(width: 60, height: 60)
+          .clipShape(Circle())
+          .overlay {
+            Circle()
+              .stroke(lineWidth: 2)
+              .foregroundColor(.white)
+          }
 
         Spacer().frame(width: 16)
 

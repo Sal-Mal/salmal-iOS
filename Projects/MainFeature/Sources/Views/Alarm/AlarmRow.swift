@@ -1,22 +1,18 @@
 import SwiftUI
 import UI
 
+import Kingfisher
+
 struct AlarmRow: View {
     var body: some View {
       HStack(alignment: .top, spacing: 0) {
-        CacheAsyncImage(
-          url: URL(string: "https://picsum.photos/100")!) { phase in
-            switch phase {
-            case let .success(image):
-              image
-                .fit(size: 38)
-                .clipShape(Circle())
-            default:
-              Circle()
-                .fill(Color.ds(.gray1))
-                .frame(width: 38)
-            }
+        KFImage(URL(string: "https://picsum.photos/100"))
+          .placeholder {
+            ProgressView()
           }
+          .resizable()
+          .frame(width: 38, height: 38)
+          .clipShape(Circle())
         
         VStack(alignment: .leading, spacing: 4) {
           Text("feroldis님의 답댓글: ㅋㅋㅋㅋㅋㅋㅋㅋ 살말결과 보니까 사고싶은 마음이 약간 사라졌어요...")
@@ -28,20 +24,13 @@ struct AlarmRow: View {
         }
         .padding(.leading, 15)
         
-        CacheAsyncImage(
-          url: URL(string: "https://picsum.photos/300/600")!) { phase in
-            switch phase {
-            case let .success(image):
-              image
-                .resizable()
-                .frame(width: 54, height: 82)
-                .cornerRadius(8)
-            default:
-              RoundedRectangle(cornerRadius: 8)
-                .fill(Color.ds(.gray1))
-                .frame(width: 54, height: 82)
-            }
+        KFImage(URL(string: "https://picsum.photos/300/600"))
+          .placeholder {
+            ProgressView()
           }
+          .resizable()
+          .frame(width: 54, height: 82)
+          .cornerRadius(8)
           .padding(.leading, 27)
       }
       .frame(height: 105)

@@ -5,6 +5,7 @@ import ComposableArchitecture
 
 import Core
 import UI
+import Kingfisher
 
 public struct ProfileEditView: View {
 

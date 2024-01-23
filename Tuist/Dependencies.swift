@@ -17,6 +17,10 @@ let dependencies1 = Dependencies(
     .remote(
       url: "https://github.com/firebase/firebase-ios-sdk",
       requirement: .upToNextMajor(from: "10.16")
+    ),
+    .remote(
+      url: "https://github.com/onevcat/Kingfisher",
+      requirement: .upToNextMajor(from: "7.1.0")
     )
   ], productTypes: [
     "ComposableArchitecture": .framework

@@ -3,15 +3,16 @@ import ComposableArchitecture
 
 import Core
 import UI
+import Kingfisher
 
 struct BookmarkListView: View {
-
+  
   private let store: StoreOf<BookmarkListCore>
-
+  
   public init(store: StoreOf<BookmarkListCore>) {
     self.store = store
   }
-
+  
   var body: some View {
     WithViewStore(store, observe: { $0 }) { viewStore in
       ZStack {
@@ -19,7 +20,7 @@ struct BookmarkListView: View {
           VStack(spacing: 6) {
             Text("북마크 내역이 없습니다.")
               .font(.ds(.title3(.semibold)))
-
+            
             Text("새로운 투표를 북마크 해주세요.")
               .foregroundColor(.ds(.gray3))
               .font(.ds(.title4(.medium)))
@@ -57,32 +58,19 @@ struct BookmarkListView: View {
       )
     }
   }
-
+  
   @ViewBuilder
   func BookmarkCell(bookmark: Vote) -> some View {
-    if let url = URL(string: bookmark.imageURL) {
-      CacheAsyncImage(url: url) { phase in
-        switch phase {
-        case .success(let image):
-          image
-            .resizable()
-            .aspectRatio(1, contentMode: .fit)
-            .cornerRadius(24.0)
-
-        default:
-          RoundedRectangle(cornerRadius: 24.0)
-            .fill(Color.ds(.gray2))
-            .aspectRatio(1, contentMode: .fit)
-        }
+    KFImage(URL(string: bookmark.imageURL))
+      .placeholder {
+        RoundedRectangle(cornerRadius: 24.0)
+          .fill(Color.ds(.gray2))
+          .aspectRatio(1, contentMode: .fit)
       }
-
-    } else {
-      RoundedRectangle(cornerRadius: 24.0)
-        .fill(Color.ds(.gray2))
-        .aspectRatio(1, contentMode: .fit)
-    }
+      .resizable()
+      .aspectRatio(1, contentMode: .fit)
+      .cornerRadius(24.0)
   }
-
 }
 
 struct BookmarkListView_Previews: PreviewProvider {

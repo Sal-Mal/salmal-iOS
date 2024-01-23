@@ -3,6 +3,7 @@ import SwiftUI
 import Core
 import UI
 import ComposableArchitecture
+import Kingfisher
 
 struct CommentRow: View {
   let store: StoreOf<CommentCore>
@@ -17,18 +18,13 @@ struct CommentRow: View {
   
   var body: some View {
     HStack(alignment: .top, spacing: 13) {
-      CacheAsyncImage(url: URL(string: viewStore.comment.memberImageUrl)!) { phase in
-        switch phase {
-        case let .success(image):
-          image
-            .fill(size: 32)
-            .clipShape(Circle())
-          
-        default:
-          Circle().fill(Color.ds(.gray1))
-            .frame(width: 32)
+      KFImage(URL(string: viewStore.comment.memberImageUrl))
+        .placeholder {
+          ProgressView()
         }
-      }
+        .resizable()
+        .frame(width: 32, height: 32)
+        .clipShape(Circle())
       
       VStack(alignment: .leading, spacing: 9) {
         HStack(spacing: 8) {
@@ -70,7 +66,6 @@ struct CommentRow: View {
             .padding(.trailing, 16)
           
           Button {
-            // TODO: 답글달기 눌렀을때
             store.send(.writeCommentToggle)
           } label: {
             Text("답글 달기")

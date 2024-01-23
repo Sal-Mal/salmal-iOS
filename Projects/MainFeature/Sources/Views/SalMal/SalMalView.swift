@@ -48,6 +48,7 @@ public struct SalMalView: View {
         .padding(2)
       }
       .padding(16)
+      .padding(.bottom, 40)
       .onAppear {
         NotificationService.post(.showTabBar)
       }

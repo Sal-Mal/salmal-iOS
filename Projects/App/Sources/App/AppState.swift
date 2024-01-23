@@ -6,7 +6,7 @@ import Core
 final class AppState: ObservableObject {
   private var cancelBag = Set<AnyCancellable>()
   
-  var showTab = true
+  @Published var showTab = true
   
   init() {
     NotificationService.publisher(.hideTabBar)

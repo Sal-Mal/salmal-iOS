@@ -67,14 +67,14 @@ public struct ReportCommentCore: Reducer {
       case let .response(.success(message)):
         return .run { send in
           await toastManager.showToast(.success("댓글 \(message) 완료했어요"))
-          await dismiss()
           await send(.delegate(.refreshList))
+          await dismiss()
         }
         
       case let .response(.failure(error)):
         return .run { send in
-          await dismiss()
           await toastManager.showToast(.error("작업에 실패했어요. 다시 시도해 주세요"))
+          await dismiss()
         }
         
       case .delegate:

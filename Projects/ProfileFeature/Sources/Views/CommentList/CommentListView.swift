@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 import UI
 import Core
@@ -10,6 +11,8 @@ public struct CommentListView: View {
   
   @FocusState var focus: Bool
   @Environment(\.dismiss) var dismiss
+  
+  @State private var cancelBag: AnyCancellable?
   
   public init(store: StoreOf<CommentListCore>) {
     self.store = store
@@ -40,9 +43,14 @@ public struct CommentListView: View {
     .onAppear {
       store.send(.requestComments)
       store.send(.requestMyPage)
+      
+      cancelBag = NotificationService.publisher(.tapAddComment)
+        .sink { _ in
+          focus = true
+        }
     }
-    .onReceive(NotificationService.publisher(.tapAddComment)) { _ in
-      focus = true
+    .onDisappear {
+      cancelBag?.cancel()
     }
   }
 }

@@ -16,7 +16,7 @@ struct MainTabView: View {
   
   var body: some View {
     WithViewStore(store, observe: { $0 }) { viewStore in
-      VStack {
+      ZStack(alignment: .bottom) {
         TabView(selection: viewStore.$tabIndex) {
           SalMalView(store: store.scope(
             state: \.salmalState,

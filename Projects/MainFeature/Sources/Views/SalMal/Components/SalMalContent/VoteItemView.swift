@@ -5,6 +5,7 @@ import ProfileFeature
 import Core
 import UI
 import ComposableArchitecture
+import Kingfisher
 
 public struct VoteItemView: View {
   let store: StoreOf<VoteItemCore>
@@ -63,26 +64,16 @@ public struct VoteItemView: View {
 extension VoteItemView {
   
   private var targetItem: some View {
-    CacheAsyncImage(url: URL(string: viewStore.vote.imageURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)!) { phase in
-      switch phase {
-      case let .success(image):
-        image
-          .fill()
-          .clipShape(Rectangle())
-        
-      case .failure:
-        // TODO: Error 처리
-        Text("Error")
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .contentShape(Rectangle())
-        
-      default:
+    KFImage(URL(string: viewStore.vote.imageURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!))
+      .placeholder {
         ProgressView()
           .progressViewStyle(.circular)
           .tint(.ds(.green1))
           .scaleEffect(2)
       }
-    }
+      .resizable()
+      .scaledToFill()
+      .clipShape(Rectangle())
   }
   
   var TopBottons: some View {
