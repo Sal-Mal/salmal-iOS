@@ -28,7 +28,6 @@ public struct SMImagePicker: UIViewControllerRepresentable {
     Coordinator(delegate: self)
   }
 
-
   // MARK: - Coordinator (Delegate)
 
   public final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
