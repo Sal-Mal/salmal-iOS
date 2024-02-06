@@ -59,7 +59,7 @@ private extension TermsView {
       
       NavigationLink(state: SplashCore.Path.State.termsDetailScreen(.init(
         title: "이용약관동의",
-        url: "https://www.naver.com"))
+        url: "https://honorable-overcoat-a54.notion.site/1b14e3eedc6a4bf3ac8d4a7aad484328?pvs=4"))
       ) {
         TermRow(title: "이용약관동의(필수)", isChecked: viewStore.$termsOfUse)
       }
@@ -68,16 +68,21 @@ private extension TermsView {
       
       NavigationLink(state: SplashCore.Path.State.termsDetailScreen(.init(
         title: "개인정보 수집 및 이용동의",
-        url: "https://www.naver.com")
+        url: "https://honorable-overcoat-a54.notion.site/ff45b483da3942558a17c20dca1c4538?pvs=4")
       )) {
         TermRow(title: "개인정보 수집 및 이용동의(필수)", isChecked: viewStore.$personalInformation)
       }
       .listRowInsets(.init())
       .listRowSeparator(.hidden)
       
-      TermRow(title: "E-mail 및 SMS 광고성 정보 수신동의(선택)", isChecked: viewStore.$marketing)
-        .listRowInsets(.init())
-        .listRowSeparator(.hidden)
+      NavigationLink(state: SplashCore.Path.State.termsDetailScreen(.init(
+        title: "E-mail 및 SMS 광고성 정보 수신동의(선택)",
+        url: "https://honorable-overcoat-a54.notion.site/8f5c915278a14733b90ef93a7e4af8ec?pvs=4")
+      )) {
+        TermRow(title: "E-mail 및 SMS 광고성 정보 수신동의(선택)", isChecked: viewStore.$marketing)
+      }
+      .listRowInsets(.init())
+      .listRowSeparator(.hidden)
     }
     .listStyle(.plain)
     .scrollDisabled(true)

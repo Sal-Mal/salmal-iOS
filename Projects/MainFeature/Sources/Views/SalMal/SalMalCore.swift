@@ -50,7 +50,7 @@ public struct SalMalCore: Reducer {
     case homeAction(CarouselCore.Action)
     case bestAction(CarouselCore.Action)
     
-    case moveToAlarm // 알람 화면으로 이동
+    case moveToAlarm(AppState.AlarmModel? = nil) // 알람 화면으로 이동
     case buyTapped // 살 버튼 눌렀을때
     case notBuyTapped // 말 버튼 눌렀을때
     case requestVote(id: Int) // id에 해당하는 Vote 데이터 요청
@@ -69,19 +69,18 @@ public struct SalMalCore: Reducer {
     
     Reduce { state, action in
       switch action {
-      case .binding:
-        return .none
+      case .binding: break
         
       case let .path(.element(_, action: .otherProfileScreen(.delegate(.moveToSalMalDetail(vote))))):
         state.path.append(.salmalDetailScreen(.init(vote: vote)))
-        return .none
       
       case let .path(.element(_, action: .salmalDetailScreen(.delegate(.moveToOtherProfile(id))))):
         state.path.append(.otherProfileScreen(.init(memberID: id)))
-        return .none
         
-      case .path:
-        return .none
+      case let .path(.element(_, action: .alarmScreen(.delegate(.pushTarget(vote, model))))):
+        state.path.append(.salmalDetailScreen(.init(vote: vote, model: model)))
+        
+      case .path: break
         
         // homeTab의 index가 바뀔때마다 실행
       case let .homeAction(.delegate(.updateVote(vote))):
@@ -89,10 +88,8 @@ public struct SalMalCore: Reducer {
         
       case let .homeAction(.delegate(.moveToprofile(id))):
         state.path.append(.otherProfileScreen(.init(memberID: id)))
-        return .none
         
-      case .homeAction:
-        return .none
+      case .homeAction: break
         
         // bestTab의 index가 바뀔때마다 실행
       case let .bestAction(.delegate(.updateVote(vote))):
@@ -100,17 +97,13 @@ public struct SalMalCore: Reducer {
         
       case let .bestAction(.delegate(.moveToprofile(id))):
         state.path.append(.otherProfileScreen(.init(memberID: id)))
-        return .none
         
-      case .bestAction:
-        return .none
+      case .bestAction: break
         
-      case .moveToAlarm:
-        state.path.append(.alarmScreen())
-        return .none
-        
+      case let .moveToAlarm(model):
+        state.path.append(.alarmScreen(.init(model: model)))
+      
       case .buyTapped:
-
         return .run { [state] send in
           switch state.salButtonState {
             // 투표
@@ -151,7 +144,6 @@ public struct SalMalCore: Reducer {
         }
         
       case let .requestVote(id):
-        
         return .run { send in
           let vote = try await voteRepository.getVote(id: id)
           await send(.updateVote(vote))
@@ -191,9 +183,9 @@ public struct SalMalCore: Reducer {
           state.salButtonState = .idle
           state.malButtonState = .idle
         }
-        
-        return .none
       }
+      
+      return .none
     }
     .forEach(\.path, action: /Action.path) {
       Path()
@@ -212,7 +204,7 @@ public struct SalMalCore: Reducer {
 public extension SalMalCore {
   struct Path: Reducer {
     public enum State: Equatable {
-      case alarmScreen(AlarmCore.State = .init())
+      case alarmScreen(AlarmCore.State)
       case otherProfileScreen(OtherProfileCore.State)
       case salmalDetailScreen(SalMalDetailCore.State)
     }

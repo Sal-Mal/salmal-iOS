@@ -39,6 +39,9 @@ struct MainTabView: View {
         .frame(height: 52)
         .opacity(appState.showTab ? 1 : 0)
       }
+      .onReceive(appState.$alarmData) {
+        store.send(._receivePushAlarm($0))
+      }
       .fullScreenCover(store: store.scope(
         state: \.$uploadState,
         action: { .uploadAction($0) }

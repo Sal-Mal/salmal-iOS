@@ -1,12 +1,14 @@
 import SwiftUI
 import UI
 import Core
+
 import ComposableArchitecture
 import ProfileFeature
 
 public struct SalMalView: View {
   let store: StoreOf<SalMalCore>
   @ObservedObject var viewStore: ViewStoreOf<SalMalCore>
+  @EnvironmentObject var appState: AppState
   
   public init(store: StoreOf<SalMalCore>) {
     self.store = store
@@ -56,7 +58,15 @@ public struct SalMalView: View {
         selection: viewStore.$tab,
         isAlarmExist: true
       ) {
-        store.send(.moveToAlarm)
+        store.send(.moveToAlarm())
+      }
+      .onReceive(AppState.shared.$alarmData) { model in
+        guard model?.step == .alarm else { return }
+        
+        Task {
+          try await Task.sleep(nanoseconds: 1_000_000_000)
+          store.send(.moveToAlarm(model))
+        }
       }
     } destination: { state in
       switch state {

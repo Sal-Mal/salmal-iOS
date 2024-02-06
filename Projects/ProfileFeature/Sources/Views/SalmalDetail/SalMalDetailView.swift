@@ -36,11 +36,33 @@ public struct SalMalDetailView: View {
       VoteButtons
         .padding(.horizontal, 18)
     }
+    .padding(.vertical, 18)
     .onAppear {
+      store.send(._showTargetComment)
       store.send(.requestVote(id: viewStore.vote.id))
       NotificationService.post(.hideTabBar)
     }
-    .padding(.vertical, 18)
+    .smNavigationBar(
+      title: "",
+      leftItems: {
+        Button {
+          store.send(.backButtonTapped)
+        } label: {
+          Image(icon: .chevron_left)
+        }
+      },
+      rightItems: {
+        if viewStore.isMine {
+          Button {
+            store.send(.deleteVoteTapped)
+          } label: {
+            Image(icon: .ic_trash)
+          }
+        } else {
+          EmptyView()
+        }
+      }
+    )
     .sheet(
       store: store.scope(state: \.$commentListState, action: SalMalDetailCore.Action.commentList)) { subStore in
         VStack(spacing: 0) {
@@ -64,44 +86,26 @@ public struct SalMalDetailView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.ds(.gray4))
         }
-        .smNavigationBar(
-          title: "",
-          leftItems: {
-            Button {
-              store.send(.backButtonTapped)
-            } label: {
-              Image(icon: .chevron_left)
-            }
-          },
-          rightItems: {
-            if viewStore.isMine {
-              Button {
-                store.send(.deleteVoteTapped)
-              } label: {
-                Image(icon: .ic_trash)
-              }
-            } else {
-              EmptyView()
-            }
-          }
-        )
   }
 }
 
 extension SalMalDetailView {
   var VoteImage: some View {
-    KFImage(URL(string: viewStore.vote.imageURL))
-      .placeholder {
-        Rectangle()
-      }
-      .resizable()
-      .frame(width: UIScreen.main.bounds.width - 36)
-      .clipped()
-      .cornerRadius(24)
+    GeometryReader { proxy in
+      KFImage(URL(string: viewStore.vote.imageURL))
+        .placeholder {
+          Rectangle()
+        }
+        .resizable()
+        .scaledToFill()
+        .frame(width: proxy.size.width, height: proxy.size.height)
+        .clipShape(
+          RoundedRectangle(cornerRadius: 24)
+        )
+    }
   }
   
   var ProfileImage: some View {
-    
     HStack(alignment: .top) {
       SMCapsuleButton(
         title: viewStore.vote.nickName,

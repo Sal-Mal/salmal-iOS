@@ -9,6 +9,7 @@ public enum UserDefaultsKey: String {
   case refreshToken
   case accessToken
   case memberID
+  case fcmToken
 }
 
 // MARK: - UserDefaultsService
@@ -33,6 +34,9 @@ public final class UserDefaultsService {
       if let accessToken { memberID = parseID(jwtToken: accessToken) }
     }
   }
+  
+  @UserDefault(key: .fcmToken)
+  public var fcmToken: String?
   
   @UserDefault(key: UserDefaultsKey.memberID)
   public var memberID: Int?

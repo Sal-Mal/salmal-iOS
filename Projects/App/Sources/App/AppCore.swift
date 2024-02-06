@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import LoginFeature
+import Core
 
 struct AppCore: Reducer {
   struct State: Equatable {
@@ -15,6 +16,8 @@ struct AppCore: Reducer {
     case _setLogin(Bool)
   }
   
+  @Dependency(\.notificationRepository) var notiRepo
+  
   var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
@@ -25,6 +28,13 @@ struct AppCore: Reducer {
         if value {
           state.splashState = nil
           state.mainState = .init()
+          
+          return .run { send in
+            if let fcmToken = UserDefaultsService.shared.fcmToken {
+              try await notiRepo.registerFCM(token: fcmToken)
+            }
+          }
+          
         } else {
           state.splashState = .init()
           state.mainState = nil

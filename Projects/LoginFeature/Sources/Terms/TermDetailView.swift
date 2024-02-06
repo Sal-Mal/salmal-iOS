@@ -15,7 +15,7 @@ struct TermDetailView: View {
   }
   
   var body: some View {
-    WebView(store: .init(initialState: .init(title: "이용약관", urlString: viewStore.url)) {
+    WebView(store: .init(initialState: .init(title: viewStore.title, urlString: viewStore.url)) {
       WebCore()
     })
   }

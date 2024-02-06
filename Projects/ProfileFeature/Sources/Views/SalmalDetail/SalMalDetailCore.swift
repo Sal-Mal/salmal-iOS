@@ -8,6 +8,7 @@ public struct SalMalDetailCore: Reducer {
   
   public struct State: Equatable {
     var vote: Vote
+    var model: AppState.AlarmModel?
     
     @BindingState var salButtonState: ButtonState = .idle
     @BindingState var malButtonState: ButtonState = .idle
@@ -22,8 +23,9 @@ public struct SalMalDetailCore: Reducer {
       return UserDefaultsService.shared.memberID == vote.memberID
     }
     
-    public init(vote: Vote) {
+    public init(vote: Vote, model: AppState.AlarmModel? = nil) {
       self.vote = vote
+      self.model = model
     }
   }
   
@@ -47,6 +49,7 @@ public struct SalMalDetailCore: Reducer {
     case malButtonTapped
     case requestVote(id: Int)
     case update(Vote)
+    case _showTargetComment
     
     
     public enum Delegate: Equatable {
@@ -55,6 +58,7 @@ public struct SalMalDetailCore: Reducer {
   }
   
   @Dependency(\.dismiss) var dismiss
+  @Dependency(\.notificationRepository) var notiRepository
   @Dependency(\.voteRepository) var voteRepository
   @Dependency(\.toastManager) var toastManager
   @Dependency(\.userDefault) var userDefault
@@ -105,7 +109,7 @@ public struct SalMalDetailCore: Reducer {
       case .moreTapped:
         state.reportState = .init(voteID: state.vote.id, memberID: state.vote.memberID)
         return .none
-      
+        
       case .profileTapped:
         if state.vote.memberID != userDefault.memberID {
           return .send(.delegate(.moveToOtherProfile(state.vote.memberID)))
@@ -190,6 +194,14 @@ public struct SalMalDetailCore: Reducer {
         }
         
         return .none
+        
+      case ._showTargetComment:
+        guard let model = state.model else { return .none }
+        
+        return .run { send in
+          await send(.commentTapped)
+          try await notiRepository.readAlarm(id: model.alarmID)
+        }
       }
     }
     .ifLet(\.$commentListState, action: /Action.commentList) {

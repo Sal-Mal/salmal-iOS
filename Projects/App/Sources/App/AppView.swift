@@ -6,7 +6,7 @@ import ComposableArchitecture
 
 struct AppView: View {
   @Dependency(\.kakaoManager) var kakaoManager
-  @StateObject var appState = AppState()
+  @StateObject var appState = AppState.shared
   
   let store: StoreOf<AppCore>
   

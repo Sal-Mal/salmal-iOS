@@ -10,6 +10,7 @@ public enum NotificationService {
     case tapAddComment
     case showTabBar
     case hideTabBar
+    case pushAlarm
     
     var name: Notification.Name {
       return .init(self.rawValue)

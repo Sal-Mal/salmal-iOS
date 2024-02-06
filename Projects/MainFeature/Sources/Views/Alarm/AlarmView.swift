@@ -2,29 +2,6 @@ import SwiftUI
 import Core
 import ComposableArchitecture
 
-public struct AlarmCore: Reducer {
-  public struct State: Equatable {
-    public init() {
-      
-    }
-  }
-  
-  public enum Action: Equatable {
-    case listTapped
-  }
-  
-  @Dependency(\.network) var network
-  
-  public var body: some ReducerOf<Self> {
-    Reduce { state, action in
-      switch action {
-      case .listTapped:
-        return .none
-      }
-    }
-  }
-}
-
 struct AlarmView: View {
   let store: StoreOf<AlarmCore>
   @ObservedObject var viewStore: ViewStoreOf<AlarmCore>
@@ -37,18 +14,24 @@ struct AlarmView: View {
   
   var body: some View {
     List {
-      AlarmRow()
-        .listRowSeparator(.hidden)
-      AlarmRow()
-        .listRowSeparator(.hidden)
-      AlarmRow()
-        .listRowSeparator(.hidden)
-      AlarmRow()
-        .listRowSeparator(.hidden)
+      ForEach(viewStore.alarms) { alarm in
+        AlarmRow(alarm: alarm)
+          .listRowSeparator(.hidden)
+          .onTapGesture {
+            store.send(.listTapped(alarm))
+          }
+      }
+      .onDelete {
+        store.send(.swipeDelete($0))
+      }
     }
     .listStyle(.plain)
-    .onAppear {
+    .task {
       NotificationService.post(.hideTabBar)
+      store.send(._requestAlarmList)
+      
+      try? await Task.sleep(nanoseconds: 1_000_000_000)
+      store.send(._requestVote)
     }
     .smNavigationBar(title: "알림", leftItems: {
       Image(icon: .chevron_left)
