@@ -32,7 +32,7 @@ public struct PhotoEditorCore: Reducer {
 
   public enum Action: BindableAction {
     case backButtonTapped
-    case confirmButtonTapped(any View)
+    case confirmButtonTapped(any View, size: CGSize)
     case addTextButtonTapped
     case filteredImageSelected(FilteredImage)
     case textBoxDeleteAreaEntered(PhotoTextBox)
@@ -55,15 +55,6 @@ public struct PhotoEditorCore: Reducer {
   @Dependency(\.voteRepository) private var voteRepository
   @Dependency(\.photoService) private var photoService
 
-  private let filters: [CIFilter] = [
-    .photoEffectFade(),
-    .photoEffectMono(),
-    .photoEffectTonal(),
-    .sepiaTone(),
-    .comicEffect(),
-    .colorInvert()
-  ]
-
   public init() {}
 
   public var body: some ReducerOf<Self> {
@@ -82,7 +73,7 @@ public struct PhotoEditorCore: Reducer {
           }
         }
 
-      case .confirmButtonTapped(let photoView):
+      case let .confirmButtonTapped(photoView, size):
         switch state.destination {
         case .photoTextEditor(let textEditorState):
           let newTextBox = PhotoTextBox(
@@ -97,7 +88,7 @@ public struct PhotoEditorCore: Reducer {
           return .none
 
         default:
-          let uiImage = photoView.snapshot()
+          let uiImage = photoView.snapshot(size: size)
           let imageData = photoService.exportCompressedImage(uiImage)
 
           return .run { send in
@@ -194,6 +185,15 @@ public struct PhotoEditorCore: Reducer {
 extension PhotoEditorCore {
 
   private func applyFilters(_ image: UIImage) -> [FilteredImage] {
+    let filters: [CIFilter] = [
+      .photoEffectFade(),
+      .photoEffectMono(),
+//      .photoEffectTonal(),
+//      .sepiaTone(),
+      .comicEffect(),
+//      .colorInvert()
+    ]
+    
     let context = CIContext()
     var images = [FilteredImage]()
 
@@ -204,7 +204,10 @@ extension PhotoEditorCore {
       guard let newImage = imageFilter.outputImage else { return }
       guard let cgImage = context.createCGImage(newImage, from: newImage.extent) else { return }
 
-      let filteredImage = FilteredImage(image: .init(cgImage: cgImage), filter: imageFilter)
+      let filteredImage = FilteredImage(
+        image: .init(cgImage: cgImage, scale: image.scale, orientation: image.imageOrientation),
+        filter: imageFilter
+      )
       images.append(filteredImage)
     }
 

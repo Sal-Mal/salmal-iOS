@@ -11,6 +11,7 @@ public enum NotificationService {
     case showTabBar
     case hideTabBar
     case pushAlarm
+    case refreshSalMalList
     
     var name: Notification.Name {
       return .init(self.rawValue)

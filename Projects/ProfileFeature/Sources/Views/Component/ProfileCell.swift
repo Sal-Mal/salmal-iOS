@@ -16,7 +16,7 @@ struct ProfileCell: View {
           .aspectRatio(1, contentMode: .fill)
       }
       .resizable()
-      .aspectRatio(1, contentMode: .fill)
+      .aspectRatio(1, contentMode: .fit)
       .cornerRadius(24.0)
       .onTapGesture {
         action()

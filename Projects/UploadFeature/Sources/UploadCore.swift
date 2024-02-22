@@ -16,7 +16,6 @@ public struct UploadCore: Reducer {
   }
 
   public enum Action: BindableAction {
-    case onAppear
     case backButtonTapped
     case selectInCamera
     case _requestCameraPermissionResponse(Bool)
@@ -24,6 +23,7 @@ public struct UploadCore: Reducer {
     case cameraCancelled
     case photoSelected(PhotosPickerItem?)
     case _loadImageCompletedResponse(UIImage)
+    case _showPhotoEditScreen(UIImage)
     
     // MARK: - 기타 Action
     case destination(PresentationAction<Destination.Action>)
@@ -40,9 +40,6 @@ public struct UploadCore: Reducer {
     BindingReducer()
     Reduce { state, action in
       switch action {
-      case .onAppear:
-        return .none
-      
       case .backButtonTapped:
         return .run { send in
           await dismiss()
@@ -66,36 +63,48 @@ public struct UploadCore: Reducer {
 
       case .cameraTaken(let uiImage):
         state.isCameraSheetPresented = false
-        state.destination = .photoEditor(.init(uiImage: uiImage))
-        return .none
+        
+        return .run { send in
+          try await Task.sleep(for: .seconds(1))
+          await send(._showPhotoEditScreen(uiImage))
+        }
 
       case .cameraCancelled:
         state.isCameraSheetPresented = false
-        return .none
         
       case .photoSelected(let item):
         return .run { send in
           guard let data = try? await item?.loadTransferable(type: Data.self),
                 let uiImage = UIImage(data: data) else { return }
           
-          await send(._loadImageCompletedResponse(uiImage))
+          let isAuthorized = await PermissionService.requestPhotoPermission()
+          
+          if isAuthorized {
+            await send(._loadImageCompletedResponse(uiImage))
+          } else {
+            await toastManager.showToast(.warning("앨범 접근 권한을 허용해주세요."))
+          }
         }
         
       case ._loadImageCompletedResponse(let uiImage):
+        return .run { send in
+          try await Task.sleep(for: .seconds(1))
+          await send(._showPhotoEditScreen(uiImage))
+        }
+        
+      case let ._showPhotoEditScreen(uiImage):
         state.destination = .photoEditor(.init(uiImage: uiImage))
-        return .none
         
       case .destination(.presented(.photoEditor(.delegate(.savePhoto)))):
         return .run { send in
           await dismiss()
         }
 
-      case .destination:
-        return .none
-        
-      case .binding:
-        return .none
+      case .destination: break
+      case .binding: break
       }
+      
+      return .none
     }
     .ifLet(\.$destination, action: /Action.destination) { Destination() }
   }

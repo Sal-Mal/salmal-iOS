@@ -26,8 +26,8 @@ public struct TermsCore: Reducer {
     BindingReducer()
     Reduce { state, action in
       switch action {
-      case .binding:
-        return .none
+      case let .binding:
+        state.all = state.termsOfUse && state.personalInformation && state.marketing
         
       case .toggleAll:
         state.all.toggle()
@@ -35,11 +35,11 @@ public struct TermsCore: Reducer {
         state.termsOfUse = state.all
         state.personalInformation = state.all
         state.marketing = state.all
-        return .none
         
-      case .moveToSignUpScreen:
-        return .none
+      case .moveToSignUpScreen: break
       }
+      
+      return .none
     }
   }
 }

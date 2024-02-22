@@ -28,7 +28,7 @@ public struct LoginView: View {
       VStack(spacing: 12) {
         Spacer()
         
-        Image(icon: .bubble)
+        Image(icon: .ic_bubble)
           .shadow(color: .ds(.green), radius: 2, x: 0, y: 0)
           .overlay {
             Text("🤝 회원가입하고 쇼핑 메이트 얻기!")

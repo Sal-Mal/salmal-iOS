@@ -64,7 +64,23 @@ public struct SignUpCore: Reducer {
 
           NotificationService.post(.login)
         } catch: { error, send in
-          await toastManager.showToast(.error("회원가입 실패!"))
+          guard let error = error as? SMError else {
+            await toastManager.showToast(.error("회원가입 실패!"))
+            return
+          }
+          
+          if case let .network(.invalidURLHTTPResponse(code)) = error {
+            switch code {
+            case 1004:
+              await toastManager.showToast(.error("닉네임의 최소 길이는 2, 최대 길이는 20입니다."))
+            case 1005:
+              await toastManager.showToast(.error("중복된 닉네임이 존재합니다"))
+            case 1001:
+              await toastManager.showToast(.error("회원을 차즐 수 없습니다."))
+            default:
+              await toastManager.showToast(.error("회원가입 실패!"))
+            }
+          }
         }
         
       case let .setErrorMessage(text):

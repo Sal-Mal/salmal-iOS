@@ -7,7 +7,7 @@ public struct CommentCore: Reducer {
     var replys: IdentifiedArrayOf<ReplyCommentCore.State>
     @PresentationState var report: ReportCommentCore.State?
     
-    var showMoreComment = false
+    var showMoreComment: Bool
     var timeDifference: String {
       let difference = comment.createdAt.timeIntervalSinceNow * -1
       
@@ -29,9 +29,10 @@ public struct CommentCore: Reducer {
     }
     public var id: Int { return comment.id }
     
-    public init(comment: Comment) {
+    public init(comment: Comment, isOpen: Bool = false) {
       self.comment = comment
       self.replys = []
+      self.showMoreComment = isOpen
     }
   }
   
@@ -39,6 +40,7 @@ public struct CommentCore: Reducer {
     case delegate(Delegate)
     case report(PresentationAction<ReportCommentCore.Action>)
     case replyComment(id: ReplyCommentCore.State.ID, action: ReplyCommentCore.Action)
+    
     case optionsTapped
     case moreCommentToggle
     case writeCommentToggle
@@ -84,7 +86,7 @@ public struct CommentCore: Reducer {
         state.report = .init(comment: state.comment)
         return .none
         
-      // 답글 4개보기
+      // 답글 보기버튼 눌렀을떄
       case .moreCommentToggle:
         state.showMoreComment.toggle()
         
@@ -127,6 +129,8 @@ public struct CommentCore: Reducer {
         return .none
         
       case .requestReplys:
+        state.replys = []
+        
         return .run { [state] send in
           let result = try await commentRepo.listReply(commentID: state.comment.id)
           await send(.setReplys(value: result))

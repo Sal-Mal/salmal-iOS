@@ -43,6 +43,12 @@ public struct CarouselView: View {
     .task {
       store.send(._onAppear)
     }
+    // 업로드 modal 닫힐때, homeList 업데이트 시켜주기
+    .onReceive(NotificationService.publisher(.refreshSalMalList)) { _ in
+      if viewStore.tab == .home {
+        store.send(._onAppear)
+      }
+    }
   }
   
   var dragGesture: some Gesture {

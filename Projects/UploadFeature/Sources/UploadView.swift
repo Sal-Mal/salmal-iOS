@@ -34,7 +34,9 @@ public struct UploadView: View {
           
           HStack(spacing: 16) {
             // 카메라 선택 버튼
-            Button(action: { store.send(.selectInCamera) }, label: {
+            Button {
+              store.send(.selectInCamera)
+            } label: {
               VStack(spacing: 2) {
                 Image(icon: .camera)
                   .renderingMode(.template)
@@ -50,7 +52,7 @@ public struct UploadView: View {
                 RoundedRectangle(cornerRadius: 6)
                   .fill(.white)
               }
-            })
+            }
             .buttonStyle(.plain)
             
             // 갤러리 선택 버튼
@@ -87,9 +89,6 @@ public struct UploadView: View {
       }
       .frame(maxHeight: .infinity)
       .background(.black)
-      .onAppear {
-        store.send(.onAppear)
-      }
       .fullScreenCover(isPresented: viewStore.$isCameraSheetPresented) {
         SMImagePicker(
           onCapture: { viewStore.send(.cameraTaken($0)) },

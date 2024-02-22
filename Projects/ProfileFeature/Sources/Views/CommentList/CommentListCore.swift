@@ -16,6 +16,7 @@ public struct CommentListCore: Reducer {
     
     var profileImageURL: String?
     var commentMode: CommentMode?
+    var shouldOpenCommentID: Int? // 대댓글 열려있어야 하는 Commnet ID
     
     public init(voteID: Int, commentCount: Int) {
       self.voteID = voteID
@@ -27,7 +28,7 @@ public struct CommentListCore: Reducer {
     case binding(BindingAction<State>)
     case comment(id: CommentCore.State.ID, action: CommentCore.Action)
     case requestComments
-    case commentsResponse(TaskResult<[Comment]>)
+    case commentsResponse([Comment], replay: [Comment]?)
     case requestMyPage
     case myPageResponse(Member)
     case tapConfirmButton
@@ -68,24 +69,55 @@ public struct CommentListCore: Reducer {
         return .none
         
       case .requestComments:
-        return .run { [id = state.voteID] send in
-          await send(.commentsResponse(
-            TaskResult {
-              try await commentRepo.list(id: id)
-            }
-          ))
+        return .run { [state] send in
+          let comments = try await commentRepo.list(id: state.voteID)
+          let replays: [Comment]?
+          
+          if let index = comments.firstIndex(where: { $0.id == state.shouldOpenCommentID }) {
+            replays = try await commentRepo.listReply(commentID: comments[index].id)
+          } else {
+            replays = nil
+          }
+          
+          await send(.commentsResponse(comments, replay: replays))
+          
+        } catch: { error, send in
+          await toastManager.showToast(.error("댓글 로딩에 실패했어요 :("))
+        }
+      case let .commentsResponse(comments, replays):
+        state.comments = []
+        
+        let commentStates = comments.map { comment -> CommentCore.State in
+          var temp = CommentCore.State(comment: comment, isOpen: comment.id == state.shouldOpenCommentID)
+          
+          if comment.id == state.shouldOpenCommentID, let replays {
+            temp.replys = .init(uniqueElements: replays.map { .init(comment: $0)} )
+          }
+          return temp
         }
         
-      case let .commentsResponse(.success(entity)):
-        state.comments = []
-        let commentStates = entity.map { CommentCore.State(comment: $0) }
         state.comments.append(contentsOf: commentStates)
+        
         return .none
         
-      case let .commentsResponse(.failure(error)):
-        // TODO: 댓글 리스트 요청 실패 (Toast Message)
-        print(error.localizedDescription)
-        return .none
+//      case let .commentsResponse(.success(entity)):
+//        state.comments = []
+//
+//        entity.forEach {
+//          print($0.id == state.shouldOpenCommentID)
+//        }
+//        
+//        let commentStates = entity.map {
+//          CommentCore.State(comment: $0, isOpen: $0.id == state.shouldOpenCommentID)
+//        }
+//        
+//        state.comments.append(contentsOf: commentStates)
+//        return .none
+//        
+//      case let .commentsResponse(.failure(error)):
+//        // TODO: 댓글 리스트 요청 실패 (Toast Message)
+//        print(error.localizedDescription)
+//        return .none
         
       case .requestMyPage:
         return .run { send in
@@ -101,6 +133,12 @@ public struct CommentListCore: Reducer {
         return .none
         
       case .tapConfirmButton:
+        if case let .writeReply(id) = state.commentMode {
+          state.shouldOpenCommentID = id
+        } else {
+          state.shouldOpenCommentID = nil
+        }
+        
         return .run { [state] send in
           
           let text = state.text

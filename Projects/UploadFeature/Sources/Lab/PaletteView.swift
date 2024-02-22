@@ -107,7 +107,7 @@ public struct PaletteView: View {
 
   private let fonts: [Font] = [
     .pretendard(.semiBold, size: 20),
-    .maruBuri(size: 20),
+//    .maruBuri(size: 20),
     .ttTogether(size: 20),
     .twaySky(size: 20),
     .binggrae(size: 20),

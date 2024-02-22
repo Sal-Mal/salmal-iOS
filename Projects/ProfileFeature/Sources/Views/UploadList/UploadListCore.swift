@@ -7,6 +7,7 @@ public struct UploadListCore: Reducer {
 
   public struct State: Equatable {
     @BindingState var isDeletionPresented: Bool = false
+    var targetVote: Vote?
 
     var votes: IdentifiedArrayOf<Vote> = []
 
@@ -17,8 +18,9 @@ public struct UploadListCore: Reducer {
     case binding(BindingAction<State>)
     case dismissButtonTapped
     case confirmButtonTapped
-    case removeVoteTapped(Vote)
-
+    case deleteButtonTapped
+    case remoteButtonTapped(Vote)
+    
     case _onAppear
     case _removeVoteResponse(TaskResult<Int>)
 
@@ -39,7 +41,7 @@ public struct UploadListCore: Reducer {
       switch action {
       case .binding:
         return .none
-
+        
       case .dismissButtonTapped:
         return .run { send in
           await dismiss()
@@ -47,9 +49,16 @@ public struct UploadListCore: Reducer {
 
       case .confirmButtonTapped:
         return .none
+        
+      case let .remoteButtonTapped(vote):
+        state.isDeletionPresented = true
+        state.targetVote = vote
+        return .none
 
-      case .removeVoteTapped(let vote):
-        return .run { [id = vote.id] send in
+      case .deleteButtonTapped:
+        guard let id = state.targetVote?.id else { return .none }
+        
+        return .run { send in
           await send(._removeVoteResponse(
             TaskResult {
               try await voteRepository.delete(voteID: id)
@@ -61,6 +70,7 @@ public struct UploadListCore: Reducer {
       case ._onAppear:
         return .run { send in
           let votes = try await memberRepository.votes(memberID: userDefault.memberID ?? -1, cursorId: nil, size: 100)
+          
           await send(._setVotes(votes))
         }
 

@@ -82,19 +82,20 @@ public struct DefaultNetworkService: NetworkService {
     else {
       debugPrint("실패: InvalidStatusCode")
       debugPrint(String(data: dataResponse.data ?? .init(), encoding: .utf8))
-      try self.printErrorMessage(dataResponse.data)
-      throw SMError.network(.invalidURLHTTPResponse)
+      let code = try self.printErrorMessage(dataResponse.data)
+      throw SMError.network(.invalidURLHTTPResponse(code))
     }
     
     return dataResponse.result
   }
   
   /// 에러 메시지를 디코딩후 출력
-  private func printErrorMessage(_ data: Data?) throws {
-    guard let data else { return }
+  private func printErrorMessage(_ data: Data?) throws -> Int {
+    guard let data else { return 0 }
     
     let errorModel = try JSONDecoder().decode(DefaultErrorResponseDTO.self, from: data)
     debugPrint("ErrorMessage: \(errorModel.message)")
+    return errorModel.code
   }
   
   /// accessToken 갱신

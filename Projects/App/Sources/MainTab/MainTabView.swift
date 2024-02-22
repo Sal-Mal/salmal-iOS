@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import StoreKit
 
 import ComposableArchitecture
 import UI
@@ -42,12 +43,18 @@ struct MainTabView: View {
       .onReceive(appState.$alarmData) {
         store.send(._receivePushAlarm($0))
       }
-      .fullScreenCover(store: store.scope(
-        state: \.$uploadState,
-        action: { .uploadAction($0) }
-      )) { subStore in
-        UploadView(store: subStore)
-      }
+      .fullScreenCover(
+        store: store.scope(state: \.$uploadState, action: { .uploadAction($0)}),
+        onDismiss: {
+          NotificationService.post(.refreshSalMalList)
+          if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive}) as? UIWindowScene {
+            SKStoreReviewController.requestReview(in: scene)
+          }
+        },
+        content: { subStore in
+          UploadView(store: subStore)
+        }
+      )
     }
   }
 }

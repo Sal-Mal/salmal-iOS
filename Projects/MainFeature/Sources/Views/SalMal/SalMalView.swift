@@ -56,7 +56,7 @@ public struct SalMalView: View {
       }
       .smMainNavigationBar(
         selection: viewStore.$tab,
-        isAlarmExist: true
+        isAlarmExist: viewStore.isAlarmExist
       ) {
         store.send(.moveToAlarm())
       }

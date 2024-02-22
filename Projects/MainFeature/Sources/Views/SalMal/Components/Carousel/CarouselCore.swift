@@ -64,6 +64,7 @@ public struct CarouselCore: Reducer {
         
       case ._onAppear:
         state = .init(tab: state.tab)
+        state.votes = []
         return .send(.requestVoteList)
         
       case .requestVoteList:

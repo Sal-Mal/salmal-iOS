@@ -21,12 +21,12 @@ extension SM {
     case ic_message
     case ic_kakao
     case ic_apple
-    case bubble
+    case ic_bell
+    case ic_bell_dot
+    case ic_bubble
 
     /// 레거시
     case chevron_left = "chevron.left"
-    case bell_fill = "bell.fill"
-    case bell_dot_fill = "bell.dot.fill"
     case arrow_left = "arrow.left"
     case home_fill = "home.fill"
     case home = "home"

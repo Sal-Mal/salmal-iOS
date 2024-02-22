@@ -31,7 +31,7 @@ public struct TermsView: View {
       }
     }
     .padding(.horizontal, 18)
-    .smNavigationBar(title: "")
+    .toolbar(.hidden, for: .navigationBar)
   }
 }
 

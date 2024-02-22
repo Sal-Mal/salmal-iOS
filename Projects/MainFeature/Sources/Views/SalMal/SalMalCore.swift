@@ -15,6 +15,7 @@ public struct SalMalCore: Reducer {
     @BindingState var buyPercentage: Double = 0
     @BindingState var notBuyPercentage: Double = 0
     var totalCount = 0
+    var isAlarmExist = false
     
     var currentIndex: Int {
       if tab == .home {
@@ -50,6 +51,9 @@ public struct SalMalCore: Reducer {
     case homeAction(CarouselCore.Action)
     case bestAction(CarouselCore.Action)
     
+    case _requestAlarm
+    case _setAlarmState(Bool)
+    
     case moveToAlarm(AppState.AlarmModel? = nil) // 알람 화면으로 이동
     case buyTapped // 살 버튼 눌렀을때
     case notBuyTapped // 말 버튼 눌렀을때
@@ -61,8 +65,8 @@ public struct SalMalCore: Reducer {
   public init() { }
   
   @Dependency(\.voteRepository) var voteRepository
+  @Dependency(\.notificationRepository) var notiRepository
   @Dependency(\.toastManager) var toastManager
-  
   
   public var body: some ReducerOf<Self> {
     BindingReducer()
@@ -100,10 +104,27 @@ public struct SalMalCore: Reducer {
         
       case .bestAction: break
         
+      case ._requestAlarm:
+        return .run { send in
+          let isAlarmExist = try await !notiRepository.requestAlarmList().isEmpty
+          await send(._setAlarmState(isAlarmExist))
+        }
+        
+      case let ._setAlarmState(value):
+        state.isAlarmExist = value
+        
       case let .moveToAlarm(model):
         state.path.append(.alarmScreen(.init(model: model)))
       
       case .buyTapped:
+        if state.homeState.votes.isEmpty && state.tab == .home {
+          return .none // 비어있을 경우 아무동작하지 않음
+        }
+        
+        if state.bestState.votes.isEmpty && state.tab == .best {
+          return .none // // 비어있을 경우 아무동작하지 않음
+        }
+        
         return .run { [state] send in
           switch state.salButtonState {
             // 투표
@@ -124,6 +145,13 @@ public struct SalMalCore: Reducer {
         }
         
       case .notBuyTapped:
+        if state.homeState.votes.isEmpty && state.tab == .home {
+          return .none // 비어있을 경우 아무동작하지 않음
+        }
+        
+        if state.bestState.votes.isEmpty && state.tab == .best {
+          return .none // // 비어있을 경우 아무동작하지 않음
+        }
         
         return .run { [state] send in
           switch state.malButtonState {

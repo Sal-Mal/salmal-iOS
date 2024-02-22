@@ -37,7 +37,7 @@ public struct SMMainNavigationBar: ViewModifier {
         }
 
         ToolbarItem(placement: .navigationBarTrailing) {
-          Image(icon: isAlarmExist ? .bell_dot_fill : .bell_fill)
+          Image(icon: isAlarmExist ? .ic_bell_dot : .ic_bell)
             .fit(size: 28)
             .onTapGesture(perform: alarmTapAction)
         }
