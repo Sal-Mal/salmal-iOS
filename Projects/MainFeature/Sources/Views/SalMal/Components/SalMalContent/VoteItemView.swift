@@ -64,16 +64,24 @@ public struct VoteItemView: View {
 extension VoteItemView {
   
   private var targetItem: some View {
-    KFImage(URL(string: viewStore.vote.imageURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!))
-      .placeholder {
-        ProgressView()
-          .progressViewStyle(.circular)
-          .tint(.ds(.green1))
-          .scaleEffect(2)
-      }
-      .resizable()
-      .scaledToFill()
-      .clipShape(Rectangle())
+    ZStack {
+      KFImage(URL(string: viewStore.vote.imageURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!))
+        .placeholder {
+          ProgressView()
+            .progressViewStyle(.circular)
+            .tint(.ds(.green1))
+            .scaleEffect(2)
+        }
+        .resizable()
+        .scaledToFill()
+        .clipShape(Rectangle())
+      
+      LinearGradient(
+        gradient: .init(colors: [.black.opacity(0), .black.opacity(0.5)]),
+        startPoint: .center,
+        endPoint: .bottom
+      )
+    }
   }
   
   var TopBottons: some View {
