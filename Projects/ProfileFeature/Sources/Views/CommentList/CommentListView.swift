@@ -63,7 +63,7 @@ private extension CommentListView {
         .foregroundColor(.ds(.white))
         .padding(.leading, 20)
       
-      Text("\(viewStore.comments.count)")
+      Text("\(viewStore.numberOfComments)")
         .font(.ds(.title5))
         .foregroundColor(.ds(.gray2))
       

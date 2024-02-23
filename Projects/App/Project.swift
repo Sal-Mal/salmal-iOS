@@ -20,7 +20,7 @@ let project = Project(
       infoPlist: .extendingDefault(with: [
         "CFBundleDisplayName": "살말",
         "CFBundleShortVersionString": "1.0",
-        "CFBundleVersion": "7",
+        "CFBundleVersion": "8",
         "UILaunchStoryboardName": "LaunchScreen",
         "LSApplicationQueriesSchemes": ["kakaokompassauth"],
         "CFBundleURLTypes": [
