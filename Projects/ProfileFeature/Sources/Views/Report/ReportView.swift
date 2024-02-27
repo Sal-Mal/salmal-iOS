@@ -26,6 +26,7 @@ public struct ReportView: View {
           }
       }
     }
+    .alert(store: store.scope(state: \.$alert, action: { .alert($0) }))
     .onAppear {
       BlurManager.shared.blurBackground()
     }
