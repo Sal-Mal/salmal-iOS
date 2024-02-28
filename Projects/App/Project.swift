@@ -20,7 +20,7 @@ let project = Project(
       infoPlist: .extendingDefault(with: [
         "CFBundleDisplayName": "살말",
         "CFBundleShortVersionString": "1.0",
-        "CFBundleVersion": "8",
+        "CFBundleVersion": "10",
         "UILaunchStoryboardName": "LaunchScreen",
         "LSApplicationQueriesSchemes": ["kakaokompassauth"],
         "CFBundleURLTypes": [
@@ -32,8 +32,8 @@ let project = Project(
         "UISupportedInterfaceOrientations": [
           "UIInterfaceOrientationPortrait"
         ],
-        "NSPhotoLibraryUsageDescription": "살말 업로드를 위해 앨범 접근권한이 필요해요",
-        "NSCameraUsageDescription": "살말 업로드를 위해 카메라 접근권한이 필요해요",
+        "NSPhotoLibraryUsageDescription": "피드에 사진을 올리거나 프로필 사진을 변경하려면 앨범 접근권한이 필요해요",
+        "NSCameraUsageDescription": "피드에 사진을 올리거나 프로필 사진을 변경하려면 카메라 접근권한이 필요해요",
         "NSAppTransportSecurity": .dictionary([
           "NSAllowsArbitraryLoads": .boolean(true)
         ])

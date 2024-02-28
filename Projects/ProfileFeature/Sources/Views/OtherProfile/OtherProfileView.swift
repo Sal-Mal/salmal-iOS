@@ -96,8 +96,8 @@ public struct OtherProfileView: View {
             Button {
               viewStore.send(.blockButtonTapped)
             } label: {
-              Image(icon: .ic_cancel)
-                .renderingMode(.template)
+              Text("차단")
+                .font(.ds(.title3(.medium)))
                 .foregroundColor(.ds(.white))
             }
           }
