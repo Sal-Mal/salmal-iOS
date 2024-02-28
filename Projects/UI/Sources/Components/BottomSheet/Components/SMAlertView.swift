@@ -90,8 +90,10 @@ public struct SMAlertView: View {
         }
       }
     }
+    .ignoresSafeArea()
     .frame(height: 212)
     .padding(.horizontal, 18)
+    .padding(.bottom, 32)
   }
 }
 

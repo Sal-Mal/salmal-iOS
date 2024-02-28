@@ -34,6 +34,8 @@ public struct ReportCommentView: View {
           }
       }
     }
+    .alert(store: store.scope(state: \.$alert, action: { ._alert($0) }))
+    .confirmationDialog(store: store.scope(state: \.$confirmDialog, action: { ._confirmDialog($0)}))
     .onAppear {
       BlurManager.shared.blurBackground()
     }

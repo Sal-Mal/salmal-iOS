@@ -18,6 +18,12 @@ public struct CommentListCore: Reducer {
     var commentMode: CommentMode?
     var shouldOpenCommentID: Int? // 대댓글 열려있어야 하는 Commnet ID
     
+    var numberOfComments: Int {
+      return comments.map(\.comment).reduce(0) {
+        $0 + 1 + ($1.replyCount ?? 0)
+      }
+    }
+    
     public init(voteID: Int, commentCount: Int) {
       self.voteID = voteID
       self.commentMode = .writeComment(voteID: voteID)
@@ -99,25 +105,6 @@ public struct CommentListCore: Reducer {
         state.comments.append(contentsOf: commentStates)
         
         return .none
-        
-//      case let .commentsResponse(.success(entity)):
-//        state.comments = []
-//
-//        entity.forEach {
-//          print($0.id == state.shouldOpenCommentID)
-//        }
-//        
-//        let commentStates = entity.map {
-//          CommentCore.State(comment: $0, isOpen: $0.id == state.shouldOpenCommentID)
-//        }
-//        
-//        state.comments.append(contentsOf: commentStates)
-//        return .none
-//        
-//      case let .commentsResponse(.failure(error)):
-//        // TODO: 댓글 리스트 요청 실패 (Toast Message)
-//        print(error.localizedDescription)
-//        return .none
         
       case .requestMyPage:
         return .run { send in

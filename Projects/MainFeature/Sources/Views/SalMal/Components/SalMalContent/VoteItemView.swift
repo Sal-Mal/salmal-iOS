@@ -19,44 +19,39 @@ public struct VoteItemView: View {
   }
   
   public var body: some View {
-    GeometryReader { proxy in
-      let width = proxy.size.width
-      let height = proxy.size.height
-      
-      ZStack(alignment: .top) {
-        ZStack(alignment: .bottomTrailing) {
-          targetItem
-            .frame(width: width, height: height)
-          
-          bottomButtons
-            .padding(.bottom, 22)
-            .padding(.trailing, 16)
-        }
+    ZStack(alignment: .top) {
+      ZStack(alignment: .bottomTrailing) {
+        targetItem
+          .allowsHitTesting(false)
         
-        TopBottons
-          .padding([.horizontal, .top], 18)
+        bottomButtons
+          .padding(.bottom, 22)
+          .padding(.trailing, 16)
       }
-      .sheet(store: store.scope(state: \.$reportState, action: VoteItemCore.Action.report)) { subStore in
-        ReportView(store: subStore)
-          .readHeight()
-          .onPreferenceChange(HeightPreferenceKey.self) { height in
-            if let height {
-              self.modalHeight = height
-            }
+      
+      TopBottons
+        .padding([.horizontal, .top], 18)
+    }
+    .sheet(store: store.scope(state: \.$reportState, action: VoteItemCore.Action.report)) { subStore in
+      ReportView(store: subStore)
+        .readHeight()
+        .onPreferenceChange(HeightPreferenceKey.self) { height in
+          if let height {
+            self.modalHeight = height
           }
-          .presentationDetents([.height(self.modalHeight)])
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
-          .background(Color.ds(.gray4))
-      }
-      .sheet(store: store.scope(state: \.$commentListState, action: VoteItemCore.Action.commentList)) { subStore in
-        VStack(spacing: 0) {
-          DragIndicator()
-            .padding(.bottom, -20)
-          CommentListView(store: subStore)
         }
-        .presentationDragIndicator(.hidden)
+        .presentationDetents([.height(self.modalHeight)])
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.ds(.gray4))
+    }
+    .sheet(store: store.scope(state: \.$commentListState, action: VoteItemCore.Action.commentList)) { subStore in
+      VStack(spacing: 0) {
+        DragIndicator()
+          .padding(.bottom, -20)
+        CommentListView(store: subStore)
       }
+      .presentationDragIndicator(.hidden)
+      .background(Color.ds(.gray4))
     }
   }
 }
@@ -64,16 +59,30 @@ public struct VoteItemView: View {
 extension VoteItemView {
   
   private var targetItem: some View {
-    KFImage(URL(string: viewStore.vote.imageURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!))
-      .placeholder {
-        ProgressView()
-          .progressViewStyle(.circular)
-          .tint(.ds(.green1))
-          .scaleEffect(2)
+    GeometryReader { proxy in
+      let width = proxy.size.width
+      let height = proxy.size.height
+      
+      ZStack {
+        KFImage(URL(string: viewStore.vote.imageURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!))
+          .placeholder {
+            ProgressView()
+              .progressViewStyle(.circular)
+              .tint(.ds(.green1))
+              .scaleEffect(2)
+          }
+          .resizable()
+          .scaledToFill()
+          .frame(width: width, height: height)
+        
+        
+        LinearGradient(
+          gradient: .init(colors: [.black.opacity(0), .black.opacity(0.3)]),
+          startPoint: .center,
+          endPoint: .bottom
+        )
       }
-      .resizable()
-      .scaledToFill()
-      .clipShape(Rectangle())
+    }
   }
   
   var TopBottons: some View {
@@ -107,7 +116,7 @@ extension VoteItemView {
         backgroundColor: .ds(.white36)) {
           store.send(.bookmarkTapped)
         }
-
+      
       SMFloatingActionButton(
         iconImage: .init(icon: .ic_message),
         buttonSize: .medium,

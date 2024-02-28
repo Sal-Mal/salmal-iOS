@@ -161,6 +161,7 @@ struct PhotoView: View {
                   .onChanged { gesture in
                     let lastOffset = textBox.lastOffset
                     let newOffset = lastOffset + gesture.translation
+     
                     viewStore.send(.textBoxOffsetChanged(textBox, offset: newOffset))
                     viewStore.send(.set(\.$isChanging, true))
                     if gesture.location.y >= UIScreen.main.bounds.height - 250 {
@@ -173,7 +174,7 @@ struct PhotoView: View {
                     if gesture.location.y >= UIScreen.main.bounds.height - 250 {
                       viewStore.send(.textBoxDeleteAreaEntered(textBox))
                     } else {
-                      viewStore.send(.textBoxOffsetEnded(textBox, offset: gesture.translation))
+                      viewStore.send(.textBoxOffsetEnded(textBox, offset: gesture.translation + textBox.lastOffset))
                     }
                     viewStore.send(.set(\.$isChanging, false))
                     viewStore.send(.textBoxOffsetHovering(textBox, isHovering: false))
