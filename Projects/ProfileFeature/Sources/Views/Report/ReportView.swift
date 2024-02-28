@@ -26,7 +26,8 @@ public struct ReportView: View {
           }
       }
     }
-    .alert(store: store.scope(state: \.$alert, action: { .alert($0) }))
+    .alert(store: store.scope(state: \.$alert, action: { ._alert($0) }))
+    .confirmationDialog(store: store.scope(state: \.$confirmDialog, action: { ._confirmDialog($0)}))
     .onAppear {
       BlurManager.shared.blurBackground()
     }
