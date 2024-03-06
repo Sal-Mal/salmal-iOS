@@ -22,6 +22,26 @@
 
 [AppStore 링크](https://apps.apple.com/kr/app/%EC%82%B4%EB%A7%90-%EB%8B%B9%EC%8B%A0%EC%9D%98-%EB%93%A0%EB%93%A0%ED%95%9C-%EC%87%BC%ED%95%91-%EB%A9%94%EC%9D%B4%ED%8A%B8/id6471960450)
 
+
+### 메인화면
+
+투표(살까, 말까), 북마크, 댓글 기능등이 있는 무한스크롤 피드
+
+<img src = "https://github.com/Sal-Mal/salmal-iOS/assets/69573768/f29e5c9b-a462-4e1c-8e82-4a0684f12436" width = "200">
+
+### 살말 투표 등록
+
+카메라나 앨범에서 사진 + 문구를 조합하여 새로운 투표 등록
+
+<img src = "https://github.com/Sal-Mal/salmal-iOS/assets/69573768/2e6cb45e-0f68-46ce-a311-0c108df92686" width = "200">
+
+
+### 마이페이지
+
+개인정보 변경이나, 등록한 투표 삭제, 북마크한 투표등을 관리할수 있는 마이페이지
+
+<img src = "https://github.com/Sal-Mal/salmal-iOS/assets/69573768/cac5d5cd-5bc2-4784-a376-8cc8b4614fd7" width = "200">
+
 ## 팀원
 
 |iOS|iOS|
