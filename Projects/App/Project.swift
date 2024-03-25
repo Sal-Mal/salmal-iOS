@@ -19,7 +19,7 @@ let project = Project(
       deploymentTarget: .iOS(targetVersion: "16.0", devices: [.iphone]),
       infoPlist: .extendingDefault(with: [
         "CFBundleDisplayName": "살말",
-        "CFBundleShortVersionString": "1.0",
+        "CFBundleShortVersionString": "1.0.1",
         "CFBundleVersion": "10",
         "UILaunchStoryboardName": "LaunchScreen",
         "LSApplicationQueriesSchemes": ["kakaokompassauth"],
