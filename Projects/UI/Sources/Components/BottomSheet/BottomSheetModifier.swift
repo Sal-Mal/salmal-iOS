@@ -36,20 +36,38 @@ public struct SMBottomSheetModifier<Inner: View>: ViewModifier {
   public func body(content: Content) -> some View {
     content
       .sheet(isPresented: $isPresented) {
-        innerView()
-          .readHeight()
-          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-          .overlay(alignment: .top) {
-            SheetDragIndicator().padding(.top, 16)
-          }
-          .onPreferenceChange(HeightPreferenceKey.self) { height in
-            if let height {
-              self.detentHeight = height
+        if #available(iOS 16.4, *) {
+          innerView()
+            .readHeight()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .overlay(alignment: .top) {
+              SheetDragIndicator().padding(.top, 16)
             }
-          }
-          .background(Color.ds(.gray4))
-          .presentationDetents([.height(detentHeight)])
-          .presentationDragIndicator(.hidden)
+            .onPreferenceChange(HeightPreferenceKey.self) { height in
+              if let height {
+                self.detentHeight = height
+              }
+            }
+            .background(Color.ds(.gray4))
+            .presentationDetents([.height(detentHeight)])
+            .presentationCornerRadius(24)
+            .presentationDragIndicator(.hidden)
+        } else {
+          innerView()
+            .readHeight()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .overlay(alignment: .top) {
+              SheetDragIndicator().padding(.top, 16)
+            }
+            .onPreferenceChange(HeightPreferenceKey.self) { height in
+              if let height {
+                self.detentHeight = height
+              }
+            }
+            .background(Color.ds(.gray4))
+            .presentationDetents([.height(detentHeight)])
+            .presentationDragIndicator(.hidden)
+        }
       }
   }
 }

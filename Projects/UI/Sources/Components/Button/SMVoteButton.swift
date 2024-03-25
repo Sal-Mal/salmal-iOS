@@ -35,7 +35,7 @@ public struct SMVoteButton: View {
       if buttonState == .idle {
         Text(title)
           .foregroundColor(.ds(.white))
-          .font(.system(size: 20, weight: .semibold))
+          .font(.ds(.title2(.semibold)))
           .frame(maxWidth: .infinity)
           .frame(height: 60)
           .background {

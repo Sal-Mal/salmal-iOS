@@ -31,8 +31,8 @@ public struct LoginView: View {
         Image(icon: .ic_bubble)
           .shadow(color: .ds(.green), radius: 2, x: 0, y: 0)
           .overlay {
-            Text("🤝 회원가입하고 쇼핑 메이트 얻기!")
-              .font(.pretendard(.black, size: 13))
+            Text("🤝 회원가입하고 **쇼핑 메이트** 얻기!")
+              .font(.ds(.title4(.medium)))
               .padding(.bottom, 8)
   
           }
@@ -67,7 +67,7 @@ private extension LoginView {
     } label: {
       ZStack(alignment: .leading) {
         Text("카카오로 계속하기")
-          .font(.system(size: 20, weight: .semibold))
+          .font(.ds(.title3(.medium)))
           .foregroundColor(.ds(.black))
           .padding(.vertical, 20)
           .frame(maxWidth: .infinity)
@@ -88,7 +88,7 @@ private extension LoginView {
     } label: {
       ZStack(alignment: .leading) {
         Text("Apple로 계속하기")
-          .font(.system(size: 20, weight: .semibold))
+          .font(.ds(.title3(.medium)))
           .foregroundColor(.ds(.black))
           .padding(.vertical, 20)
           .frame(maxWidth: .infinity)
